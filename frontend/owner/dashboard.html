@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eczane Sahibi Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
 
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">Eczane Sahibi Paneli</a>
+
+            <div>
+                <a href="../auth/login.html" class="btn btn-light btn-sm">Çıkış</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container mt-4">
+
+        <h3>Hoş geldiniz, Eczane Sahibi!</h3>
+        <p class="text-muted">Buradan iş ilanı oluşturabilir ve başvuruları görüntüleyebilirsiniz.</p>
+
+        <div class="row mt-4">
+
+            <!-- İlan Oluştur -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <h5>Yeni İş İlanı</h5>
+                    <p>Eczanenize teknisyen veya nöbet yardımcısı arayın.</p>
+                    <a href="../jobs/create-job.html" class="btn btn-primary w-100">İlan Oluştur</a>
+                </div>
+            </div>
+
+            <!-- İlanlarım -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <h5>İlanlarım</h5>
+                    <p>Açtığınız tüm ilanları inceleyin ve yönetim sağlayın.</p>
+                    <a href="../jobs/my-jobs.html" class="btn btn-success w-100">Görüntüle</a>
+                </div>
+            </div>
+
+            <!-- Başvurular -->
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3">
+                    <h5>Başvurular</h5>
+                    <p>İlanlarınıza yapılan başvuruları görün.</p>
+                    <a href="../jobs/applications.html" class="btn btn-warning w-100">Başvuruları Aç</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
