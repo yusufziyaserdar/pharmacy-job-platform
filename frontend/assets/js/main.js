@@ -1,12 +1,13 @@
-
+// Navbar yükle
 fetch("/frontend/components/navbar/navbar.html")
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById("navbar-placeholder").innerHTML = html;
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("navbar-placeholder").innerHTML = data;
     });
 
+// Footer yükle
 fetch("/frontend/components/footer/footer.html")
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById("footer-placeholder").innerHTML = html;
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer-placeholder").innerHTML = data;
     });
