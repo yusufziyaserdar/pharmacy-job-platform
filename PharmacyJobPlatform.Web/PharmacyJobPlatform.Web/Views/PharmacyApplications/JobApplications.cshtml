@@ -1,0 +1,85 @@
+﻿@model IEnumerable<PharmacyApplicationViewModel>
+@using PharmacyJobPlatform.Domain.Entities
+
+@{
+    ViewData["Title"] = "İlana Gelen Başvurular";
+}
+
+
+<div class="container mt-4">
+
+    <h4 class="mb-4">
+        📥 @ViewBag.JobTitle — Başvurular
+    </h4>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Bu ilana henüz başvuru yapılmamış.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Çalışan</th>
+                        <th>Email</th>
+                        <th>Başvuru Tarihi</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var app in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@app.WorkerFullName</strong>
+                            </td>
+
+                            <td>@app.WorkerEmail</td>
+
+                            <td>@app.AppliedAt.ToString("dd.MM.yyyy")</td>
+
+                            <td>
+                                @if (app.Status == ApplicationStatus.Pending)
+                                {
+                                    <span class="badge bg-secondary">Beklemede</span>
+                                }
+                                else if (app.Status == ApplicationStatus.Accepted)
+                                {
+                                    <span class="badge bg-success">Kabul Edildi</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Reddedildi</span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                @if (app.Status == ApplicationStatus.Pending)
+                                {
+                                    <form asp-action="Accept" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@app.ApplicationId" />
+                                        <button class="btn btn-sm btn-success">✔</button>
+                                    </form>
+
+                                    <form asp-action="Reject" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@app.ApplicationId" />
+                                        <button class="btn btn-sm btn-danger">✖</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="JobPosts" asp-action="MyPosts" class="btn btn-outline-secondary mt-3">
+        ← İlanlarıma Dön
+    </a>
+</div>

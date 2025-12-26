@@ -1,0 +1,17 @@
+﻿@using PharmacyJobPlatform.Domain.Entities
+@model IEnumerable<Conversation>
+
+<div class="container mt-4">
+    <h2>Mesajlarım</h2>
+
+    <ul class="list-group">
+        @foreach (var c in Model)
+        {
+            <li class="list-group-item">
+                <a asp-action="Chat" asp-route-id="@c.Id">
+                    Sohbet #@c.Id
+                </a>
+            </li>
+        }
+    </ul>
+</div>

@@ -1,0 +1,105 @@
+﻿@model PharmacyJobPlatform.Domain.Entities.Conversation
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Mesajlaşma";
+    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+
+        <!-- HEADER -->
+        <div class="card-header bg-primary text-white">
+            💬 Mesajlaşma
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="card-body" id="chatBox"
+             style="height:400px; overflow-y:auto; background:#f8f9fa">
+
+            @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+            {
+                bool mine = msg.SenderId == userId;
+
+                <div class="d-flex mb-2 @(mine ? "justify-content-end" : "justify-content-start")">
+                    <div class="p-2 rounded
+                        @(mine ? "bg-primary text-white" : "bg-white border")"
+                         style="max-width:70%">
+
+                        <div>@msg.Content</div>
+
+                        <div class="text-end">
+                            <small class="@(mine ? "text-light" : "text-muted")">
+                                @msg.SentAt.ToLocalTime().ToString("HH:mm")
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- SEND MESSAGE -->
+        <div class="card-footer">
+            <form id="sendForm">
+                <input type="hidden" id="conversationId" value="@Model.Id" />
+
+                <div class="input-group">
+                    <input id="messageText"
+                           class="form-control"
+                           placeholder="Mesaj yaz..."
+                           autocomplete="off"
+                           required />
+
+                    <button class="btn btn-primary">
+                        Gönder
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const form = document.getElementById("sendForm");
+        const box = document.getElementById("chatBox");
+        const input = document.getElementById("messageText");
+
+        form.addEventListener("submit", async e => {
+            e.preventDefault();
+
+            if (!input.value.trim()) return;
+
+            const id = document.getElementById("conversationId").value;
+            const text = input.value;
+
+            const res = await fetch("/Messages/Send", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `conversationId=${id}&content=${encodeURIComponent(text)}`
+            });
+
+            if (res.ok) {
+                box.innerHTML += `
+                    <div class="d-flex justify-content-end mb-2">
+                        <div class="p-2 rounded bg-primary text-white" style="max-width:70%">
+                            ${text}
+                            <div class="text-end">
+                                <small class="text-light">şimdi</small>
+                            </div>
+                        </div>
+                    </div>`;
+
+                box.scrollTop = box.scrollHeight;
+                input.value = "";
+            }
+        });
+
+        // Sayfa açılınca en alta kaydır
+        box.scrollTop = box.scrollHeight;
+    </script>
+}

@@ -1,0 +1,74 @@
+﻿@model JobPostFilterViewModel
+@using PharmacyJobPlatform.Domain.Enums
+
+<div class="container mt-4">
+
+    <h3>🔍 İş İlanları</h3>
+
+    <!-- FİLTRE -->
+    <form method="get" class="row g-2 mb-4">
+        <div class="col-md-3">
+            <input class="form-control" name="City" placeholder="Şehir" value="@Model.City" />
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select" name="JobType">
+                <option value="">İş Türü</option>
+                <option value="Daily">Günlük</option>
+                <option value="Permanent">Kalıcı</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <input class="form-control" name="MinWage" placeholder="Min Ücret" />
+        </div>
+
+        <div class="col-md-2">
+            <input class="form-control" name="MaxWage" placeholder="Max Ücret" />
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Filtrele</button>
+        </div>
+    </form>
+
+    <!-- İLANLAR -->
+    <div class="row">
+        @foreach (var job in Model.Results)
+        {
+            <div class="col-md-4">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5>@job.Title</h5>
+                        <p class="text-muted">@job.City</p>
+
+                        <p>
+                            @if (job.JobType == JobType.Daily)
+                            {
+                                <strong>@job.DailyWage ₺ / gün</strong>
+                            }
+                            else
+                            {
+                                <strong>@job.MonthlySalary ₺ / ay</strong>
+                            }
+                        </p>
+
+                        @if (job.AlreadyApplied)
+                        {
+                            <span class="badge bg-secondary">Başvuruldu</span>
+                        }
+                        else
+                        {
+                            <form asp-action="Apply" method="post">
+                                <input type="hidden" name="jobPostId" value="@job.Id" />
+                                <button class="btn btn-success w-100">
+                                    Başvur
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

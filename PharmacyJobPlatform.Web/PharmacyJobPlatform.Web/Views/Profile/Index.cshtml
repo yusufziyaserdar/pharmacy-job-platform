@@ -1,0 +1,50 @@
+﻿@model PharmacyJobPlatform.Domain.Entities.User
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3 class="mb-1">
+                👤 @Model.FirstName @Model.LastName
+            </h3>
+
+            <p class="text-muted">@Model.Email</p>
+
+            <span class="badge bg-secondary">
+                @Model.Role.Name
+            </span>
+
+            <hr />
+
+            @* WORKER *@
+            @if (Model.Role.Name == "Worker")
+            {
+                <p class="mb-1">👷 Çalışan Profili</p>
+                <p class="text-muted">
+                    Platforma katılma:
+                    @Model.CreatedAt.ToShortDateString()
+                </p>
+            }
+
+            @* PHARMACY *@
+            @if (Model.Role.Name == "PharmacyOwner")
+            {
+                <p class="mb-1">🏥 Eczane Sahibi</p>
+                <p class="text-muted">
+                    Platforma katılma:
+                    @Model.CreatedAt.ToShortDateString()
+                </p>
+            }
+
+            <hr />
+
+            <a asp-controller="Messages"
+               asp-action="Start"
+               asp-route-userId="@Model.Id"
+               class="btn btn-primary">
+                💬 Mesaj Gönder
+            </a>
+
+        </div>
+    </div>
+</div>

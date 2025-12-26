@@ -1,0 +1,111 @@
+﻿@model IEnumerable<JobPostListViewModel>
+@using PharmacyJobPlatform.Domain.Enums
+
+@{
+    ViewData["Title"] = "İlanlarım";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>📋 Benim İş İlanlarım</h3>
+
+        <a asp-action="Create" class="btn btn-primary">
+            ➕ Yeni İlan Oluştur
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            Henüz oluşturduğunuz bir iş ilanı bulunmamaktadır.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Başlık</th>
+                        <th>Tür</th>
+                        <th>Konum</th>
+                        <th>Ücret</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var post in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@post.Title</strong><br />
+                                <small class="text-muted">
+                                    @post.CreatedAt.ToString("dd.MM.yyyy")
+                                </small>
+                            </td>
+
+                            <td>
+                                @if (post.JobType == JobType.Daily)
+                                {
+                                    <span class="badge bg-warning text-dark">Günlük</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Kalıcı</span>
+                                }
+                            </td>
+
+                            <td>
+                                @post.City
+                            </td>
+
+                            <td>
+                                @if (post.JobType == JobType.Daily)
+                                {
+                                    <span>@post.DailyWage ₺ / gün</span>
+                                }
+                                else
+                                {
+                                    <span>@post.MonthlySalary ₺ / ay</span>
+                                }
+                            </td>
+
+                            <td>
+                                @if (post.IsActive)
+                                {
+                                    <span class="badge bg-primary">Yayında</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Pasif</span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <a asp-action="Details" asp-route-id="@post.Id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    👁
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@post.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    ✏️
+                                </a>
+
+                                <a asp-controller="PharmacyApplications"
+                                   asp-action="JobApplications"
+                                   asp-route-jobPostId="@post.Id"
+                                   class="btn btn-sm btn-outline-success">
+                                    📥 Başvurular
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

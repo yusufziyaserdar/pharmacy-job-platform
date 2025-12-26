@@ -1,0 +1,47 @@
+﻿@model List<InboxConversationViewModel>
+
+@{
+    ViewData["Title"] = "Mesajlarım";
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4">💬 Mesajlarım</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Henüz mesajlaşmanız bulunmamaktadır.
+        </div>
+    }
+    else
+    {
+        <div class="list-group shadow-sm">
+            @foreach (var convo in Model)
+            {
+                <a asp-action="Chat"
+                   asp-route-conversationId="@convo.ConversationId"
+                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <strong>@convo.OtherUserFullName</strong>
+                        <div class="small text-muted">
+                            @convo.LastMessage
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        @if (convo.UnreadCount > 0)
+                        {
+                            <span class="badge bg-danger rounded-pill">
+                                @convo.UnreadCount
+                            </span>
+                        }
+                        <div class="small text-muted">
+                            @convo.LastMessageTime?.ToString("dd.MM HH:mm")
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

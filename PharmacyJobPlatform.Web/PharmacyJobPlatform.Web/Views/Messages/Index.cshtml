@@ -1,0 +1,46 @@
+﻿@model List<Conversation>
+@using System.Security.Claims
+
+@{
+    int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+}
+
+<div class="container mt-4">
+    <h3 class="mb-4">💬 Mesajlar</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Henüz bir mesajlaşmanız yok.
+        </div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var conv in Model)
+            {
+                var otherUser = conv.User1Id == userId ? conv.User2 : conv.User1;
+                var unreadCount = conv.Messages.Count(m => !m.IsRead && m.SenderId != userId);
+
+                <a asp-action="Chat" asp-route-id="@conv.Id"
+                   class="list-group-item list-group-item-action d-flex justify-content-between">
+
+                    <div>
+                        <strong>@otherUser.FirstName @otherUser.LastName</strong><br />
+                        <small class="text-muted">
+                            @conv.Messages.OrderByDescending(m => m.SentAt)
+                            .FirstOrDefault()?.Content
+                        </small>
+                    </div>
+
+                    @if (unreadCount > 0)
+                    {
+                        <span class="badge bg-danger rounded-pill">
+                            @unreadCount
+                        </span>
+                    }
+                </a>
+            }
+        </div>
+    }
+</div>
