@@ -1,26 +1,24 @@
 ﻿using PharmacyJobPlatform.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
-public class JobPostCreateViewModel
+namespace PharmacyJobPlatform.Web.Models.JobPost
 {
-    [Required]
-    public string Title { get; set; }
+    public class JobPostCreateViewModel
+    {
+        [Required, MaxLength(150)]
+        public string Title { get; set; } = null!;
 
-    [Required]
-    public string Description { get; set; }
+        [Required]
+        public string Description { get; set; } = null!;
 
-    [Required]
-    public JobType JobType { get; set; }
+        [Required]
+        public JobType JobType { get; set; }
 
-    [Required]
-    public string City { get; set; }
+        // Daily
+        public decimal? DailyWage { get; set; }
+        public DateTime? WorkDate { get; set; }
 
-    public string Address { get; set; }
-
-    // Günlük
-    public decimal? DailyWage { get; set; }
-    public DateTime? WorkDate { get; set; }
-
-    // Kalıcı
-    public decimal? MonthlySalary { get; set; }
+        // Permanent
+        public decimal? MonthlySalary { get; set; }
+    }
 }

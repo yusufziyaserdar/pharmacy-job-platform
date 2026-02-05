@@ -5,6 +5,7 @@ C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobP
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.AssemblyInfoInputs.cache
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.AssemblyInfo.cs
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.sourcelink.json
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.dll
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\refint\PharmacyJobPlatform.Domain.dll
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Domain\obj\Debug\net8.0\PharmacyJobPlatform.Domain.pdb

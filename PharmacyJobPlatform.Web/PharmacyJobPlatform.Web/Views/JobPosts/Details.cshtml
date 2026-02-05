@@ -1,0 +1,40 @@
+﻿@model JobPostDetailsViewModel
+@using PharmacyJobPlatform.Domain.Enums
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h3>@Model.Title</h3>
+
+            <span class="badge @(Model.JobType == JobType.Daily ? "bg-warning" : "bg-success")">
+                @Model.JobType
+            </span>
+
+            <hr />
+
+            <p>@Model.Description</p>
+
+            <p>
+                <strong>Adres:</strong><br />
+                @Model.City / @Model.District<br />
+                @Model.Neighborhood
+            </p>
+
+            @if (Model.JobType == JobType.Daily)
+            {
+                <p><strong>Günlük Ücret:</strong> @Model.DailyWage ₺</p>
+                <p><strong>Tarih:</strong> @Model.WorkDate?.ToString("dd.MM.yyyy")</p>
+            }
+            else
+            {
+                <p><strong>Aylık Maaş:</strong> @Model.MonthlySalary ₺</p>
+            }
+
+            <div class="text-end">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">✏️ Düzenle</a>
+                <a asp-action="MyPosts" class="btn btn-secondary">⬅ Geri</a>
+            </div>
+        </div>
+    </div>
+</div>

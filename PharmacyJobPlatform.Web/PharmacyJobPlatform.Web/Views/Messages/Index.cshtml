@@ -1,4 +1,4 @@
-﻿@model List<Conversation>
+﻿@model List<PharmacyJobPlatform.Web.Models.ViewModels.InboxConversationViewModel>
 @using System.Security.Claims
 
 @{
@@ -19,28 +19,31 @@
         <div class="list-group">
             @foreach (var conv in Model)
             {
-                var otherUser = conv.User1Id == userId ? conv.User2 : conv.User1;
-                var unreadCount = conv.Messages.Count(m => !m.IsRead && m.SenderId != userId);
 
-                <a asp-action="Chat" asp-route-id="@conv.Id"
+                
+                 <a asp-controller="Profile"
+                   asp-action="Index"
+                   asp-route-id="@conv.OtherUserId"
+                   class="fw-bold text-decoration-none">
+                    @conv.OtherUserFullName
+                </a>
+                <a asp-action="Chat"
+                   asp-route-id="@conv.ConversationId"
                    class="list-group-item list-group-item-action d-flex justify-content-between">
 
-                    <div>
-                        <strong>@otherUser.FirstName @otherUser.LastName</strong><br />
-                        <small class="text-muted">
-                            @conv.Messages.OrderByDescending(m => m.SentAt)
-                            .FirstOrDefault()?.Content
-                        </small>
-                    </div>
 
-                    @if (unreadCount > 0)
+                        <small class="text-muted">@conv.LastMessage</small>
+
+
+                    @if (conv.UnreadCount > 0)
                     {
                         <span class="badge bg-danger rounded-pill">
-                            @unreadCount
+                            @conv.UnreadCount
                         </span>
                     }
                 </a>
             }
+
         </div>
     }
 </div>

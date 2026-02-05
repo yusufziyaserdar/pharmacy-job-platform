@@ -26,6 +26,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+            var test = model;
             var user = _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == model.Email);
@@ -63,28 +64,124 @@ namespace PharmacyJobPlatform.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            if (model.Role == "Worker")
+            {
+                ModelState.Remove("Address.City");
+                ModelState.Remove("Address.District");
+                ModelState.Remove("Address.Neighborhood");
+            }
+
+            if (model.Role == "PharmacyOwner")
+            {
+                ModelState.Remove("WorkExperiences");
+            }
+
+            if (!ModelState.IsValid)
+                return View(model);
+
             if (_context.Users.Any(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("", "Bu email zaten kayıtlı");
                 return View(model);
             }
 
-            var role = _context.Roles.First(r => r.Name == model.Role);
+            var role = await _context.Roles
+                .FirstOrDefaultAsync(r => r.Name == model.Role);
 
+            if (role == null)
+            {
+                ModelState.AddModelError("", "Geçersiz rol seçimi");
+                return View(model);
+            }
+
+            // ============================
+            // 📸 Profil Fotoğrafı
+            // ============================
+            string? profileImagePath = null;
+
+            if (model.ProfileImage != null && model.ProfileImage.Length > 0)
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "images", "profiles");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ProfileImage.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await model.ProfileImage.CopyToAsync(stream);
+
+                profileImagePath = "/images/profiles/" + fileName;
+            }
+
+            // ============================
+            // 🏠 Address (SADECE PharmacyOwner)
+            // ============================
+            Address? address = null;
+
+            if (model.Role == "PharmacyOwner")
+            {
+                if (model.Address == null)
+                {
+                    ModelState.AddModelError("", "Eczane sahibi için adres bilgisi zorunludur");
+                    return View(model);
+                }
+
+                address = new Address
+                {
+                    City = model.Address.City,
+                    District = model.Address.District,
+                    Neighborhood = model.Address.Neighborhood,
+                    Street = model.Address.Street,
+                    BuildingNumber = model.Address.BuildingNumber,
+                    Description = model.Address.Description
+                };
+
+                _context.Addresses.Add(address);
+            }
+
+            // ============================
+            // 👤 User
+            // ============================
             var user = new User
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                RoleId = role.Id
+                PhoneNumber = model.PhoneNumber,
+                About = model.About,
+                ProfileImagePath = profileImagePath,
+                RoleId = role.Id,
+                Address = address, // 🔥 EF otomatik AddressId set eder
+                CreatedAt = DateTime.UtcNow
             };
+
+            // ============================
+            // 🏥 Work Experiences (SADECE Worker)
+            // ============================
+            if (model.Role == "Worker" && model.WorkExperiences != null)
+            {
+                foreach (var exp in model.WorkExperiences)
+                {
+                    if (string.IsNullOrWhiteSpace(exp.PharmacyName))
+                        continue;
+
+                    user.WorkExperiences.Add(new WorkExperience
+                    {
+                        PharmacyName = exp.PharmacyName,
+                        StartDate = exp.StartDate,
+                        EndDate = exp.EndDate
+                    });
+                }
+            }
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Login");
         }
+
+
 
         // ---------------- LOGOUT ----------------
         public async Task<IActionResult> Logout()

@@ -1,43 +1,126 @@
 ﻿@model PharmacyJobPlatform.Domain.Entities.User
+@using System.Security.Claims
+
+
+@{
+    string profileImage = string.IsNullOrEmpty(Model.ProfileImagePath)
+        ? "/images/profiles/default-profile.png"
+        : Model.ProfileImagePath;
+
+    int totalMonths = 0;
+
+    if (Model.WorkExperiences != null)
+    {
+        foreach (var exp in Model.WorkExperiences)
+        {
+            var endDate = exp.EndDate ?? DateTime.Today;
+            totalMonths += (endDate.Year - exp.StartDate.Year) * 12
+                           + endDate.Month - exp.StartDate.Month;
+        }
+    }
+
+    int years = totalMonths / 12;
+    int months = totalMonths % 12;
+}
 
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-body">
 
-            <h3 class="mb-1">
-                👤 @Model.FirstName @Model.LastName
-            </h3>
+            <!-- PROFIL ÜST -->
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <img src="@profileImage"
+                         class="rounded-circle img-fluid mb-3"
+                         style="max-width:150px;"
+                         alt="Profil Fotoğrafı" />
+                </div>
 
-            <p class="text-muted">@Model.Email</p>
+                <div class="col-md-9">
+                    <h3 class="mb-1">
+                        @Model.FirstName @Model.LastName
+                    </h3>
 
-            <span class="badge bg-secondary">
-                @Model.Role.Name
-            </span>
+                    <span class="badge bg-secondary mb-2">
+                        @Model.Role.Name
+                    </span>
+
+                    <p class="mb-1">
+                        📧 @Model.Email
+                    </p>
+
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <p class="mb-1">
+                            📞 @Model.PhoneNumber
+                        </p>
+                    }
+
+                    <p class="text-muted">
+                        Platforma katılma:
+                        @Model.CreatedAt.ToShortDateString()
+                    </p>
+
+                    @if (User.Identity?.IsAuthenticated == true &&
+                    int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) == Model.Id)
+                    {
+                        <a asp-controller="Profile"
+                           asp-action="Edit"
+                           class="btn btn-outline-primary btn-sm float-end">
+                            ✏️ Profili Düzenle
+                        </a>
+                    }
+
+                </div>
+            </div>
 
             <hr />
 
-            @* WORKER *@
-            @if (Model.Role.Name == "Worker")
+            <!-- ABOUT -->
+            @if (!string.IsNullOrEmpty(Model.About))
             {
-                <p class="mb-1">👷 Çalışan Profili</p>
-                <p class="text-muted">
-                    Platforma katılma:
-                    @Model.CreatedAt.ToShortDateString()
-                </p>
+                <h5>📝 Hakkında</h5>
+                <p>@Model.About</p>
+                <hr />
             }
 
-            @* PHARMACY *@
-            @if (Model.Role.Name == "PharmacyOwner")
+            <!-- WORK EXPERIENCE -->
+            @if (Model.Role.Name == "Worker" && Model.WorkExperiences?.Any() == true)
             {
-                <p class="mb-1">🏥 Eczane Sahibi</p>
-                <p class="text-muted">
-                    Platforma katılma:
-                    @Model.CreatedAt.ToShortDateString()
+                <h5>🏥 Çalışma Geçmişi</h5>
+
+                <ul class="list-group mb-3">
+                    @foreach (var exp in Model.WorkExperiences.OrderByDescending(x => x.StartDate))
+                    {
+                        <li class="list-group-item">
+                            <strong>@exp.PharmacyName</strong><br />
+                            <small class="text-muted">
+                                @exp.StartDate.ToString("MM/yyyy")
+                                -
+                                @(exp.EndDate.HasValue
+                                    ? exp.EndDate.Value.ToString("MM/yyyy")
+                                    : "Devam ediyor")
+                            </small>
+                        </li>
+                    }
+                </ul>
+
+                <p class="fw-bold">
+                    ⏱ Toplam Deneyim:
+                    @if (years > 0)
+                    {
+                        @($"{years} yıl ")
+                    }
+                    @if (months > 0)
+                    {
+                        @($"{months} ay")
+                    }
                 </p>
+
+                <hr />
             }
 
-            <hr />
-
+            <!-- MESAJ -->
             <a asp-controller="Messages"
                asp-action="Start"
                asp-route-userId="@Model.Id"

@@ -1,0 +1,17 @@
+﻿@model PharmacyJobPlatform.Domain.Entities.Message
+@using System.Security.Claims
+
+@{
+    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+    bool mine = Model.SenderId == userId;
+}
+
+<div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
+    <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light border")"
+         style="max-width:75%">
+        <div>@Model.Content</div>
+        <small class="d-block text-end text-muted">
+            şimdi
+        </small>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model PharmacyJobPlatform.Domain.Entities.Conversation
+@using System.Security.Claims
+
+@{
+    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var otherUser =
+        Model.User1Id == userId ? Model.User2 : Model.User1;
+}
+
+<div class="chat-header sticky-top bg-white py-1 mb-2
+            d-flex align-items-center gap-2 border-bottom">
+
+    <button class="btn btn-sm btn-secondary"
+            onclick="loadConversations()">←</button>
+
+    <a href="/Profile/@otherUser.Id"
+       class="fw-bold text-decoration-none">
+        @otherUser.FirstName @otherUser.LastName
+    </a>
+</div>
+
+
+<div id="widgetMessagesInner">
+    @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+    {
+        bool mine = msg.SenderId == userId;
+        <div class="mb-1 @(mine ? "text-end" : "")">
+            <span class="badge @(mine ? "bg-primary" : "bg-secondary")">
+                @msg.Content
+            </span>
+        </div>
+    }
+</div>
+
+
+<form onsubmit="sendWidgetMessage(event, @Model.Id)">
+    <input id="widgetMessageInput" class="form-control mt-2" required />
+    <button class="btn btn-primary w-100 mt-1">Gönder</button>
+</form>

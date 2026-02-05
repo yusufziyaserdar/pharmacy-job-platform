@@ -1,7 +1,3 @@
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.AssemblyInfoInputs.cache
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.AssemblyInfo.cs
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.csproj.CoreCompileInputs.cache
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\bin\Debug\net8.0\PharmacyJobPlatform.Infrastructure.deps.json
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\bin\Debug\net8.0\PharmacyJobPlatform.Infrastructure.runtimeconfig.json
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\bin\Debug\net8.0\PharmacyJobPlatform.Infrastructure.dll
@@ -11,6 +7,11 @@ C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobP
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\bin\Debug\net8.0\PharmacyJobPlatform.Application.pdb
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\bin\Debug\net8.0\PharmacyJobPlatform.Domain.pdb
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.AssemblyInfo.cs
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.sourcelink.json
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.csproj.CopyComplete
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\PharmacyJobPlatform.Infrastructure.dll
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Infrastructure\obj\Debug\net8.0\refint\PharmacyJobPlatform.Infrastructure.dll

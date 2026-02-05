@@ -1,0 +1,43 @@
+﻿#chat-widget {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1050;
+}
+
+/* Floating button */
+.chat-toggle {
+    width: 56px;
+    height: 56px;
+}
+
+.chat-panel {
+    position: absolute;
+    bottom: 70px; /* 🔥 yukarı açılır */
+    right: 0;
+    width: 320px;
+    max-height: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Body scroll */
+#chat-conversations,
+#chat-messages {
+    height: 250px;
+    overflow-y: auto;
+}
+
+/* Footer fix */
+footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .chat-panel {
+        width: 95vw;
+        right: -10px;
+    }
+}

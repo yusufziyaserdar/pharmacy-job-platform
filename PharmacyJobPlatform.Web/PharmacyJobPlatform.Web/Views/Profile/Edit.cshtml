@@ -1,0 +1,158 @@
+﻿@model PharmacyJobPlatform.Web.Models.Profile.ProfileEditViewModel
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label>Ad</label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Soyad</label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Telefon</label>
+        <input asp-for="PhoneNumber" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Hakkında</label>
+        <textarea asp-for="About" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Profil Fotoğrafı</label>
+        <input asp-for="ProfileImage" type="file" class="form-control" />
+    </div>
+
+    <hr />
+    <h5>🏥 Çalışma Geçmişi</h5>
+
+    <div id="experience-list">
+
+        @for (int i = 0; i < Model.WorkExperiences.Count; i++)
+        {
+            <div class="card mb-3 experience-item">
+                <div class="card-body">
+
+                    <input type="hidden"
+                           name="WorkExperiences[@i].Id"
+                           value="@Model.WorkExperiences[i].Id" />
+
+                    <div class="mb-2">
+                        <label>Eczane Adı</label>
+                        <input class="form-control"
+                               name="WorkExperiences[@i].PharmacyName"
+                               value="@Model.WorkExperiences[i].PharmacyName" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Başlangıç</label>
+                            <input type="date"
+                                   class="form-control"
+                                   name="WorkExperiences[@i].StartDate"
+                                   value="@Model.WorkExperiences[i].StartDate.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label>Bitiş</label>
+                            <input type="date"
+                                   class="form-control"
+                                   name="WorkExperiences[@i].EndDate"
+                                   value="@(Model.WorkExperiences[i].EndDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-sm btn-danger mt-3 remove-experience">
+                        🗑 Sil
+                    </button>
+
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <button type="button"
+            id="add-experience"
+            class="btn btn-outline-secondary mb-3">
+        ➕ Tecrübe Ekle
+    </button>
+
+
+    <button class="btn btn-success">Kaydet</button>
+</form>
+
+@section Scripts {
+    <script>
+            let experienceIndex = @Model.WorkExperiences.Count;
+
+            document.getElementById("add-experience")
+                .addEventListener("click", function () {
+
+                    const container = document.getElementById("experience-list");
+
+                    const html = `
+        <div class="card mb-3 experience-item">
+            <div class="card-body">
+
+                <div class="mb-2">
+                    <label>Eczane Adı</label>
+                    <input class="form-control"
+                           name="WorkExperiences[${experienceIndex}].PharmacyName" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Başlangıç</label>
+                        <input type="date"
+                               class="form-control"
+                               name="WorkExperiences[${experienceIndex}].StartDate" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Bitiş</label>
+                        <input type="date"
+                               class="form-control"
+                               name="WorkExperiences[${experienceIndex}].EndDate" />
+                    </div>
+                </div>
+
+                <button type="button"
+                        class="btn btn-sm btn-danger mt-3 remove-experience">
+                    🗑 Sil
+                </button>
+
+            </div>
+        </div>`;
+
+                    container.insertAdjacentHTML("beforeend", html);
+                    experienceIndex++;
+                });
+
+            document.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-experience")) {
+                    e.target.closest(".experience-item").remove();
+                    reindexExperiences();
+                }
+            });
+
+            function reindexExperiences() {
+                const items = document.querySelectorAll(".experience-item");
+
+                items.forEach((item, index) => {
+                    item.querySelectorAll("input").forEach(input => {
+                        input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    });
+                });
+
+                experienceIndex = items.length;
+            }
+    </script>
+}

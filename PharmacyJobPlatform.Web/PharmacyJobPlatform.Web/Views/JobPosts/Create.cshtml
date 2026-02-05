@@ -17,15 +17,14 @@
                     <!-- Başlık -->
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label">İlan Başlığı</label>
-                        <input asp-for="Title" class="form-control" placeholder="Eczane Teknikeri Aranıyor" />
+                        <input asp-for="Title" class="form-control" />
                         <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
 
                     <!-- Açıklama -->
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label">İlan Açıklaması</label>
-                        <textarea asp-for="Description" class="form-control" rows="4"
-                                  placeholder="İş tanımı, beklentiler, çalışma saatleri..."></textarea>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
 
@@ -34,62 +33,40 @@
                         <label asp-for="JobType" class="form-label">İş Türü</label>
                         <select asp-for="JobType" class="form-select" id="jobType">
                             <option value="">Seçiniz</option>
-                            <option value="Permanent">🕒 Kalıcı Çalışan</option>
-                            <option value="Daily">📆 Günlük / Nöbet Yardımı</option>
+                            <option value="Permanent">🕒 Kalıcı</option>
+                            <option value="Daily">📆 Günlük</option>
                         </select>
                         <span asp-validation-for="JobType" class="text-danger"></span>
                     </div>
 
-                    <div class="row">
-                        <!-- Şehir -->
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="City" class="form-label">Şehir</label>
-                            <input asp-for="City" class="form-control" placeholder="İstanbul" />
-                        </div>
+                    <hr />
 
-                        <!-- Adres -->
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="Address" class="form-label">Adres</label>
-                            <input asp-for="Address" class="form-control" placeholder="Kadıköy / İstanbul" />
-                        </div>
-                    </div>
-
-                    <!-- Günlük İş Alanları -->
+                    <!-- Günlük -->
                     <div id="dailyFields" class="border rounded p-3 mb-3 bg-light" style="display:none">
-                        <h6 class="mb-3">📆 Günlük İş Detayları</h6>
-
+                        <h6>📆 Günlük İş</h6>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="DailyWage" class="form-label">Günlük Ücret (₺)</label>
+                            <div class="col-md-6">
+                                <label asp-for="DailyWage">Günlük Ücret</label>
                                 <input asp-for="DailyWage" class="form-control" />
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="WorkDate" class="form-label">Çalışma Tarihi</label>
+                            <div class="col-md-6">
+                                <label asp-for="WorkDate">Çalışma Tarihi</label>
                                 <input asp-for="WorkDate" type="date" class="form-control" />
                             </div>
                         </div>
                     </div>
 
-                    <!-- Kalıcı İş Alanları -->
+                    <!-- Kalıcı -->
                     <div id="permanentFields" class="border rounded p-3 mb-3 bg-light" style="display:none">
-                        <h6 class="mb-3">🕒 Kalıcı İş Detayları</h6>
-
-                        <div class="mb-3">
-                            <label asp-for="MonthlySalary" class="form-label">Aylık Maaş (₺)</label>
-                            <input asp-for="MonthlySalary" class="form-control" />
-                        </div>
+                        <h6>🕒 Kalıcı İş</h6>
+                        <label asp-for="MonthlySalary">Aylık Maaş</label>
+                        <input asp-for="MonthlySalary" class="form-control" />
                     </div>
 
-                    <!-- Submit -->
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary px-4">
-                            💾 İlanı Yayınla
-                        </button>
+                    <div class="text-end">
+                        <button class="btn btn-primary">💾 Kaydet</button>
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>
@@ -97,19 +74,16 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-
     <script>
         const jobType = document.getElementById("jobType");
         const daily = document.getElementById("dailyFields");
         const permanent = document.getElementById("permanentFields");
 
-        function toggleFields() {
+        function toggle() {
             daily.style.display = jobType.value === "Daily" ? "block" : "none";
             permanent.style.display = jobType.value === "Permanent" ? "block" : "none";
         }
-
-        jobType.addEventListener("change", toggleFields);
-        toggleFields(); // sayfa refresh olunca da çalışsın
+        jobType.addEventListener("change", toggle);
+        toggle();
     </script>
 }
-y

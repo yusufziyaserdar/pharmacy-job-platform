@@ -36,7 +36,7 @@
                     {
                         <tr>
                             <td>
-                                <strong>@app.WorkerFullName</strong>
+                                <strong><a asp-controller="Profile" asp-action="Index" asp-route-id="@app.WorkerId">@app.WorkerFullName</a></strong>
                             </td>
 
                             <td>@app.WorkerEmail</td>

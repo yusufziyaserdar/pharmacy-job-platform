@@ -2,104 +2,64 @@
 @using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Mesajlaşma";
-    var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+    var otherUser =
+        Model.User1Id == userId ? Model.User2 : Model.User1;
 }
 
-<div class="container mt-4">
-    <div class="card shadow-sm">
 
-        <!-- HEADER -->
-        <div class="card-header bg-primary text-white">
-            💬 Mesajlaşma
-        </div>
+<div class="row">
+    <div class="col-md-8 offset-md-2">
 
-        <!-- MESSAGES -->
-        <div class="card-body" id="chatBox"
-             style="height:400px; overflow-y:auto; background:#f8f9fa">
+        <div class="card">
+            <div class="card-header fw-bold">
+                💬
+                <a asp-controller="Profile"
+                   asp-action="Index"
+                   asp-route-id="@otherUser.Id"
+                   class="text-decoration-none">
+                    @otherUser.FirstName @otherUser.LastName
+                </a>
+            </div>
 
-            @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
-            {
-                bool mine = msg.SenderId == userId;
 
-                <div class="d-flex mb-2 @(mine ? "justify-content-end" : "justify-content-start")">
-                    <div class="p-2 rounded
-                        @(mine ? "bg-primary text-white" : "bg-white border")"
-                         style="max-width:70%">
+            <div class="card-body" id="chatBody" style="height:400px; overflow-y:auto">
+                @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+                {
+                    bool mine = msg.SenderId == userId;
 
-                        <div>@msg.Content</div>
-
-                        <div class="text-end">
-                            <small class="@(mine ? "text-light" : "text-muted")">
-                                @msg.SentAt.ToLocalTime().ToString("HH:mm")
-                            </small>
+                    <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
+                        <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
+                             style="max-width:70%">
+                            @msg.Content
+                            <div class="text-end">
+                                <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
 
-        <!-- SEND MESSAGE -->
-        <div class="card-footer">
-            <form id="sendForm">
-                <input type="hidden" id="conversationId" value="@Model.Id" />
+            <div class="card-footer">
+                <form asp-action="SendMessage" method="post">
+                    <input type="hidden" name="conversationId" value="@Model.Id" />
 
-                <div class="input-group">
-                    <input id="messageText"
-                           class="form-control"
-                           placeholder="Mesaj yaz..."
-                           autocomplete="off"
-                           required />
-
-                    <button class="btn btn-primary">
-                        Gönder
-                    </button>
-                </div>
-            </form>
+                    <div class="input-group">
+                        <input name="content" class="form-control" required />
+                        <button class="btn btn-primary">Gönder</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
     </div>
 </div>
-
 @section Scripts {
     <script>
-        const form = document.getElementById("sendForm");
-        const box = document.getElementById("chatBox");
-        const input = document.getElementById("messageText");
-
-        form.addEventListener("submit", async e => {
-            e.preventDefault();
-
-            if (!input.value.trim()) return;
-
-            const id = document.getElementById("conversationId").value;
-            const text = input.value;
-
-            const res = await fetch("/Messages/Send", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `conversationId=${id}&content=${encodeURIComponent(text)}`
-            });
-
-            if (res.ok) {
-                box.innerHTML += `
-                    <div class="d-flex justify-content-end mb-2">
-                        <div class="p-2 rounded bg-primary text-white" style="max-width:70%">
-                            ${text}
-                            <div class="text-end">
-                                <small class="text-light">şimdi</small>
-                            </div>
-                        </div>
-                    </div>`;
-
-                box.scrollTop = box.scrollHeight;
-                input.value = "";
-            }
-        });
-
-        // Sayfa açılınca en alta kaydır
-        box.scrollTop = box.scrollHeight;
+        const chatBody = document.getElementById("chatBody");
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
     </script>
 }

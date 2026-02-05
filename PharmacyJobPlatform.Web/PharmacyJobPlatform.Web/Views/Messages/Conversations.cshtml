@@ -1,5 +1,9 @@
-﻿@using PharmacyJobPlatform.Domain.Entities
-@model IEnumerable<Conversation>
+﻿@using System.Security.Claims
+@model IEnumerable<PharmacyJobPlatform.Domain.Entities.Conversation>
+
+@{
+    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+}
 
 <div class="container mt-4">
     <h2>Mesajlarım</h2>
@@ -7,10 +11,27 @@
     <ul class="list-group">
         @foreach (var c in Model)
         {
-            <li class="list-group-item">
-                <a asp-action="Chat" asp-route-id="@c.Id">
-                    Sohbet #@c.Id
+            var otherUser =
+                c.User1Id == userId ? c.User2 : c.User1;
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                <!-- PROFİL -->
+                <a asp-controller="Profile"
+                   asp-action="Index"
+                   asp-route-id="@otherUser.Id"
+                   class="fw-bold text-decoration-none">
+                    @otherUser.FirstName @otherUser.LastName
                 </a>
+
+                <!-- CHAT -->
+                <a asp-controller="Messages"
+                   asp-action="Chat"
+                   asp-route-id="@c.Id"
+                   class="btn btn-sm btn-outline-primary">
+                    Sohbete Git
+                </a>
+
             </li>
         }
     </ul>

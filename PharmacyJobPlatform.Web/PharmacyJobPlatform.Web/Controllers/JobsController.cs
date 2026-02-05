@@ -26,8 +26,15 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Where(x => x.IsActive)
                 .AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
-                query = query.Where(x => x.City.Contains(filter.City));
+            if (!string.IsNullOrEmpty(filter.City))
+                query = query.Where(x => x.Address.City == filter.City);
+
+            if (!string.IsNullOrEmpty(filter.District))
+                query = query.Where(x => x.Address.District == filter.District);
+
+            if (!string.IsNullOrEmpty(filter.Neighborhood))
+                query = query.Where(x => x.Address.Neighborhood == filter.Neighborhood);
+
 
             if (filter.JobType.HasValue)
                 query = query.Where(x => x.JobType == filter.JobType);
@@ -55,7 +62,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
-                    City = x.City,
+                    City=x.Address.City,
                     JobType = x.JobType,
                     DailyWage = x.DailyWage,
                     MonthlySalary = x.MonthlySalary,

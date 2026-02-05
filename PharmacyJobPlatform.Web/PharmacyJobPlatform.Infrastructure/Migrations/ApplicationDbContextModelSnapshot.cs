@@ -22,6 +22,40 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BuildingNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Neighborhood")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Conversation", b =>
                 {
                     b.Property<int>("Id")
@@ -114,13 +148,8 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -153,6 +182,8 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("PharmacyOwnerId");
 
@@ -217,6 +248,12 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("About")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -236,14 +273,51 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfileImagePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.WorkExperience", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PharmacyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WorkExperiences");
                 });
 
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Conversation", b =>
@@ -305,11 +379,19 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.JobPost", b =>
                 {
+                    b.HasOne("PharmacyJobPlatform.Domain.Entities.Address", "Address")
+                        .WithMany("JobPosts")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("PharmacyJobPlatform.Domain.Entities.User", "PharmacyOwner")
                         .WithMany()
                         .HasForeignKey("PharmacyOwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
 
                     b.Navigation("PharmacyOwner");
                 });
@@ -335,13 +417,38 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.User", b =>
                 {
+                    b.HasOne("PharmacyJobPlatform.Domain.Entities.Address", "Address")
+                        .WithMany("Users")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("PharmacyJobPlatform.Domain.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Address");
+
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.WorkExperience", b =>
+                {
+                    b.HasOne("PharmacyJobPlatform.Domain.Entities.User", "User")
+                        .WithMany("WorkExperiences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Address", b =>
+                {
+                    b.Navigation("JobPosts");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Conversation", b =>
@@ -352,6 +459,11 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.User", b =>
+                {
+                    b.Navigation("WorkExperiences");
                 });
 #pragma warning restore 612, 618
         }

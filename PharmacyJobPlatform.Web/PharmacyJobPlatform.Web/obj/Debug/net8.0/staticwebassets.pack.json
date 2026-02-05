@@ -5,12 +5,60 @@
       "PackagePath": "staticwebassets\\PharmacyJobPlatform.Web.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\chat-widget.css",
+      "PackagePath": "staticwebassets\\css\\chat-widget.css"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\README.md",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\README.md"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\ilceler.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\ilceler.json"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\mahalleler-1.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\mahalleler-1.json"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\mahalleler-2.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\mahalleler-2.json"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\mahalleler-3.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\mahalleler-3.json"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\mahalleler-4.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\mahalleler-4.json"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\data\\turkiye-adresler-json\\sehirler.json",
+      "PackagePath": "staticwebassets\\data\\turkiye-adresler-json\\sehirler.json"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\default-profile.png",
+      "PackagePath": "staticwebassets\\images\\profiles\\default-profile.png"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\f6211b5f-017c-4f55-9eb4-9ec3599d709b.PNG",
+      "PackagePath": "staticwebassets\\images\\profiles\\f6211b5f-017c-4f55-9eb4-9ec3599d709b.PNG"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\chat-connection.js",
+      "PackagePath": "staticwebassets\\js\\chat-connection.js"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\chat-page.js",
+      "PackagePath": "staticwebassets\\js\\chat-page.js"
     },
     {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\site.js",
@@ -243,6 +291,10 @@
     {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\user-circles-set.zip",
+      "PackagePath": "staticwebassets\\user-circles-set.zip"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.PharmacyJobPlatform.Web.Microsoft.AspNetCore.StaticWebAssets.props",

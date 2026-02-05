@@ -9,16 +9,14 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         [Required]
         public int JobPostId { get; set; }
-        public JobPost JobPost { get; set; }
+        public JobPost JobPost { get; set; } = null!;
 
         [Required]
         public int WorkerId { get; set; }
-        public User Worker { get; set; }
+        public User Worker { get; set; } = null!;
 
         public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
 
         public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
     }
-
 }
-

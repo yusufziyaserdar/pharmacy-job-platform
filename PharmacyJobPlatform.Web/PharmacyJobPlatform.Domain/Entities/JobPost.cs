@@ -20,10 +20,8 @@ namespace PharmacyJobPlatform.Domain.Entities
         [Required]
         public string Description { get; set; }
 
-        [Required]
-        public string City { get; set; }
-
-        public string Address { get; set; }
+        public int AddressId { get; set; }
+        public Address Address { get; set; }
 
         // Günlük iş
         public decimal? DailyWage { get; set; }

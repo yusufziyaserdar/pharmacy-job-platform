@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PharmacyJobPlatform.Web.Models.ViewModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace PharmacyJobPlatform.Web.Models.Auth
 {
@@ -16,8 +17,16 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
 
+        public string PhoneNumber { get; set; }
+        public string? About { get; set; }
+        public IFormFile? ProfileImage { get; set; }
+
+        // 🔥 BURASI ÇOK ÖNEMLİ
+        public AddressInputViewModel Address { get; set; } = new();
+
+        public List<WorkExperienceInputModel> WorkExperiences { get; set; } = new();
+
         [Required]
-        [Display(Name = "Kayıt Türü")]
-        public string Role { get; set; } // Worker | PharmacyOwner
+        public string Role { get; set; }
     }
 }

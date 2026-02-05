@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PharmacyJobPlatform.Infrastructure.Data
 {
@@ -15,16 +10,41 @@ namespace PharmacyJobPlatform.Infrastructure.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+
+        public DbSet<Address> Addresses { get; set; } // ✅ EKLENDİ
+
         public DbSet<JobPost> JobPosts { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<ConversationRequest> ConversationRequests { get; set; }
+        public DbSet<WorkExperience> WorkExperiences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // ============================
+            // User ↔ Address
+            // ============================
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Address)
+                .WithMany(a => a.Users)
+                .HasForeignKey(u => u.AddressId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            // ============================
+            // JobPost ↔ Address
+            // ============================
+            modelBuilder.Entity<JobPost>()
+                .HasOne(j => j.Address)
+                .WithMany(a => a.JobPosts)
+                .HasForeignKey(j => j.AddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ============================
+            // ConversationRequest
+            // ============================
             modelBuilder.Entity<ConversationRequest>()
                 .HasOne(cr => cr.FromUser)
                 .WithMany()
@@ -36,6 +56,10 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(cr => cr.ToUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // ============================
+            // Conversation
+            // ============================
             modelBuilder.Entity<Conversation>()
                 .HasOne(c => c.User1)
                 .WithMany()
@@ -47,21 +71,30 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(c => c.User2Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // ============================
+            // JobApplication
+            // ============================
             modelBuilder.Entity<JobApplication>()
                 .HasOne(ja => ja.Worker)
                 .WithMany()
                 .HasForeignKey(ja => ja.WorkerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // JobApplication → JobPost
             modelBuilder.Entity<JobApplication>()
                 .HasOne(ja => ja.JobPost)
                 .WithMany()
                 .HasForeignKey(ja => ja.JobPostId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // ============================
+            // WorkExperience
+            // ============================
+            modelBuilder.Entity<WorkExperience>()
+                .HasOne(w => w.User)
+                .WithMany(u => u.WorkExperiences)
+                .HasForeignKey(w => w.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
-
-
     }
 }

@@ -18,8 +18,29 @@
 
     <!-- Site CSS -->
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <!-- Chat Widget CSS -->
+    <link rel="stylesheet" href="~/css/chat-widget.css" />
+
 </head>
 <body>
+
+    @* 🔹 Ortak değişkenler *@
+    @{
+        int? userId = null;
+        int unreadCount = 0;
+
+        if (User.Identity?.IsAuthenticated ?? false)
+        {
+            userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            unreadCount = db.Messages.Count(m =>
+            !m.IsRead &&
+            m.SenderId != userId &&
+            (m.Conversation.User1Id == userId ||
+            m.Conversation.User2Id == userId));
+        }
+    }
 
     <!-- 🔹 NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -41,30 +62,19 @@
                 <!-- 🔹 SOL MENÜ -->
                 <ul class="navbar-nav me-auto">
 
-                    @if (User.Identity?.IsAuthenticated ?? false)
+                    @if (userId != null)
                     {
-                        <!-- 💬 MESAJLAR (SOLA ALINDI) -->
-                        
-                            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-                            var unreadCount = db.Messages.Count(m =>
-                                !m.IsRead &&
-                                m.SenderId != userId &&
-                                (m.Conversation.User1Id == userId ||
-                                 m.Conversation.User2Id == userId));
-                        
-
+                        <!-- 💬 MESAJLAR -->
                         <li class="nav-item">
                             <a class="nav-link position-relative"
                                asp-controller="Messages"
                                asp-action="Index">
-
                                 <i class="fa-solid fa-comments"></i> Mesajlar
 
                                 @if (unreadCount > 0)
                                 {
                                     <span class="position-absolute top-0 start-100 translate-middle
-                                                 badge rounded-pill bg-danger">
+                                             badge rounded-pill bg-danger">
                                         @unreadCount
                                     </span>
                                 }
@@ -74,6 +84,13 @@
                         <!-- Worker Menü -->
                         @if (User.IsInRole("Worker"))
                         {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="WorkerDashboard"
+                                   asp-action="Index">
+                                    <i class="fa-solid fa-chart-line"></i> Panel
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Jobs" asp-action="Index">
                                     <i class="fa-solid fa-briefcase"></i> İş İlanları
@@ -91,6 +108,12 @@
                         @if (User.IsInRole("PharmacyOwner"))
                         {
                             <li class="nav-item">
+                                <a class="nav-link" asp-controller="PharmacyDashboard" asp-action="Index">
+                                    <i class="fa-solid fa-chart-line"></i> Panel
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
                                 <a class="nav-link" asp-controller="JobPosts" asp-action="MyPosts">
                                     <i class="fa-solid fa-list"></i> İlanlarım
                                 </a>
@@ -101,6 +124,7 @@
                                     <i class="fa-solid fa-plus"></i> İlan Oluştur
                                 </a>
                             </li>
+
                         }
                     }
                 </ul>
@@ -108,13 +132,14 @@
                 <!-- 🔹 SAĞ MENÜ -->
                 <ul class="navbar-nav ms-auto">
 
-                    @if (User.Identity?.IsAuthenticated ?? false)
+                    @if (userId != null)
                     {
                         <!-- 👤 PROFİL -->
                         <li class="nav-item">
-                            <a class="nav-link"
+                            <a class="nav-link text-white"
                                asp-controller="Profile"
-                               asp-action="Index">
+                               asp-action="Index"
+                               asp-route-id="@userId">
                                 <i class="fa-solid fa-user"></i>
                                 @User.Identity.Name
                             </a>
@@ -152,6 +177,8 @@
         @RenderBody()
     </main>
 
+    @await Component.InvokeAsync("ChatWidget")
+
     <!-- 🔹 FOOTER -->
     <footer class="bg-light text-center py-3 mt-5 border-top">
         <small class="text-muted">
@@ -159,8 +186,27 @@
         </small>
     </footer>
 
-    <!-- Scripts -->
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Validation -->
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+
+    <script src="~/js/chat-widget.js"></script>
+
+
+
+
     @RenderSection("Scripts", required: false)
+
+
 </body>
 </html>
