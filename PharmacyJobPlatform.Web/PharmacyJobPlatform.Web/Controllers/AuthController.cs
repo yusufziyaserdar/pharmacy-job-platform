@@ -6,7 +6,6 @@ using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
-using Org.BouncyCastle.Crypto.Generators;
 
 namespace PharmacyJobPlatform.Web.Controllers
 {
@@ -66,14 +65,12 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             if (model.Role == "Worker")
             {
-                ModelState.Remove("Address.City");
-                ModelState.Remove("Address.District");
-                ModelState.Remove("Address.Neighborhood");
+                RemoveModelStateByPrefix("Address");
             }
 
             if (model.Role == "PharmacyOwner")
             {
-                ModelState.Remove("WorkExperiences");
+                RemoveModelStateByPrefix("WorkExperiences");
             }
 
             if (!ModelState.IsValid)
@@ -163,13 +160,13 @@ namespace PharmacyJobPlatform.Web.Controllers
             {
                 foreach (var exp in model.WorkExperiences)
                 {
-                    if (string.IsNullOrWhiteSpace(exp.PharmacyName))
+                    if (string.IsNullOrWhiteSpace(exp.PharmacyName) || !exp.StartDate.HasValue)
                         continue;
 
                     user.WorkExperiences.Add(new WorkExperience
                     {
                         PharmacyName = exp.PharmacyName,
-                        StartDate = exp.StartDate,
+                        StartDate = exp.StartDate.Value,
                         EndDate = exp.EndDate
                     });
                 }
@@ -181,7 +178,17 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction("Login");
         }
 
+        private void RemoveModelStateByPrefix(string prefix)
+        {
+            var keysToRemove = ModelState.Keys
+                .Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
+            foreach (var key in keysToRemove)
+            {
+                ModelState.Remove(key);
+            }
+        }
 
         // ---------------- LOGOUT ----------------
         public async Task<IActionResult> Logout()
