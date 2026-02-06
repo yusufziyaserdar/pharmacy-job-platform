@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
 using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.Profile;
+using PharmacyJobPlatform.Web.Models.ViewModels;
 using System.Security.Claims;
 
 namespace PharmacyJobPlatform.Web.Controllers
@@ -11,10 +12,12 @@ namespace PharmacyJobPlatform.Web.Controllers
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public ProfileController(ApplicationDbContext context)
+        public ProfileController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet("{id}")]
@@ -84,6 +87,8 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var user = _context.Users
                 .Include(u => u.WorkExperiences)
+                .Include(u => u.Role)
+                .Include(u => u.Address)
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user == null)
@@ -96,6 +101,17 @@ namespace PharmacyJobPlatform.Web.Controllers
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 About = user.About,
+                Address = user.Address == null
+                    ? new AddressInputViewModel()
+                    : new AddressInputViewModel
+                    {
+                        City = user.Address.City,
+                        District = user.Address.District,
+                        Neighborhood = user.Address.Neighborhood,
+                        Street = user.Address.Street,
+                        BuildingNumber = user.Address.BuildingNumber,
+                        Description = user.Address.Description
+                    },
                 ExistingProfileImagePath = user.ProfileImagePath,
                 WorkExperiences = user.WorkExperiences.Select(x => new WorkExperienceEditModel
                 {
@@ -107,6 +123,8 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             };
 
+            ViewData["IsPharmacyOwner"] = user.Role?.Name == "PharmacyOwner";
+            ViewData["GoogleMapsApiKey"] = _configuration["GoogleMaps:ApiKey"];
             return View(vm);
         }
 
@@ -120,24 +138,39 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var user = _context.Users
                 .Include(u => u.WorkExperiences)
+                .Include(u => u.Role)
+                .Include(u => u.Address)
                 .FirstOrDefault(u => u.Id == userId);
 
             if (user == null)
                 return NotFound();
 
+            if (user.Role?.Name != "PharmacyOwner")
+            {
+                RemoveModelStateByPrefix("Address");
+            }
+
             if (!ModelState.IsValid)
+            {
+                ViewData["IsPharmacyOwner"] = user.Role?.Name == "PharmacyOwner";
+                ViewData["GoogleMapsApiKey"] = _configuration["GoogleMaps:ApiKey"];
                 return View(model);
+            }
 
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
             user.About = model.About;
-            user.Address.City = model.Address.City;
-            user.Address.District = model.Address.District;
-            user.Address.Neighborhood = model.Address.Neighborhood;
-            user.Address.Street = model.Address.Street;
-            user.Address.BuildingNumber = model.Address.BuildingNumber;
-            user.Address.Description = model.Address.Description;
+            if (user.Role?.Name == "PharmacyOwner")
+            {
+                user.Address ??= new Address();
+                user.Address.City = model.Address.City;
+                user.Address.District = model.Address.District;
+                user.Address.Neighborhood = model.Address.Neighborhood;
+                user.Address.Street = model.Address.Street;
+                user.Address.BuildingNumber = model.Address.BuildingNumber;
+                user.Address.Description = model.Address.Description;
+            }
 
 
             // 🖼 Profil Foto
@@ -171,6 +204,17 @@ namespace PharmacyJobPlatform.Web.Controllers
         }
 
 
+        private void RemoveModelStateByPrefix(string prefix)
+        {
+            var keysToRemove = ModelState.Keys
+                .Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            foreach (var key in keysToRemove)
+            {
+                ModelState.Remove(key);
+            }
+        }
 
     }
 

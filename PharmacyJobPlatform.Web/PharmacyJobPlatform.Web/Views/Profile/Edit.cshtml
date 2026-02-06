@@ -1,5 +1,37 @@
 ﻿@model PharmacyJobPlatform.Web.Models.Profile.ProfileEditViewModel
 
+@{
+    var googleMapsApiKey = ViewData["GoogleMapsApiKey"] as string;
+    var isPharmacyOwner = ViewData["IsPharmacyOwner"] as bool? ?? false;
+    var addressParts = new List<string>();
+    if (!string.IsNullOrWhiteSpace(Model.Address?.Street))
+    {
+        addressParts.Add(Model.Address.Street);
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.Address?.BuildingNumber))
+    {
+        addressParts.Add(Model.Address.BuildingNumber);
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.Address?.Neighborhood))
+    {
+        addressParts.Add(Model.Address.Neighborhood);
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.Address?.District))
+    {
+        addressParts.Add(Model.Address.District);
+    }
+
+    if (!string.IsNullOrWhiteSpace(Model.Address?.City))
+    {
+        addressParts.Add(Model.Address.City);
+    }
+
+    var addressSummary = string.Join(", ", addressParts);
+}
+
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
 
     <input type="hidden" asp-for="Id" />
@@ -28,6 +60,47 @@
         <label>Profil Fotoğrafı</label>
         <input asp-for="ProfileImage" type="file" class="form-control" />
     </div>
+
+    @if (isPharmacyOwner)
+    {
+        <hr />
+        <h5><i class="fa-solid fa-location-dot"></i> Eczane Adresi</h5>
+
+        <div class="mb-3">
+            <label>Adres Ara</label>
+            <input id="addressAutocomplete"
+                   type="text"
+                   class="form-control"
+                   placeholder="Adres yazmaya başlayın"
+                   autocomplete="off"
+                   value="@addressSummary" />
+        </div>
+
+        <div class="mb-3">
+            <label>Şehir</label>
+            <input asp-for="Address.City" id="cityInput" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>İlçe</label>
+            <input asp-for="Address.District" id="districtInput" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Mahalle</label>
+            <input asp-for="Address.Neighborhood" id="neighborhoodInput" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Sokak / Cadde</label>
+            <input asp-for="Address.Street" id="streetInput" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Bina No</label>
+            <input asp-for="Address.BuildingNumber" id="buildingNumberInput" class="form-control" />
+        </div>
+    }
 
     <hr />
     <h5>🏥 Çalışma Geçmişi</h5>
@@ -154,5 +227,98 @@
 
                 experienceIndex = items.length;
             }
+
+            const fillAddressInput = (input, value) => {
+                if (!input) return;
+                input.value = value ?? "";
+            };
+
+            const clearAddressInputs = () => {
+                fillAddressInput(document.getElementById("cityInput"), "");
+                fillAddressInput(document.getElementById("districtInput"), "");
+                fillAddressInput(document.getElementById("neighborhoodInput"), "");
+                fillAddressInput(document.getElementById("streetInput"), "");
+                fillAddressInput(document.getElementById("buildingNumberInput"), "");
+            };
+
+            const getComponent = (components, types) => {
+                const component = components.find(c => types.some(t => c.types.includes(t)));
+                return component?.long_name ?? "";
+            };
+
+            const initAddressAutocomplete = () => {
+                const addressInput = document.getElementById("addressAutocomplete");
+                if (!addressInput || !window.google?.maps?.places) {
+                    return;
+                }
+
+                const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                    types: ["address"],
+                    componentRestrictions: { country: "tr" },
+                    fields: ["address_components", "formatted_address"]
+                });
+
+                autocomplete.addListener("place_changed", () => {
+                    const place = autocomplete.getPlace();
+                    if (!place?.address_components) {
+                        return;
+                    }
+
+                    if (place.formatted_address) {
+                        addressInput.value = place.formatted_address;
+                    }
+
+                    const components = place.address_components;
+                    const city = getComponent(components, ["administrative_area_level_1"]);
+                    const district = getComponent(components, ["administrative_area_level_2"]);
+                    const neighborhood = getComponent(components, [
+                        "sublocality_level_1",
+                        "neighborhood",
+                        "administrative_area_level_3",
+                        "administrative_area_level_4"
+                    ]);
+                    const street = getComponent(components, ["route"]);
+                    const buildingNumber = getComponent(components, ["street_number"]);
+
+                    fillAddressInput(document.getElementById("cityInput"), city);
+                    fillAddressInput(document.getElementById("districtInput"), district);
+                    fillAddressInput(document.getElementById("neighborhoodInput"), neighborhood);
+
+                    const streetInput = document.getElementById("streetInput");
+                    const buildingInput = document.getElementById("buildingNumberInput");
+
+                    if (streetInput && !streetInput.value) {
+                        streetInput.value = street;
+                    }
+
+                    if (buildingInput && !buildingInput.value) {
+                        buildingInput.value = buildingNumber;
+                    }
+                });
+
+                addressInput.addEventListener("input", () => {
+                    if (!addressInput.value) {
+                        clearAddressInputs();
+                    }
+                });
+            };
+
+            window.initAddressAutocomplete = initAddressAutocomplete;
     </script>
+
+    @if (isPharmacyOwner)
+    {
+        if (!string.IsNullOrWhiteSpace(googleMapsApiKey))
+        {
+            <script src="https://maps.googleapis.com/maps/api/js?key=@googleMapsApiKey&libraries=places&callback=initAddressAutocomplete"
+                    async
+                    defer></script>
+        }
+        else
+        {
+            <script>
+                console.warn("Google Maps API anahtarı bulunamadı. Adres otomatik tamamlama çalışmayacak.");
+            </script>
+        }
+    }
 }

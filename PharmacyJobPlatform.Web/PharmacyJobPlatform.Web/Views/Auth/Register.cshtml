@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Kayıt Ol";
+    var googleMapsApiKey = ViewData["GoogleMapsApiKey"] as string;
 }
 
 <div class="row justify-content-center">
@@ -112,34 +113,37 @@
                         <h5><i class="fa-solid fa-location-dot"></i> Eczane Adresi</h5>
 
                         <div class="mb-3">
+                            <label>Adres Ara</label>
+                            <input id="addressAutocomplete"
+                                   type="text"
+                                   class="form-control"
+                                   placeholder="Adres yazmaya başlayın"
+                                   autocomplete="off" />
+                        </div>
+
+                        <div class="mb-3">
                             <label>Şehir</label>
-                            <select asp-for="Address.City" id="citySelect" class="form-select">
-                                <option value="">Şehir seçiniz</option>
-                            </select>
+                            <input asp-for="Address.City" id="cityInput" class="form-control" readonly />
                         </div>
 
                         <div class="mb-3">
                             <label>İlçe</label>
-                            <select asp-for="Address.District" id="districtSelect" class="form-select" disabled>
-                                <option value="">İlçe seçiniz</option>
-                            </select>
+                            <input asp-for="Address.District" id="districtInput" class="form-control" readonly />
                         </div>
 
                         <div class="mb-3">
                             <label>Mahalle</label>
-                            <select asp-for="Address.Neighborhood" id="neighborhoodSelect" class="form-select" disabled>
-                                <option value="">Mahalle seçiniz</option>
-                            </select>
+                            <input asp-for="Address.Neighborhood" id="neighborhoodInput" class="form-control" readonly />
                         </div>
 
                         <div class="mb-3">
                             <label>Sokak / Cadde</label>
-                            <input asp-for="Address.Street" class="form-control" />
+                            <input asp-for="Address.Street" id="streetInput" class="form-control" />
                         </div>
 
                         <div class="mb-3">
                             <label>Bina No</label>
-                            <input asp-for="Address.BuildingNumber" class="form-control" />
+                            <input asp-for="Address.BuildingNumber" id="buildingNumberInput" class="form-control" />
                         </div>
                     </div>
 
@@ -254,102 +258,96 @@
                 reindexExperiences();
             });
 
-            // ================= ADDRESS =================
-            let districts = [];
-            let neighborhoods = [];
+        });
 
-            fetch('/data/turkiye-adresler-json/sehirler.json')
-                .then(r => {
-                    if (!r.ok) throw new Error("Şehir JSON yüklenemedi");
-                    return r.json();
-                })
-                .then(data => {
-                    const citySelect = document.getElementById("citySelect");
-                    if (!citySelect) return;
+        const fillAddressInput = (input, value) => {
+            if (!input) return;
+            input.value = value ?? "";
+        };
 
-                    data.forEach(c => {
-                        citySelect.insertAdjacentHTML(
-                            "beforeend",
-                            `<option value="${c.sehir_adi}" data-id="${c.sehir_id}">
-                                ${c.sehir_adi}
-                             </option>`
-                        );
-                    });
-                })
-                .catch(err => console.error(err));
+        const clearAddressInputs = () => {
+            fillAddressInput(document.getElementById("cityInput"), "");
+            fillAddressInput(document.getElementById("districtInput"), "");
+            fillAddressInput(document.getElementById("neighborhoodInput"), "");
+            fillAddressInput(document.getElementById("streetInput"), "");
+            fillAddressInput(document.getElementById("buildingNumberInput"), "");
+        };
 
-            fetch('/data/turkiye-adresler-json/ilceler.json')
-                .then(r => {
-                    if (!r.ok) throw new Error("İlçe JSON yüklenemedi");
-                    return r.json();
-                })
-                .then(data => { districts = data; })
-                .catch(err => console.error(err));
+        const getComponent = (components, types) => {
+            const component = components.find(c => types.some(t => c.types.includes(t)));
+            return component?.long_name ?? "";
+        };
 
-            Promise.all([
-                fetch('/data/turkiye-adresler-json/mahalleler-1.json').then(r => {
-                    if (!r.ok) throw new Error("Mahalle JSON (1) yüklenemedi");
-                    return r.json();
-                }),
-                fetch('/data/turkiye-adresler-json/mahalleler-2.json').then(r => {
-                    if (!r.ok) throw new Error("Mahalle JSON (2) yüklenemedi");
-                    return r.json();
-                }),
-                fetch('/data/turkiye-adresler-json/mahalleler-3.json').then(r => {
-                    if (!r.ok) throw new Error("Mahalle JSON (3) yüklenemedi");
-                    return r.json();
-                }),
-                fetch('/data/turkiye-adresler-json/mahalleler-4.json').then(r => {
-                    if (!r.ok) throw new Error("Mahalle JSON (4) yüklenemedi");
-                    return r.json();
-                })
-            ])
-                .then(results => {
-                    neighborhoods = results.flat();
-                })
-                .catch(err => console.error(err));
-
-            const citySelect = document.getElementById("citySelect");
-            const districtSelect = document.getElementById("districtSelect");
-            const neighborhoodSelect = document.getElementById("neighborhoodSelect");
-
-            if (!citySelect || !districtSelect || !neighborhoodSelect) {
+        const initAddressAutocomplete = () => {
+            const addressInput = document.getElementById("addressAutocomplete");
+            if (!addressInput || !window.google?.maps?.places) {
                 return;
             }
 
-            citySelect.addEventListener("change", function () {
-                const cityId = this.selectedOptions[0]?.dataset.id;
-
-                districtSelect.innerHTML = '<option value="">İlçe seçiniz</option>';
-                districtSelect.disabled = false;
-                neighborhoodSelect.innerHTML = '<option value="">Mahalle seçiniz</option>';
-                neighborhoodSelect.disabled = true;
-
-                if (!cityId) return;
-
-                districts
-                    .filter(d => d.sehir_id === cityId)
-                    .forEach(d => {
-                        districtSelect.innerHTML +=
-                            `<option value="${d.ilce_adi}" data-id="${d.ilce_id}">${d.ilce_adi}</option>`;
-                    });
+            const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ["address"],
+                componentRestrictions: { country: "tr" },
+                fields: ["address_components", "formatted_address"]
             });
 
-            districtSelect.addEventListener("change", function () {
-                const ilceId = this.selectedOptions[0]?.dataset.id;
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (!place?.address_components) {
+                    return;
+                }
 
-                neighborhoodSelect.innerHTML = '<option value="">Mahalle seçiniz</option>';
-                neighborhoodSelect.disabled = false;
+                if (place.formatted_address) {
+                    addressInput.value = place.formatted_address;
+                }
 
-                if (!ilceId) return;
+                const components = place.address_components;
+                const city = getComponent(components, ["administrative_area_level_1"]);
+                const district = getComponent(components, ["administrative_area_level_2"]);
+                const neighborhood = getComponent(components, [
+                    "sublocality_level_1",
+                    "neighborhood",
+                    "administrative_area_level_3",
+                    "administrative_area_level_4"
+                ]);
+                const street = getComponent(components, ["route"]);
+                const buildingNumber = getComponent(components, ["street_number"]);
 
-                neighborhoods
-                    .filter(n => n.ilce_id === ilceId)
-                    .forEach(n => {
-                        neighborhoodSelect.innerHTML +=
-                            `<option value="${n.mahalle_adi}">${n.mahalle_adi}</option>`;
-                    });
+                fillAddressInput(document.getElementById("cityInput"), city);
+                fillAddressInput(document.getElementById("districtInput"), district);
+                fillAddressInput(document.getElementById("neighborhoodInput"), neighborhood);
+
+                const streetInput = document.getElementById("streetInput");
+                const buildingInput = document.getElementById("buildingNumberInput");
+
+                if (streetInput && !streetInput.value) {
+                    streetInput.value = street;
+                }
+
+                if (buildingInput && !buildingInput.value) {
+                    buildingInput.value = buildingNumber;
+                }
             });
-        });
+
+            addressInput.addEventListener("input", () => {
+                if (!addressInput.value) {
+                    clearAddressInputs();
+                }
+            });
+        };
+
+        window.initAddressAutocomplete = initAddressAutocomplete;
     </script>
+
+    @if (!string.IsNullOrWhiteSpace(googleMapsApiKey))
+    {
+        <script src="https://maps.googleapis.com/maps/api/js?key=@googleMapsApiKey&libraries=places&callback=initAddressAutocomplete"
+                async
+                defer></script>
+    }
+    else
+    {
+        <script>
+            console.warn("Google Maps API anahtarı bulunamadı. Adres otomatik tamamlama çalışmayacak.");
+        </script>
+    }
 }

@@ -13,10 +13,12 @@ namespace PharmacyJobPlatform.Web.Controllers
     public class AuthController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(ApplicationDbContext context)
+        public AuthController(ApplicationDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         // ---------------- LOGIN ----------------
@@ -58,7 +60,11 @@ namespace PharmacyJobPlatform.Web.Controllers
         }
 
         // ---------------- REGISTER ----------------
-        public IActionResult Register() => View();
+        public IActionResult Register()
+        {
+            SetGoogleMapsApiKey();
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -74,11 +80,15 @@ namespace PharmacyJobPlatform.Web.Controllers
             }
 
             if (!ModelState.IsValid)
+            {
+                SetGoogleMapsApiKey();
                 return View(model);
+            }
 
             if (_context.Users.Any(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("", "Bu email zaten kayıtlı");
+                SetGoogleMapsApiKey();
                 return View(model);
             }
 
@@ -88,6 +98,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             if (role == null)
             {
                 ModelState.AddModelError("", "Geçersiz rol seçimi");
+                SetGoogleMapsApiKey();
                 return View(model);
             }
 
@@ -120,6 +131,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 if (model.Address == null)
                 {
                     ModelState.AddModelError("", "Eczane sahibi için adres bilgisi zorunludur");
+                    SetGoogleMapsApiKey();
                     return View(model);
                 }
 
@@ -198,6 +210,11 @@ namespace PharmacyJobPlatform.Web.Controllers
         }
 
         public IActionResult AccessDenied() => View();
+
+        private void SetGoogleMapsApiKey()
+        {
+            ViewData["GoogleMapsApiKey"] = _configuration["GoogleMaps:ApiKey"];
+        }
     }
 
 }
