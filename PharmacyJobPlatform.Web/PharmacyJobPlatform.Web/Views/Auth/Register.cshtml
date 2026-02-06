@@ -143,15 +143,25 @@
         const workerSection = document.getElementById("workerSection");
         const ownerSection = document.getElementById("ownerSection");
 
-        roleSelect.addEventListener("change", () => {
-            workerSection.classList.add("d-none");
-            ownerSection.classList.add("d-none");
+        const toggleSectionInputs = (section, enabled) => {
+            section.querySelectorAll("input, select, textarea").forEach(el => {
+                el.disabled = !enabled;
+            });
+        };
 
-            if (roleSelect.value === "Worker")
-                workerSection.classList.remove("d-none");
+        const applyRoleView = () => {
+            const isWorker = roleSelect.value === "Worker";
+            const isOwner = roleSelect.value === "PharmacyOwner";
 
-            if (roleSelect.value === "PharmacyOwner")
-                ownerSection.classList.remove("d-none");
+            workerSection.classList.toggle("d-none", !isWorker);
+            ownerSection.classList.toggle("d-none", !isOwner);
+
+            toggleSectionInputs(workerSection, isWorker);
+            toggleSectionInputs(ownerSection, isOwner);
+        };
+
+        roleSelect.addEventListener("change", applyRoleView);
+        applyRoleView();
         });
 
         // ================= ADDRESS =================

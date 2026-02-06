@@ -178,7 +178,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction("Login");
         }
 
-        private void RemoveModelStateByPrefix(string prefix)
+                private void RemoveModelStateByPrefix(string prefix)
         {
             var keysToRemove = ModelState.Keys
                 .Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
