@@ -1,17 +1,18 @@
-﻿@model PharmacyJobPlatform.Domain.Entities.User
+﻿@model PharmacyJobPlatform.Web.Models.Profile.ProfileDetailViewModel
 @using System.Security.Claims
 
 
 @{
-    string profileImage = string.IsNullOrEmpty(Model.ProfileImagePath)
+    var user = Model.User;
+    string profileImage = string.IsNullOrEmpty(user.ProfileImagePath)
         ? "/images/profiles/default-profile.png"
-        : Model.ProfileImagePath;
+        : user.ProfileImagePath;
 
     int totalMonths = 0;
 
-    if (Model.WorkExperiences != null)
+    if (user.WorkExperiences != null)
     {
-        foreach (var exp in Model.WorkExperiences)
+        foreach (var exp in user.WorkExperiences)
         {
             var endDate = exp.EndDate ?? DateTime.Today;
             totalMonths += (endDate.Year - exp.StartDate.Year) * 12
@@ -38,31 +39,31 @@
 
                 <div class="col-md-9">
                     <h3 class="mb-1">
-                        @Model.FirstName @Model.LastName
+                        @user.FirstName @user.LastName
                     </h3>
 
                     <span class="badge bg-secondary mb-2">
-                        @Model.Role.Name
+                        @user.Role.Name
                     </span>
 
                     <p class="mb-1">
-                        📧 @Model.Email
+                        📧 @user.Email
                     </p>
 
-                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    @if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
                         <p class="mb-1">
-                            📞 @Model.PhoneNumber
+                            📞 @user.PhoneNumber
                         </p>
                     }
 
                     <p class="text-muted">
                         Platforma katılma:
-                        @Model.CreatedAt.ToShortDateString()
+                        @user.CreatedAt.ToShortDateString()
                     </p>
 
                     @if (User.Identity?.IsAuthenticated == true &&
-                    int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) == Model.Id)
+                    int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) == user.Id)
                     {
                         <a asp-controller="Profile"
                            asp-action="Edit"
@@ -77,20 +78,20 @@
             <hr />
 
             <!-- ABOUT -->
-            @if (!string.IsNullOrEmpty(Model.About))
+            @if (!string.IsNullOrEmpty(user.About))
             {
                 <h5>📝 Hakkında</h5>
-                <p>@Model.About</p>
+                <p>@user.About</p>
                 <hr />
             }
 
             <!-- WORK EXPERIENCE -->
-            @if (Model.Role.Name == "Worker" && Model.WorkExperiences?.Any() == true)
+            @if (user.Role.Name == "Worker" && user.WorkExperiences?.Any() == true)
             {
                 <h5>🏥 Çalışma Geçmişi</h5>
 
                 <ul class="list-group mb-3">
-                    @foreach (var exp in Model.WorkExperiences.OrderByDescending(x => x.StartDate))
+                    @foreach (var exp in user.WorkExperiences.OrderByDescending(x => x.StartDate))
                     {
                         <li class="list-group-item">
                             <strong>@exp.PharmacyName</strong><br />
@@ -121,12 +122,48 @@
             }
 
             <!-- MESAJ -->
-            <a asp-controller="Messages"
-               asp-action="Start"
-               asp-route-userId="@Model.Id"
-               class="btn btn-primary">
-                💬 Mesaj Gönder
-            </a>
+            @if (User.Identity?.IsAuthenticated == true && user.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
+            {
+                if (Model.ConversationId.HasValue)
+                {
+                    <a asp-controller="Messages"
+                       asp-action="Chat"
+                       asp-route-id="@Model.ConversationId.Value"
+                       class="btn btn-primary">
+                        💬 Mesajlaşmaya Git
+                    </a>
+                }
+                else if (Model.IncomingRequestId.HasValue)
+                {
+                    <form asp-controller="Messages"
+                          asp-action="AcceptRequest"
+                          asp-route-requestId="@Model.IncomingRequestId.Value"
+                          method="post"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-success">
+                            ✅ Mesaj İsteğini Kabul Et
+                        </button>
+                    </form>
+                }
+                else if (Model.HasPendingOutgoingRequest)
+                {
+                    <button class="btn btn-outline-secondary" disabled>
+                        ⏳ Mesaj İsteği Gönderildi
+                    </button>
+                }
+                else if (Model.CanSendRequest)
+                {
+                    <form asp-controller="Messages"
+                          asp-action="Start"
+                          asp-route-userId="@user.Id"
+                          method="post"
+                          class="d-inline">
+                        <button type="submit" class="btn btn-primary">
+                            💬 Mesaj İsteği Gönder
+                        </button>
+                    </form>
+                }
+            }
 
         </div>
     </div>

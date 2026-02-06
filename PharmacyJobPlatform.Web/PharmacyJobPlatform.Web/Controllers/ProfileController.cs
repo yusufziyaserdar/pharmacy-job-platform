@@ -28,7 +28,53 @@ namespace PharmacyJobPlatform.Web.Controllers
             if (user == null)
                 return NotFound();
 
-            return View(user);
+            int? viewerId = null;
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                viewerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            }
+
+            int? conversationId = null;
+            bool canSendRequest = false;
+            bool hasPendingOutgoingRequest = false;
+            int? incomingRequestId = null;
+
+            if (viewerId.HasValue && viewerId.Value != user.Id)
+            {
+                conversationId = _context.Conversations
+                    .Where(c => (c.User1Id == viewerId && c.User2Id == user.Id) ||
+                                (c.User1Id == user.Id && c.User2Id == viewerId))
+                    .Select(c => (int?)c.Id)
+                    .FirstOrDefault();
+
+                if (!conversationId.HasValue)
+                {
+                    hasPendingOutgoingRequest = _context.ConversationRequests.Any(r =>
+                        r.FromUserId == viewerId &&
+                        r.ToUserId == user.Id &&
+                        !r.IsAccepted);
+
+                    incomingRequestId = _context.ConversationRequests
+                        .Where(r => r.FromUserId == user.Id &&
+                                    r.ToUserId == viewerId &&
+                                    !r.IsAccepted)
+                        .Select(r => (int?)r.Id)
+                        .FirstOrDefault();
+
+                    canSendRequest = !hasPendingOutgoingRequest && !incomingRequestId.HasValue;
+                }
+            }
+
+            var vm = new ProfileDetailViewModel
+            {
+                User = user,
+                ConversationId = conversationId,
+                CanSendRequest = canSendRequest,
+                HasPendingOutgoingRequest = hasPendingOutgoingRequest,
+                IncomingRequestId = incomingRequestId
+            };
+
+            return View(vm);
         }
 
         [HttpGet("Edit")]

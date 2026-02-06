@@ -56,7 +56,27 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .OrderByDescending(x => x.LastMessageTime)
                 .ToList();
 
-            return View(conversations);
+            var requests = _context.ConversationRequests
+                .Include(r => r.FromUser)
+                .Where(r => r.ToUserId == userId && !r.IsAccepted)
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new ConversationRequestViewModel
+                {
+                    Id = r.Id,
+                    FromUserId = r.FromUserId,
+                    FromUserName = r.FromUser.FirstName + " " + r.FromUser.LastName,
+                    FromUserProfileImagePath = r.FromUser.ProfileImagePath,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToList();
+
+            var vm = new MessagesInboxViewModel
+            {
+                Conversations = conversations,
+                IncomingRequests = requests
+            };
+
+            return View(vm);
         }
 
         // 💬 Chat ekranı
@@ -107,6 +127,78 @@ namespace PharmacyJobPlatform.Web.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Chat", new { id = conversationId });
+        }
+
+        // 📩 Mesaj isteği gönder
+        [HttpPost]
+        public async Task<IActionResult> Start(int userId)
+        {
+            int senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            if (senderId == userId)
+                return RedirectToAction("Index", "Profile", new { id = userId });
+
+            var existingConversation = _context.Conversations
+                .FirstOrDefault(c =>
+                    (c.User1Id == senderId && c.User2Id == userId) ||
+                    (c.User1Id == userId && c.User2Id == senderId));
+
+            if (existingConversation != null)
+                return RedirectToAction("Chat", new { id = existingConversation.Id });
+
+            bool hasPendingRequest = _context.ConversationRequests.Any(r =>
+                !r.IsAccepted &&
+                ((r.FromUserId == senderId && r.ToUserId == userId) ||
+                 (r.FromUserId == userId && r.ToUserId == senderId)));
+
+            if (!hasPendingRequest)
+            {
+                _context.ConversationRequests.Add(new ConversationRequest
+                {
+                    FromUserId = senderId,
+                    ToUserId = userId
+                });
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index", "Profile", new { id = userId });
+        }
+
+        // ✅ Mesaj isteği kabul et
+        [HttpPost]
+        public async Task<IActionResult> AcceptRequest(int requestId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var request = await _context.ConversationRequests
+                .FirstOrDefaultAsync(r => r.Id == requestId && r.ToUserId == userId);
+
+            if (request == null)
+                return NotFound();
+
+            if (!request.IsAccepted)
+            {
+                request.IsAccepted = true;
+            }
+
+            var conversation = await _context.Conversations
+                .FirstOrDefaultAsync(c =>
+                    (c.User1Id == request.FromUserId && c.User2Id == request.ToUserId) ||
+                    (c.User1Id == request.ToUserId && c.User2Id == request.FromUserId));
+
+            if (conversation == null)
+            {
+                conversation = new Conversation
+                {
+                    User1Id = request.FromUserId,
+                    User2Id = request.ToUserId
+                };
+                _context.Conversations.Add(conversation);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Chat", new { id = conversation.Id });
         }
 
         // 🧩 Widget – conversation list
