@@ -1,11 +1,42 @@
 ﻿const panel = document.getElementById("chatPanel");
+const toggleButton = document.getElementById("chat-toggle");
+const closeButton = document.getElementById("chat-close");
+const widgetStorageKey = "chatWidgetOpen";
 let widgetConversationId = null;
 
-document.getElementById("chat-toggle").onclick = () =>
-    panel.classList.toggle("d-none");
+function setWidgetOpenState(isOpen) {
+    if (!panel) {
+        return;
+    }
 
-document.getElementById("chat-close").onclick = () =>
-    panel.classList.add("d-none");
+    panel.classList.toggle("d-none", !isOpen);
+
+    try {
+        localStorage.setItem(widgetStorageKey, isOpen ? "1" : "0");
+    } catch (error) {
+        // Ignore storage issues and keep UI responsive.
+    }
+}
+
+function isWidgetOpen() {
+    if (!panel) {
+        return false;
+    }
+
+    return !panel.classList.contains("d-none");
+}
+
+if (toggleButton) {
+    toggleButton.onclick = () => {
+        setWidgetOpenState(!isWidgetOpen());
+    };
+}
+
+if (closeButton) {
+    closeButton.onclick = () => {
+        setWidgetOpenState(false);
+    };
+}
 
 function loadConversations() {
     fetch("/Messages/WidgetConversations")
@@ -55,7 +86,10 @@ function sendWidgetMessage(e, convId) {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `conversationId=${convId}&content=${encodeURIComponent(input.value)}`
-    }).then(() => openConversation(convId));
+    }).then(() => {
+        input.value = "";
+        openConversation(convId);
+    });
 }
 
 function scrollWidgetToBottom() {
@@ -77,5 +111,14 @@ window.loadConversations = loadConversations;
 window.openConversation = openConversation;
 window.refreshWidgetConversation = refreshWidgetConversation;
 
+
+try {
+    const savedState = localStorage.getItem(widgetStorageKey);
+    if (savedState === "1") {
+        setWidgetOpenState(true);
+    }
+} catch (error) {
+    // Ignore storage issues and keep UI responsive.
+}
 
 loadConversations();

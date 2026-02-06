@@ -39,6 +39,25 @@ connection.on("RefreshMessages", (conversationId) => {
     }
 });
 
-connection.start().catch(() => {
-// Fail silently; UI will still work via manual reloads.
+async function startConnection() {
+    try {
+        await connection.start();
+        refreshUnreadCount();
+    } catch (error) {
+        setTimeout(startConnection, 5000);
+    }
+}
+
+connection.onreconnected(() => {
+    refreshUnreadCount();
+
+    if (typeof window.refreshWidgetConversation === "function") {
+        window.refreshWidgetConversation();
+    }
+
+    if (typeof window.refreshChatMessages === "function") {
+        window.refreshChatMessages();
+    }
 });
+
+startConnection();
