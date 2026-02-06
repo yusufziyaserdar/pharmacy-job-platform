@@ -87,5 +87,3 @@ C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobp
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\obj\Debug\net8.0\PharmacyJobPlatform.Web.pdb
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\obj\Debug\net8.0\PharmacyJobPlatform.Web.genruntimeconfig.cache
 C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\obj\Debug\net8.0\ref\PharmacyJobPlatform.Web.dll
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\bin\Debug\net8.0\Newtonsoft.Json.dll
-C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

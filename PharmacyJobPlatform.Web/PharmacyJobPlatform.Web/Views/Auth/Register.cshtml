@@ -72,21 +72,38 @@
                         <hr />
                         <h5><i class="fa-solid fa-briefcase"></i> Çalışma Geçmişi</h5>
 
-                        <div class="border rounded p-3 mb-3">
-                            <label>Eczane Adı</label>
-                            <input name="WorkExperiences[0].PharmacyName" class="form-control" />
+                        <div id="experience-list">
+                            <div class="card mb-3 experience-item">
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        <label>Eczane Adı</label>
+                                        <input name="WorkExperiences[0].PharmacyName" class="form-control" />
+                                    </div>
 
-                            <div class="row mt-2">
-                                <div class="col-md-6">
-                                    <label>Başlangıç</label>
-                                    <input name="WorkExperiences[0].StartDate" type="date" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label>Bitiş</label>
-                                    <input name="WorkExperiences[0].EndDate" type="date" class="form-control" />
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Başlangıç</label>
+                                            <input name="WorkExperiences[0].StartDate" type="date" class="form-control" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Bitiş</label>
+                                            <input name="WorkExperiences[0].EndDate" type="date" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger mt-3 remove-experience">
+                                        <i class="fa-solid fa-trash"></i> Sil
+                                    </button>
                                 </div>
                             </div>
                         </div>
+
+                        <button type="button"
+                                id="add-experience"
+                                class="btn btn-outline-secondary mb-3">
+                            <i class="fa-solid fa-plus"></i> Tecrübe Ekle
+                        </button>
                     </div>
 
                     <!-- ================= PHARMACY OWNER ================= -->
@@ -143,6 +160,8 @@
             const roleSelect = document.getElementById("roleSelect");
             const workerSection = document.getElementById("workerSection");
             const ownerSection = document.getElementById("ownerSection");
+            const experienceList = document.getElementById("experience-list");
+            const addExperienceButton = document.getElementById("add-experience");
 
             if (!roleSelect || !workerSection || !ownerSection) {
                 return;
@@ -167,6 +186,73 @@
 
             roleSelect.addEventListener("change", applyRoleView);
             applyRoleView();
+
+            // ================= WORK EXPERIENCE =================
+            let experienceIndex = experienceList
+                ? experienceList.querySelectorAll(".experience-item").length
+                : 0;
+
+            const reindexExperiences = () => {
+                if (!experienceList) return;
+
+                const items = experienceList.querySelectorAll(".experience-item");
+                items.forEach((item, index) => {
+                    item.querySelectorAll("input").forEach(input => {
+                        input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    });
+                });
+
+                experienceIndex = items.length;
+            };
+
+            if (addExperienceButton && experienceList) {
+                addExperienceButton.addEventListener("click", () => {
+                    const html = `
+                        <div class="card mb-3 experience-item">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <label>Eczane Adı</label>
+                                    <input class="form-control"
+                                           name="WorkExperiences[${experienceIndex}].PharmacyName" />
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Başlangıç</label>
+                                        <input type="date"
+                                               class="form-control"
+                                               name="WorkExperiences[${experienceIndex}].StartDate" />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label>Bitiş</label>
+                                        <input type="date"
+                                               class="form-control"
+                                               name="WorkExperiences[${experienceIndex}].EndDate" />
+                                    </div>
+                                </div>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-danger mt-3 remove-experience">
+                                    <i class="fa-solid fa-trash"></i> Sil
+                                </button>
+                            </div>
+                        </div>`;
+
+                    experienceList.insertAdjacentHTML("beforeend", html);
+                    experienceIndex++;
+                    applyRoleView();
+                });
+            }
+
+            document.addEventListener("click", event => {
+                if (!event.target.closest(".remove-experience")) {
+                    return;
+                }
+
+                event.target.closest(".experience-item")?.remove();
+                reindexExperiences();
+            });
 
             // ================= ADDRESS =================
             let districts = [];
