@@ -139,97 +139,131 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        const roleSelect = document.getElementById("roleSelect");
-        const workerSection = document.getElementById("workerSection");
-        const ownerSection = document.getElementById("ownerSection");
+        document.addEventListener("DOMContentLoaded", () => {
+            const roleSelect = document.getElementById("roleSelect");
+            const workerSection = document.getElementById("workerSection");
+            const ownerSection = document.getElementById("ownerSection");
 
-        const toggleSectionInputs = (section, enabled) => {
-            section.querySelectorAll("input, select, textarea").forEach(el => {
-                el.disabled = !enabled;
-            });
-        };
+            if (!roleSelect || !workerSection || !ownerSection) {
+                return;
+            }
 
-        const applyRoleView = () => {
-            const isWorker = roleSelect.value === "Worker";
-            const isOwner = roleSelect.value === "PharmacyOwner";
-
-            workerSection.classList.toggle("d-none", !isWorker);
-            ownerSection.classList.toggle("d-none", !isOwner);
-
-            toggleSectionInputs(workerSection, isWorker);
-            toggleSectionInputs(ownerSection, isOwner);
-        };
-
-        roleSelect.addEventListener("change", applyRoleView);
-        applyRoleView();
-        });
-
-        // ================= ADDRESS =================
-
-        let cities = [];
-        let districts = [];
-        let neighborhoods = [];
-
-        fetch('/data/turkiye-adresler-json/sehirler.json')
-            .then(r => {
-                if (!r.ok) throw new Error("Şehir JSON yüklenemedi");
-                return r.json();
-            })
-            .then(data => {
-                const citySelect = document.getElementById("citySelect");
-                data.forEach(c => {
-                    citySelect.insertAdjacentHTML(
-                        "beforeend",
-                        `<option value="${c.sehir_adi}" data-id="${c.sehir_id}">
-                            ${c.sehir_adi}
-                         </option>`
-                    );
+            const toggleSectionInputs = (section, enabled) => {
+                section.querySelectorAll("input, select, textarea").forEach(el => {
+                    el.disabled = !enabled;
                 });
-            })
-            .catch(err => console.error(err));
+            };
 
+            const applyRoleView = () => {
+                const isWorker = roleSelect.value === "Worker";
+                const isOwner = roleSelect.value === "PharmacyOwner";
 
-        fetch('/data/turkiye-adresler-json/ilceler.json')
-            .then(r => r.json())
-            .then(data => districts = data);
+                workerSection.classList.toggle("d-none", !isWorker);
+                ownerSection.classList.toggle("d-none", !isOwner);
 
-        Promise.all([
-            fetch('/data/turkiye-adresler-json/mahalleler-1.json').then(r => r.json()),
-            fetch('/data/turkiye-adresler-json/mahalleler-2.json').then(r => r.json()),
-            fetch('/data/turkiye-adresler-json/mahalleler-3.json').then(r => r.json()),
-            fetch('/data/turkiye-adresler-json/mahalleler-4.json').then(r => r.json())
-        ]).then(results => {
-            neighborhoods = results.flat();
-        });
+                toggleSectionInputs(workerSection, isWorker);
+                toggleSectionInputs(ownerSection, isOwner);
+            };
 
-        document.getElementById("citySelect").addEventListener("change", function () {
-            const cityId = this.selectedOptions[0].dataset.id;
+            roleSelect.addEventListener("change", applyRoleView);
+            applyRoleView();
+
+            // ================= ADDRESS =================
+            let districts = [];
+            let neighborhoods = [];
+
+            fetch('/data/turkiye-adresler-json/sehirler.json')
+                .then(r => {
+                    if (!r.ok) throw new Error("Şehir JSON yüklenemedi");
+                    return r.json();
+                })
+                .then(data => {
+                    const citySelect = document.getElementById("citySelect");
+                    if (!citySelect) return;
+
+                    data.forEach(c => {
+                        citySelect.insertAdjacentHTML(
+                            "beforeend",
+                            `<option value="${c.sehir_adi}" data-id="${c.sehir_id}">
+                                ${c.sehir_adi}
+                             </option>`
+                        );
+                    });
+                })
+                .catch(err => console.error(err));
+
+            fetch('/data/turkiye-adresler-json/ilceler.json')
+                .then(r => {
+                    if (!r.ok) throw new Error("İlçe JSON yüklenemedi");
+                    return r.json();
+                })
+                .then(data => { districts = data; })
+                .catch(err => console.error(err));
+
+            Promise.all([
+                fetch('/data/turkiye-adresler-json/mahalleler-1.json').then(r => {
+                    if (!r.ok) throw new Error("Mahalle JSON (1) yüklenemedi");
+                    return r.json();
+                }),
+                fetch('/data/turkiye-adresler-json/mahalleler-2.json').then(r => {
+                    if (!r.ok) throw new Error("Mahalle JSON (2) yüklenemedi");
+                    return r.json();
+                }),
+                fetch('/data/turkiye-adresler-json/mahalleler-3.json').then(r => {
+                    if (!r.ok) throw new Error("Mahalle JSON (3) yüklenemedi");
+                    return r.json();
+                }),
+                fetch('/data/turkiye-adresler-json/mahalleler-4.json').then(r => {
+                    if (!r.ok) throw new Error("Mahalle JSON (4) yüklenemedi");
+                    return r.json();
+                })
+            ])
+                .then(results => {
+                    neighborhoods = results.flat();
+                })
+                .catch(err => console.error(err));
+
+            const citySelect = document.getElementById("citySelect");
             const districtSelect = document.getElementById("districtSelect");
-
-            districtSelect.innerHTML = '<option value="">İlçe seçiniz</option>';
-            districtSelect.disabled = false;
-
-            districts
-                .filter(d => d.sehir_id === cityId)
-                .forEach(d => {
-                    districtSelect.innerHTML +=
-                        `<option value="${d.ilce_adi}" data-id="${d.ilce_id}">${d.ilce_adi}</option>`;
-                });
-        });
-
-        document.getElementById("districtSelect").addEventListener("change", function () {
-            const ilceId = this.selectedOptions[0].dataset.id;
             const neighborhoodSelect = document.getElementById("neighborhoodSelect");
 
-            neighborhoodSelect.innerHTML = '<option value="">Mahalle seçiniz</option>';
-            neighborhoodSelect.disabled = false;
+            if (!citySelect || !districtSelect || !neighborhoodSelect) {
+                return;
+            }
 
-            neighborhoods
-                .filter(n => n.ilce_id === ilceId)
-                .forEach(n => {
-                    neighborhoodSelect.innerHTML +=
-                        `<option value="${n.mahalle_adi}">${n.mahalle_adi}</option>`;
-                });
+            citySelect.addEventListener("change", function () {
+                const cityId = this.selectedOptions[0]?.dataset.id;
+
+                districtSelect.innerHTML = '<option value="">İlçe seçiniz</option>';
+                districtSelect.disabled = false;
+                neighborhoodSelect.innerHTML = '<option value="">Mahalle seçiniz</option>';
+                neighborhoodSelect.disabled = true;
+
+                if (!cityId) return;
+
+                districts
+                    .filter(d => d.sehir_id === cityId)
+                    .forEach(d => {
+                        districtSelect.innerHTML +=
+                            `<option value="${d.ilce_adi}" data-id="${d.ilce_id}">${d.ilce_adi}</option>`;
+                    });
+            });
+
+            districtSelect.addEventListener("change", function () {
+                const ilceId = this.selectedOptions[0]?.dataset.id;
+
+                neighborhoodSelect.innerHTML = '<option value="">Mahalle seçiniz</option>';
+                neighborhoodSelect.disabled = false;
+
+                if (!ilceId) return;
+
+                neighborhoods
+                    .filter(n => n.ilce_id === ilceId)
+                    .forEach(n => {
+                        neighborhoodSelect.innerHTML +=
+                            `<option value="${n.mahalle_adi}">${n.mahalle_adi}</option>`;
+                    });
+            });
         });
     </script>
 }
