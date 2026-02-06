@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
 using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.ViewModels;
+using PharmacyJobPlatform.Web.SignalR;
 using System.Security.Claims;
 
 namespace PharmacyJobPlatform.Web.Controllers
@@ -14,10 +15,12 @@ namespace PharmacyJobPlatform.Web.Controllers
     public class MessagesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public MessagesController(ApplicationDbContext context)
+        public MessagesController(ApplicationDbContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         // 📥 Inbox
@@ -115,19 +118,31 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             int senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var msg = new Message
-            {
-                ConversationId = conversationId,
-                SenderId = senderId,
-                Content = content,
-                SentAt = DateTime.UtcNow
-            };
 
-            _context.Messages.Add(msg);
-            await _context.SaveChangesAsync();
+            bool sent = await TrySendMessageAsync(conversationId, senderId, content);
+            if (!sent)
+                return RedirectToAction("Chat", new { id = conversationId });
+
 
             return RedirectToAction("Chat", new { id = conversationId });
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SendMessageAjax(int conversationId, string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                return BadRequest();
+
+            int senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            bool sent = await TrySendMessageAsync(conversationId, senderId, content);
+
+            if (!sent)
+                return NotFound();
+
+            return Ok();
+        }
+
 
         // 📩 Mesaj isteği gönder
         [HttpPost]
@@ -265,6 +280,79 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             return PartialView("_ChatMessages", conv);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> ChatMessages(int conversationId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conv = await _context.Conversations
+                .Include(c => c.Messages)
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .FirstOrDefaultAsync(c =>
+                    c.Id == conversationId &&
+                    (c.User1Id == userId || c.User2Id == userId));
+
+            if (conv == null)
+                return Unauthorized();
+
+            foreach (var msg in conv.Messages
+                .Where(m => !m.IsRead && m.SenderId != userId))
+            {
+                msg.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return PartialView("_ChatBodyMessages", conv);
+        }
+
+        [HttpGet]
+        public IActionResult UnreadCount()
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            int unreadCount = _context.Messages.Count(m =>
+                !m.IsRead &&
+                m.SenderId != userId &&
+                (m.Conversation.User1Id == userId ||
+                 m.Conversation.User2Id == userId));
+
+            return Json(new { unreadCount });
+        }
+
+        private async Task<bool> TrySendMessageAsync(int conversationId, int senderId, string content)
+        {
+            var conversation = await _context.Conversations
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .FirstOrDefaultAsync(c => c.Id == conversationId);
+
+            if (conversation == null)
+                return false;
+
+            var msg = new Message
+            {
+                ConversationId = conversationId,
+                SenderId = senderId,
+                Content = content,
+                SentAt = DateTime.UtcNow
+            };
+
+            _context.Messages.Add(msg);
+            await _context.SaveChangesAsync();
+
+            var receiverId = conversation.User1Id == senderId
+                ? conversation.User2Id
+                : conversation.User1Id;
+
+            await _hubContext.Clients.Users(senderId.ToString(), receiverId.ToString())
+                .SendAsync("RefreshMessages", conversationId);
+
+            return true;
+        }
+
     }
 
 

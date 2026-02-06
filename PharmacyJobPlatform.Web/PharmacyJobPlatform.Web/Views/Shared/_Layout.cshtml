@@ -71,13 +71,11 @@
                                asp-action="Index">
                                 <i class="fa-solid fa-comments"></i> Mesajlar
 
-                                @if (unreadCount > 0)
-                                {
-                                    <span class="position-absolute top-0 start-100 translate-middle
-                                             badge rounded-pill bg-danger">
-                                        @unreadCount
-                                    </span>
-                                }
+                                <span id="unreadBadge"
+                                      class="position-absolute top-0 start-100 translate-middle
+                                             badge rounded-pill bg-danger @(unreadCount > 0 ? "" : "d-none")">
+                                    @(unreadCount > 0 ? unreadCount : "")
+                                </span>
                             </a>
                         </li>
 
@@ -200,6 +198,8 @@
 
 
 
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.14/dist/browser/signalr.min.js"></script>
+    <script src="~/js/chat-connection.js"></script>
     <script src="~/js/chat-widget.js"></script>
 
 

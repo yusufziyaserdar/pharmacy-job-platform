@@ -1,4 +1,5 @@
 ﻿const panel = document.getElementById("chatPanel");
+let widgetConversationId = null;
 
 document.getElementById("chat-toggle").onclick = () =>
     panel.classList.toggle("d-none");
@@ -13,6 +14,7 @@ function loadConversations() {
             const box = document.getElementById("chat-messages");
             scrollWidgetToBottom();
             box.innerHTML = "";
+            widgetConversationId = null;
 
             data.forEach(c => {
                 box.innerHTML += `
@@ -36,6 +38,7 @@ function loadConversations() {
 }
 
 function openConversation(id) {
+    widgetConversationId = id;
     fetch(`/Messages/WidgetChat?conversationId=${id}`)
         .then(r => r.text())
         .then(html => {
@@ -61,6 +64,18 @@ function scrollWidgetToBottom() {
         el.scrollTop = el.scrollHeight;
     }
 }
+
+function refreshWidgetConversation() {
+    if (widgetConversationId) {
+        openConversation(widgetConversationId);
+    } else {
+        loadConversations();
+    }
+}
+
+window.loadConversations = loadConversations;
+window.openConversation = openConversation;
+window.refreshWidgetConversation = refreshWidgetConversation;
 
 
 loadConversations();

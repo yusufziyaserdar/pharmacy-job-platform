@@ -25,29 +25,18 @@
 
 
             <div class="card-body" id="chatBody" style="height:400px; overflow-y:auto">
-                @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
-                {
-                    bool mine = msg.SenderId == userId;
-
-                    <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
-                        <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
-                             style="max-width:70%">
-                            @msg.Content
-                            <div class="text-end">
-                                <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
-                            </div>
-                        </div>
-                    </div>
-                }
+                <div id="chatMessages">
+                    @await Html.PartialAsync("_ChatBodyMessages", Model)
+                </div>
             </div>
 
             <div class="card-footer">
-                <form asp-action="SendMessage" method="post">
+                <form asp-action="SendMessage">
                     <input type="hidden" name="conversationId" value="@Model.Id" />
 
                     <div class="input-group">
-                        <input name="content" class="form-control" required />
-                        <button class="btn btn-primary">Gönder</button>
+                        <input id="chatMessageInput" name="content" class="form-control" required />
+                        <button class="btn btn-primary" type="submit">Gönder</button>
                     </div>
                 </form>
             </div>
@@ -58,8 +47,53 @@
 @section Scripts {
     <script>
         const chatBody = document.getElementById("chatBody");
-        if (chatBody) {
-            chatBody.scrollTop = chatBody.scrollHeight;
+        const chatMessages = document.getElementById("chatMessages");
+        const conversationId = @Model.Id;
+
+        function scrollChatToBottom() {
+            if (chatBody) {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
         }
+
+        async function refreshChatMessages() {
+            const response = await fetch(`/Messages/ChatMessages?conversationId=${conversationId}`);
+            if (response.ok && chatMessages) {
+                chatMessages.innerHTML = await response.text();
+                scrollChatToBottom();
+            }
+        }
+
+        window.refreshChatMessages = refreshChatMessages;
+        window.currentConversationId = conversationId;
+
+        const chatForm = document.getElementById("chatSendForm");
+        const chatInput = document.getElementById("chatMessageInput");
+
+        if (chatForm) {
+            chatForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                if (!chatInput || !chatInput.value.trim()) {
+                    return;
+                }
+
+                const payload = new URLSearchParams();
+                payload.set("conversationId", conversationId);
+                payload.set("content", chatInput.value);
+
+                const response = await fetch("/Messages/SendMessageAjax", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: payload.toString()
+                });
+
+                if (response.ok) {
+                    chatInput.value = "";
+                    refreshChatMessages();
+                }
+            });
+        }
+
+        scrollChatToBottom();
     </script>
 }

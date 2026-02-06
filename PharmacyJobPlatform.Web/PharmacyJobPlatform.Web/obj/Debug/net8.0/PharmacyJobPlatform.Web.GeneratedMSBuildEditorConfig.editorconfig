@@ -9,123 +9,131 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PharmacyJobPlatform.Web
 build_property.RootNamespace = PharmacyJobPlatform.Web
-build_property.ProjectDir = C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web\
+build_property.ProjectDir = C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Web\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\pharmacyjobplatform.web
+build_property.MSBuildProjectDirectory = C:\Users\user\Desktop\pharmacy-job-platform\PharmacyJobPlatform.Web\PharmacyJobPlatform.Web
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Auth/AccessDenied.cshtml]
+[C:/Users/user/AppData/Roaming/SonarLint for Visual Studio/.global/csharp/SonarLint.xml]
+build_metadata.AdditionalFiles.TargetPath = 
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Auth/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxBY2Nlc3NEZW5pZWQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Auth/Login.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Auth/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Auth/Register.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Auth/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Home/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Home/Privacy.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/JobApplications/MyApplications.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/JobApplications/MyApplications.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iQXBwbGljYXRpb25zXE15QXBwbGljYXRpb25zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/JobPosts/Create.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/JobPosts/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iUG9zdHNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/JobPosts/Details.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/JobPosts/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iUG9zdHNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/JobPosts/Edit.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/JobPosts/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iUG9zdHNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/JobPosts/MyPosts.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/JobPosts/MyPosts.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9iUG9zdHNcTXlQb3N0cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Jobs/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Jobs/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSm9ic1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/Chat.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/Chat.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcQ2hhdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/Conversations.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/Conversations.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcQ29udmVyc2F0aW9ucy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/Inbox.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/Inbox.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcSW5ib3guY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/_ChatMessages.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/_ChatBodyMessages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcX0NoYXRCb2R5TWVzc2FnZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/_ChatMessages.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcX0NoYXRNZXNzYWdlcy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/_ChatSingleMessage.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Messages/_ChatSingleMessage.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcX0NoYXRTaW5nbGVNZXNzYWdlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/PharmacyApplications/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/PharmacyApplications/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhhcm1hY3lBcHBsaWNhdGlvbnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/PharmacyApplications/JobApplications.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/PharmacyApplications/JobApplications.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhhcm1hY3lBcHBsaWNhdGlvbnNcSm9iQXBwbGljYXRpb25zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/PharmacyDashboard/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/PharmacyDashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhhcm1hY3lEYXNoYm9hcmRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Profile/Edit.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Profile/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Profile/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Profile/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Shared/Components/ChatWidget/Default.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Shared/Components/ChatWidget/Default.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcQ2hhdFdpZGdldFxEZWZhdWx0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/WorkerDashboard/Index.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/WorkerDashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcV29ya2VyRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/_ViewImports.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/_ViewStart.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Shared/_Layout.cshtml]
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/PharmacyJobPlatform.Web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-9hpd07f97p
