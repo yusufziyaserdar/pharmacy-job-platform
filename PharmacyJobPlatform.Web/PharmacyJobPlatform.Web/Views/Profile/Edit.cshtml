@@ -262,7 +262,8 @@
 
             const initAddressAutocomplete = () => {
                 const addressInput = document.getElementById("addressAutocomplete");
-                if (!addressInput || !window.google?.maps?.places) {
+                if (!addressInput || !window.google?.maps?.places?.Autocomplete) {
+                    console.warn("Google Maps Places Autocomplete yüklenemedi. API anahtarını ve referer izinlerini kontrol edin.");
                     return;
                 }
 
@@ -318,13 +319,16 @@
             };
 
             window.initAddressAutocomplete = initAddressAutocomplete;
+            window.gm_authFailure = () => {
+                console.warn("Google Maps API doğrulaması başarısız oldu. API anahtarının referer izinlerini kontrol edin.");
+            };
     </script>
 
     @if (isPharmacyOwner)
     {
         if (!string.IsNullOrWhiteSpace(googleMapsApiKey))
         {
-            <script src="https://maps.googleapis.com/maps/api/js?key=@googleMapsApiKey&libraries=places&callback=initAddressAutocomplete"
+            <script src="https://maps.googleapis.com/maps/api/js?key=@googleMapsApiKey&libraries=places&callback=initAddressAutocomplete&loading=async"
                     async
                     defer></script>
         }
