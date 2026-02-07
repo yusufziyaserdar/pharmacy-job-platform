@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Infrastructure.Data;
+using PharmacyJobPlatform.Web.Services;
 using PharmacyJobPlatform.Web.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Auth/Login";
         options.AccessDeniedPath = "/Auth/AccessDenied";
     });
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 // ================= APP =================
 
