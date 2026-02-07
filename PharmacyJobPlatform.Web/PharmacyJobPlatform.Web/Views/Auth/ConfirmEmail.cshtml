@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Email Doğrulama";
+    var message = ViewData["ConfirmMessage"]?.ToString();
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm mt-5">
+            <div class="card-body p-4 text-center">
+                <h3 class="mb-3">📧 Email Doğrulama</h3>
+                <p class="mb-4">@message</p>
+                <a class="btn btn-primary" asp-action="Login">Giriş sayfasına dön</a>
+            </div>
+        </div>
+    </div>
+</div>

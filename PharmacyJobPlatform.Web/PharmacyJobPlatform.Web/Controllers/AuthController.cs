@@ -6,6 +6,9 @@ using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
+using PharmacyJobPlatform.Web.Services;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Cryptography;
 
 namespace PharmacyJobPlatform.Web.Controllers
 {
@@ -14,11 +17,16 @@ namespace PharmacyJobPlatform.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEmailSender _emailSender;
 
-        public AuthController(ApplicationDbContext context, IConfiguration configuration)
+        public AuthController(
+            ApplicationDbContext context,
+            IConfiguration configuration,
+            IEmailSender? emailSender = null)
         {
             _context = context;
             _configuration = configuration;
+            _emailSender = emailSender ?? new NullEmailSender();
         }
 
         // ---------------- LOGIN ----------------
@@ -27,7 +35,6 @@ namespace PharmacyJobPlatform.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var test = model;
             var user = _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == model.Email);
@@ -37,6 +44,13 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ModelState.AddModelError("", "Email veya şifre hatalı");
                 return View(model);
             }
+
+            if (!user.EmailConfirmed)
+            {
+                ModelState.AddModelError("", "Email adresinizi doğrulamadan giriş yapamazsınız. Mailinizi kontrol edin.");
+                return View(model);
+            }
+
 
             var claims = new List<Claim>
         {
@@ -162,7 +176,10 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ProfileImagePath = profileImagePath,
                 RoleId = role.Id,
                 Address = address, // 🔥 EF otomatik AddressId set eder
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                EmailConfirmed = false,
+                EmailConfirmationToken = GenerateEmailToken(),
+                EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddHours(24)
             };
 
             // ============================
@@ -187,10 +204,58 @@ namespace PharmacyJobPlatform.Web.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            if (_emailSender == null || _emailSender is NullEmailSender)
+            {
+                ModelState.AddModelError("", "Email servisi yapılandırılmadığı için doğrulama maili gönderilemedi.");
+                SetGoogleMapsApiKey();
+                return View(model);
+            }
+
+            await SendConfirmationEmailAsync(user);
+            TempData["AuthMessage"] = "Kayıt tamamlandı. Giriş yapmadan önce email adresinizi doğrulayın.";
             return RedirectToAction("Login");
         }
 
-                private void RemoveModelStateByPrefix(string prefix)
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
+            {
+                ViewData["ConfirmMessage"] = "Doğrulama bilgileri eksik.";
+                return View();
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null)
+            {
+                ViewData["ConfirmMessage"] = "Kullanıcı bulunamadı.";
+                return View();
+            }
+
+            if (user.EmailConfirmed)
+            {
+                ViewData["ConfirmMessage"] = "Email adresiniz zaten doğrulanmış.";
+                return View();
+            }
+
+            if (user.EmailConfirmationTokenExpiresAt == null ||
+                user.EmailConfirmationTokenExpiresAt < DateTime.UtcNow ||
+                user.EmailConfirmationToken != token)
+            {
+                ViewData["ConfirmMessage"] = "Doğrulama bağlantısı geçersiz veya süresi dolmuş.";
+                return View();
+            }
+
+            user.EmailConfirmed = true;
+            user.EmailConfirmationToken = null;
+            user.EmailConfirmationTokenExpiresAt = null;
+            await _context.SaveChangesAsync();
+
+            ViewData["ConfirmMessage"] = "Email adresiniz doğrulandı. Artık giriş yapabilirsiniz.";
+            return View();
+        }
+
+        private void RemoveModelStateByPrefix(string prefix)
         {
             var keysToRemove = ModelState.Keys
                 .Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
@@ -214,6 +279,35 @@ namespace PharmacyJobPlatform.Web.Controllers
         private void SetGoogleMapsApiKey()
         {
             ViewData["GoogleMapsApiKey"] = _configuration["GoogleMaps:ApiKey"];
+        }
+
+
+        private static string GenerateEmailToken()
+        {
+            var tokenBytes = RandomNumberGenerator.GetBytes(32);
+            return WebEncoders.Base64UrlEncode(tokenBytes);
+        }
+
+        private async Task SendConfirmationEmailAsync(User user)
+        {
+            if (_emailSender == null)
+            {
+                return;
+            }
+
+            var confirmationUrl = Url.Action(
+                "ConfirmEmail",
+                "Auth",
+                new { email = user.Email, token = user.EmailConfirmationToken },
+                Request.Scheme);
+
+            var body = $@"
+                <p>Merhaba {user.FirstName},</p>
+                <p>Kayıt işlemini tamamlamak için aşağıdaki bağlantıya tıklayın:</p>
+                <p><a href=""{confirmationUrl}"">Email adresimi doğrula</a></p>
+                <p>Bağlantı 24 saat boyunca geçerlidir.</p>";
+
+            await _emailSender.SendEmailAsync(user.Email, "Email Doğrulama", body);
         }
     }
 

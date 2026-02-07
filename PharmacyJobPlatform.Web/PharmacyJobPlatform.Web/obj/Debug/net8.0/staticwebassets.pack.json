@@ -45,6 +45,14 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\5092bdc7-9304-442a-bbfe-29739bc1f7cc.jpg",
+      "PackagePath": "staticwebassets\\images\\profiles\\5092bdc7-9304-442a-bbfe-29739bc1f7cc.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\82d5380c-5810-4999-b8e9-b3a49a217c18.jpg",
+      "PackagePath": "staticwebassets\\images\\profiles\\82d5380c-5810-4999-b8e9-b3a49a217c18.jpg"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\default-profile.png",
       "PackagePath": "staticwebassets\\images\\profiles\\default-profile.png"
     },

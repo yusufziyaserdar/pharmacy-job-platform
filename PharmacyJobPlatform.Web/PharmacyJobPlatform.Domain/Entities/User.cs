@@ -24,6 +24,10 @@ namespace PharmacyJobPlatform.Domain.Entities
         public string? ProfileImagePath { get; set; }
         public string? About { get; set; }
 
+        public bool EmailConfirmed { get; set; }
+        public string? EmailConfirmationToken { get; set; }
+        public DateTime? EmailConfirmationTokenExpiresAt { get; set; }
+
         public int? AddressId { get; set; }
         public Address? Address { get; set; }
 
