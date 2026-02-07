@@ -31,3 +31,46 @@ html, body {
 main {
     flex: 1;
 }
+
+.address-card {
+    border: 1px solid #e6e9ef;
+    border-radius: 16px;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.address-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.address-card__search {
+    margin-top: 16px;
+}
+
+.address-input {
+    position: relative;
+}
+
+.address-input__icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+.address-input__control {
+    padding-left: 40px;
+}
+
+.pac-container {
+    z-index: 2000;
+    border-radius: 12px;
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.16);
+}

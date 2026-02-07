@@ -110,40 +110,54 @@
                     <!-- ================= PHARMACY OWNER ================= -->
                     <div id="ownerSection" class="d-none">
                         <hr />
-                        <h5><i class="fa-solid fa-location-dot"></i> Eczane Adresi</h5>
+                        <div class="address-card">
+                            <div class="address-card__header">
+                                <div>
+                                    <h5 class="mb-1"><i class="fa-solid fa-location-dot"></i> Eczane Adresi</h5>
+                                    <p class="text-muted mb-0">Adres yazmaya başlayın, alanlar otomatik dolsun.</p>
+                                </div>
+                                <span class="badge text-bg-light">Google Places</span>
+                            </div>
 
-                        <div class="mb-3">
-                            <label>Adres Ara</label>
-                            <input id="addressAutocomplete"
-                                   type="text"
-                                   class="form-control"
-                                   placeholder="Adres yazmaya başlayın"
-                                   autocomplete="off" />
-                        </div>
+                            <div class="address-card__search">
+                                <label for="addressAutocomplete" class="form-label">Adres Ara</label>
+                                <div class="address-input">
+                                    <span class="address-input__icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                    <input id="addressAutocomplete"
+                                           type="text"
+                                           class="form-control address-input__control"
+                                           placeholder="Örn: Bağdat Cad. No:1 Kadıköy"
+                                           autocomplete="off" />
+                                </div>
+                                <small class="text-muted">Sonuçlardan birini seçtiğinizde şehir, ilçe ve mahalle otomatik alınır.</small>
+                            </div>
 
-                        <div class="mb-3">
-                            <label>Şehir</label>
-                            <input asp-for="Address.City" id="cityInput" class="form-control" readonly />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>İlçe</label>
-                            <input asp-for="Address.District" id="districtInput" class="form-control" readonly />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Mahalle</label>
-                            <input asp-for="Address.Neighborhood" id="neighborhoodInput" class="form-control" readonly />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Sokak / Cadde</label>
-                            <input asp-for="Address.Street" id="streetInput" class="form-control" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label>Bina No</label>
-                            <input asp-for="Address.BuildingNumber" id="buildingNumberInput" class="form-control" />
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">Şehir</label>
+                                    <input asp-for="Address.City" id="cityInput" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">İlçe</label>
+                                    <input asp-for="Address.District" id="districtInput" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Mahalle</label>
+                                    <input asp-for="Address.Neighborhood" id="neighborhoodInput" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Sokak / Cadde</label>
+                                    <input asp-for="Address.Street" id="streetInput" class="form-control" placeholder="Örn: Bağdat Caddesi" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Bina No</label>
+                                    <input asp-for="Address.BuildingNumber" id="buildingNumberInput" class="form-control" placeholder="Örn: 24A" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Adres Notu</label>
+                                    <input asp-for="Address.Description" class="form-control" placeholder="Kat, daire vb." />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
