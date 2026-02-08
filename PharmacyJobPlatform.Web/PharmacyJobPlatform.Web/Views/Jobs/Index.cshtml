@@ -8,23 +8,59 @@
     <!-- FİLTRE -->
     <form method="get" class="row g-2 mb-4">
         <div class="col-md-3">
-            <input class="form-control" name="City" placeholder="Şehir" value="@Model.City" />
+            <select class="form-select" name="City">
+                <option value="">Şehir</option>
+                @foreach (var city in Model.Cities)
+                {
+                    <option value="@city" selected="@(city == Model.City)">
+                        @city
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select" name="District">
+                <option value="">İlçe</option>
+                @foreach (var district in Model.Districts)
+                {
+                    <option value="@district" selected="@(district == Model.District)">
+                        @district
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select class="form-select" name="Neighborhood">
+                <option value="">Mahalle</option>
+                @foreach (var neighborhood in Model.Neighborhoods)
+                {
+                    <option value="@neighborhood" selected="@(neighborhood == Model.Neighborhood)">
+                        @neighborhood
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <input class="form-control" name="Keyword" placeholder="Sözcük arama (Örn: Deneyimsiz çalışan)" value="@Model.Keyword" />
         </div>
 
         <div class="col-md-3">
             <select class="form-select" name="JobType">
                 <option value="">İş Türü</option>
-                <option value="Daily">Günlük</option>
-                <option value="Permanent">Kalıcı</option>
+                <option value="Daily" selected="@(Model.JobType == JobType.Daily)">Günlük</option>
+                <option value="Permanent" selected="@(Model.JobType == JobType.Permanent)">Kalıcı</option>
             </select>
         </div>
 
         <div class="col-md-2">
-            <input class="form-control" name="MinWage" placeholder="Min Ücret" />
+            <input class="form-control" name="MinWage" placeholder="Min Ücret" value="@Model.MinWage" />
         </div>
 
         <div class="col-md-2">
-            <input class="form-control" name="MaxWage" placeholder="Max Ücret" />
+            <input class="form-control" name="MaxWage" placeholder="Max Ücret" value="@Model.MaxWage" />
         </div>
 
         <div class="col-md-2">
@@ -38,9 +74,13 @@
         {
             <div class="col-md-4">
                 <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h5>@job.Title</h5>
-                        <p class="text-muted">@job.City</p>
+                    <div class="card-body position-relative">
+                        <h5 class="card-title">
+                            <a asp-action="Details" asp-route-id="@job.Id" class="stretched-link text-decoration-none">
+                                @job.Title
+                            </a>
+                        </h5>
+                        <p class="text-muted mb-2">@job.City / @job.District / @job.Neighborhood</p>
 
                         <p>
                             @if (job.JobType == JobType.Daily)
@@ -59,7 +99,7 @@
                         }
                         else
                         {
-                            <form asp-action="Apply" method="post">
+                            <form asp-action="Apply" method="post" class="position-relative">
                                 <input type="hidden" name="jobPostId" value="@job.Id" />
                                 <button class="btn btn-success w-100">
                                     Başvur

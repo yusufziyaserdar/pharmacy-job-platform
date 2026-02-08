@@ -22,5 +22,7 @@ namespace PharmacyJobPlatform.Web.Models.JobPost
 
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        public bool AlreadyApplied { get; set; }
     }
 }

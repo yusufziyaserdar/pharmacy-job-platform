@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "sT4NyPk3qtMp1gHv2kgBF14AEbOKYSwXc0b0p1HyWos=",
+  "Hash": "p+wqknQYqW94dq24wpkgrd5C5CHzWay9iUVSXN6UxUQ=",
   "Source": "PharmacyJobPlatform.Web",
   "BasePath": "_content/PharmacyJobPlatform.Web",
   "Mode": "Default",
@@ -245,6 +245,25 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\0f31fbc3-7015-4a3a-8a62-06693c2e20d9.jpg",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "images/profiles/0f31fbc3-7015-4a3a-8a62-06693c2e20d9.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profiles\\0f31fbc3-7015-4a3a-8a62-06693c2e20d9.jpg"
+    },
+    {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\447ee3e0-09f3-4c43-bf20-7e87e70f7da3.jpg",
       "SourceId": "PharmacyJobPlatform.Web",
       "SourceType": "Discovered",
@@ -283,6 +302,25 @@
       "OriginalItemSpec": "wwwroot\\images\\profiles\\5092bdc7-9304-442a-bbfe-29739bc1f7cc.jpg"
     },
     {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\74855b3c-62f7-4929-a474-7075bd9d15cd.jpg",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "images/profiles/74855b3c-62f7-4929-a474-7075bd9d15cd.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profiles\\74855b3c-62f7-4929-a474-7075bd9d15cd.jpg"
+    },
+    {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\82d5380c-5810-4999-b8e9-b3a49a217c18.jpg",
       "SourceId": "PharmacyJobPlatform.Web",
       "SourceType": "Discovered",
@@ -302,6 +340,25 @@
       "OriginalItemSpec": "wwwroot\\images\\profiles\\82d5380c-5810-4999-b8e9-b3a49a217c18.jpg"
     },
     {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\8a0727b1-7700-4e28-b87a-c67145d907b3.jpg",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "images/profiles/8a0727b1-7700-4e28-b87a-c67145d907b3.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profiles\\8a0727b1-7700-4e28-b87a-c67145d907b3.jpg"
+    },
+    {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\a4401247-fa9e-44f1-a10e-1476038e3062.jpg",
       "SourceId": "PharmacyJobPlatform.Web",
       "SourceType": "Discovered",
@@ -319,6 +376,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\profiles\\a4401247-fa9e-44f1-a10e-1476038e3062.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\c356617c-52d1-4ea2-ad66-c466b993134c.jpg",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "images/profiles/c356617c-52d1-4ea2-ad66-c466b993134c.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profiles\\c356617c-52d1-4ea2-ad66-c466b993134c.jpg"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\default-profile.png",

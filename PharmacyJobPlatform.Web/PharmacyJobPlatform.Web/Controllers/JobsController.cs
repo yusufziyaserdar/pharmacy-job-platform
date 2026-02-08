@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
 using PharmacyJobPlatform.Domain.Enums;
 using PharmacyJobPlatform.Infrastructure.Data;
@@ -22,9 +23,33 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             var workerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var query = _context.JobPosts
+            var baseQuery = _context.JobPosts
                 .Where(x => x.IsActive)
                 .AsQueryable();
+
+            filter.Cities = baseQuery
+                .Select(x => x.Address.City)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            filter.Districts = baseQuery
+                .Where(x => string.IsNullOrEmpty(filter.City) || x.Address.City == filter.City)
+                .Select(x => x.Address.District)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            filter.Neighborhoods = baseQuery
+                .Where(x =>
+                    (string.IsNullOrEmpty(filter.City) || x.Address.City == filter.City) &&
+                    (string.IsNullOrEmpty(filter.District) || x.Address.District == filter.District))
+                .Select(x => x.Address.Neighborhood)
+                .Distinct()
+                .OrderBy(x => x)
+                .ToList();
+
+            var query = baseQuery;
 
             if (!string.IsNullOrEmpty(filter.City))
                 query = query.Where(x => x.Address.City == filter.City);
@@ -35,6 +60,13 @@ namespace PharmacyJobPlatform.Web.Controllers
             if (!string.IsNullOrEmpty(filter.Neighborhood))
                 query = query.Where(x => x.Address.Neighborhood == filter.Neighborhood);
 
+            if (!string.IsNullOrWhiteSpace(filter.Keyword))
+            {
+                var keyword = filter.Keyword.Trim();
+                query = query.Where(x =>
+                    EF.Functions.Like(x.Title, $"%{keyword}%") ||
+                    EF.Functions.Like(x.Description, $"%{keyword}%"));
+            }
 
             if (filter.JobType.HasValue)
                 query = query.Where(x => x.JobType == filter.JobType);
@@ -62,7 +94,9 @@ namespace PharmacyJobPlatform.Web.Controllers
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
-                    City=x.Address.City,
+                    City = x.Address.City,
+                    District = x.Address.District,
+                    Neighborhood = x.Address.Neighborhood,
                     JobType = x.JobType,
                     DailyWage = x.DailyWage,
                     MonthlySalary = x.MonthlySalary,
@@ -73,6 +107,38 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .ToList();
 
             return View(filter);
+        }
+
+        public IActionResult Details(int id)
+        {
+            var workerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var post = _context.JobPosts
+                .Include(x => x.Address)
+                .Where(x => x.IsActive && x.Id == id)
+                .Select(x => new JobPostDetailsViewModel
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Description = x.Description,
+                    JobType = x.JobType,
+                    City = x.Address.City,
+                    District = x.Address.District,
+                    Neighborhood = x.Address.Neighborhood,
+                    DailyWage = x.DailyWage,
+                    WorkDate = x.WorkDate,
+                    MonthlySalary = x.MonthlySalary,
+                    IsActive = x.IsActive,
+                    CreatedAt = x.CreatedAt,
+                    AlreadyApplied = _context.JobApplications
+                        .Any(a => a.JobPostId == x.Id && a.WorkerId == workerId)
+                })
+                .FirstOrDefault();
+
+            if (post == null)
+                return NotFound();
+
+            return View(post);
         }
 
         // 👇 BAŞVURU ACTION
