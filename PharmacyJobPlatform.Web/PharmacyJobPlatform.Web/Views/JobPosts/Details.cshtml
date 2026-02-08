@@ -7,9 +7,19 @@
 
             <h3>@Model.Title</h3>
 
-            <span class="badge @(Model.JobType == JobType.Daily ? "bg-warning" : "bg-success")">
-                @Model.JobType
-            </span>
+            @if (Model.JobType == JobType.Permanent)
+            {
+                <span class="badge bg-success">
+                    Kalıcı
+                </span>
+            }
+            else
+            {
+                <span class="badge bg-warning">
+                    Günlük
+                </span>
+            }
+
 
             <hr />
 

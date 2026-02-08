@@ -21,6 +21,8 @@ namespace PharmacyJobPlatform.Domain.Entities
         [Required]
         public string PhoneNumber { get; set; } = null!;
 
+        public string? PharmacyName { get; set; }
+
         public string? ProfileImagePath { get; set; }
         public string? About { get; set; }
 

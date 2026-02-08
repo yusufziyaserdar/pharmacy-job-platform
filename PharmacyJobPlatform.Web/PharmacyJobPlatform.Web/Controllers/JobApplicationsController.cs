@@ -56,7 +56,9 @@ public class JobApplicationsController : Controller
             {
                 ApplicationId = a.Id,
                 JobTitle = a.JobPost.Title,
-                PharmacyName = a.JobPost.PharmacyOwner.FirstName + " " + a.JobPost.PharmacyOwner.LastName,
+                PharmacyName = string.IsNullOrWhiteSpace(a.JobPost.PharmacyOwner.PharmacyName)
+                    ? a.JobPost.PharmacyOwner.FirstName + " " + a.JobPost.PharmacyOwner.LastName
+                    : a.JobPost.PharmacyOwner.PharmacyName,
                 JobType = a.JobPost.JobType,
                 DailyWage = a.JobPost.DailyWage,
                 MonthlySalary = a.JobPost.MonthlySalary,

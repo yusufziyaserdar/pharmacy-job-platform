@@ -21,6 +21,8 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         public string? About { get; set; }
         public IFormFile? ProfileImage { get; set; }
 
+        public string? PharmacyName { get; set; }
+
         // 🔥 BURASI ÇOK ÖNEMLİ
         public AddressInputViewModel Address { get; set; } = new();
 

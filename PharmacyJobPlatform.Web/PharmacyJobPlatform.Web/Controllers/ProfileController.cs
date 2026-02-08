@@ -101,6 +101,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 About = user.About,
+                PharmacyName = user.PharmacyName,
                 Address = user.Address == null
                     ? new AddressInputViewModel()
                     : new AddressInputViewModel
@@ -150,6 +151,11 @@ namespace PharmacyJobPlatform.Web.Controllers
                 RemoveModelStateByPrefix("Address");
             }
 
+            if (user.Role?.Name == "PharmacyOwner" && string.IsNullOrWhiteSpace(model.PharmacyName))
+            {
+                ModelState.AddModelError(nameof(model.PharmacyName), "Eczane adı zorunludur");
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewData["IsPharmacyOwner"] = user.Role?.Name == "PharmacyOwner";
@@ -163,6 +169,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             user.About = model.About;
             if (user.Role?.Name == "PharmacyOwner")
             {
+                user.PharmacyName = model.PharmacyName;
                 user.Address ??= new Address();
                 user.Address.City = model.Address.City;
                 user.Address.District = model.Address.District;

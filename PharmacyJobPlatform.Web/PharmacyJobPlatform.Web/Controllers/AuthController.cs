@@ -142,6 +142,11 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             if (model.Role == "PharmacyOwner")
             {
+                if (string.IsNullOrWhiteSpace(model.PharmacyName))
+                {
+                    ModelState.AddModelError(nameof(model.PharmacyName), "Eczane adı zorunludur");
+                }
+
                 if (model.Address == null)
                 {
                     ModelState.AddModelError("", "Eczane sahibi için adres bilgisi zorunludur");
@@ -162,6 +167,12 @@ namespace PharmacyJobPlatform.Web.Controllers
                 _context.Addresses.Add(address);
             }
 
+            if (!ModelState.IsValid)
+            {
+                SetGoogleMapsApiKey();
+                return View(model);
+            }
+
             // ============================
             // 👤 User
             // ============================
@@ -174,6 +185,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 PhoneNumber = model.PhoneNumber,
                 About = model.About,
                 ProfileImagePath = profileImagePath,
+                PharmacyName = model.PharmacyName,
                 RoleId = role.Id,
                 Address = address, // 🔥 EF otomatik AddressId set eder
                 CreatedAt = DateTime.UtcNow,

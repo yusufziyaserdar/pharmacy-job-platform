@@ -18,6 +18,8 @@ namespace PharmacyJobPlatform.Web.Models.Profile
 
         public string? About { get; set; }
 
+        public string? PharmacyName { get; set; }
+
         public AddressInputViewModel Address { get; set; } = new();
 
         public string? ExistingProfileImagePath { get; set; }

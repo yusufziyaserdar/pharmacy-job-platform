@@ -53,8 +53,9 @@ namespace PharmacyJobPlatform.Web.Controllers
                         JobId = a.JobPostId,
                         JobTitle = a.JobPost.Title,
                         CompanyName =
-                            a.JobPost.PharmacyOwner.FirstName + " " +
-                            a.JobPost.PharmacyOwner.LastName,
+                            string.IsNullOrWhiteSpace(a.JobPost.PharmacyOwner.PharmacyName)
+                                ? a.JobPost.PharmacyOwner.FirstName + " " + a.JobPost.PharmacyOwner.LastName
+                                : a.JobPost.PharmacyOwner.PharmacyName,
                         AppliedAt = a.AppliedAt,
                         Status = a.Status.ToString()
                     })
