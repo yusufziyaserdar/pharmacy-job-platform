@@ -252,6 +252,75 @@ namespace PharmacyJobPlatform.Web.Controllers
             return Json(data);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> InboxMessages(int conversationId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conv = await _context.Conversations
+                .Include(c => c.Messages)
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .FirstOrDefaultAsync(c =>
+                    c.Id == conversationId &&
+                    (c.User1Id == userId || c.User2Id == userId));
+
+            if (conv == null)
+                return Unauthorized();
+
+            foreach (var msg in conv.Messages
+                .Where(m => !m.IsRead && m.SenderId != userId))
+            {
+                msg.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return PartialView("_InboxMessages", conv);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConversation(int conversationId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conversation = await _context.Conversations
+                .Include(c => c.Messages)
+                .FirstOrDefaultAsync(c =>
+                    c.Id == conversationId &&
+                    (c.User1Id == userId || c.User2Id == userId));
+
+            if (conversation == null)
+                return Unauthorized();
+
+            _context.Messages.RemoveRange(conversation.Messages);
+            _context.Conversations.Remove(conversation);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteMessage(int messageId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var message = await _context.Messages
+                .Include(m => m.Conversation)
+                .FirstOrDefaultAsync(m => m.Id == messageId);
+
+            if (message == null)
+                return NotFound();
+
+            if (message.Conversation.User1Id != userId && message.Conversation.User2Id != userId)
+                return Unauthorized();
+
+            _context.Messages.Remove(message);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
 
         // 🧩 Widget – messages
         [HttpGet]

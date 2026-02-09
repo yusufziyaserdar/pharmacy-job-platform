@@ -1,12 +1,24 @@
 ﻿@model PharmacyJobPlatform.Web.Models.ViewModels.MessagesInboxViewModel
 
-<div class="container mt-4">
-    <h3 class="mb-4"><i class="bi bi-chat-dots me-2"></i>Mesajlar</h3>
+@section Styles {
+    <link rel="stylesheet" href="~/css/messages-index.css" />
+}
+
+<div class="container mt-4 messages-page">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="mb-1"><i class="bi bi-chat-dots me-2"></i>Mesajlar</h3>
+            <p class="text-muted mb-0">Konuşmalarınızı görüntüleyin ve yönetin.</p>
+        </div>
+        <button class="btn btn-outline-primary btn-sm" onclick="refreshInboxConversations()">
+            <i class="bi bi-arrow-repeat"></i> Yenile
+        </button>
+    </div>
 
     @if (Model.IncomingRequests.Any())
     {
         <div class="mb-4">
-            <h5><i class="bi bi-envelope-paper me-2"></i>Gelen Mesaj İstekleri</h5>
+            <h5 class="mb-3"><i class="bi bi-envelope-paper me-2"></i>Gelen Mesaj İstekleri</h5>
             <div class="list-group">
                 @foreach (var request in Model.IncomingRequests)
                 {
@@ -41,42 +53,64 @@
         </div>
     }
 
-    @if (!Model.Conversations.Any())
-    {
-        <div class="alert alert-info">
-            Henüz bir mesajlaşmanız yok.
-        </div>
-    }
-    else
-    {
-        <div class="list-group">
-            @foreach (var conv in Model.Conversations)
-            {
-
-
-                 <a asp-controller="Profile"
-                   asp-action="Index"
-                   asp-route-id="@conv.OtherUserId"
-                   class="fw-bold text-decoration-none">
-                    @conv.OtherUserFullName
-                </a>
-                <a asp-action="Chat"
-                   asp-route-id="@conv.ConversationId"
-                   class="list-group-item list-group-item-action d-flex justify-content-between">
-
-
-                        <small class="text-muted">@conv.LastMessage</small>
-
-
-                    @if (conv.UnreadCount > 0)
+    <div class="messages-layout">
+        <aside class="messages-sidebar">
+            <div class="messages-sidebar-header">
+                <span>Konuşmalar</span>
+                <span class="text-muted small">@Model.Conversations.Count()</span>
+            </div>
+            <div class="messages-sidebar-body" id="inboxConversations">
+                @if (!Model.Conversations.Any())
+                {
+                    <div class="messages-empty">
+                        <i class="bi bi-chat-left"></i>
+                        <p>Henüz bir mesajlaşmanız yok.</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var conv in Model.Conversations)
                     {
-                        <span class="badge bg-danger rounded-pill">
-                            @conv.UnreadCount
-                        </span>
+                        <div class="messages-conversation"
+                             data-id="@conv.ConversationId"
+                             data-name="@conv.OtherUserFullName"
+                             data-profile="/Profile/@conv.OtherUserId"
+                             onclick="openInboxConversation(@conv.ConversationId)">
+                            <div class="messages-avatar">
+                                @(string.IsNullOrWhiteSpace(conv.OtherUserFullName) ? "?" : conv.OtherUserFullName.Substring(0, 1))
+                            </div>
+                            <div class="messages-conversation-body">
+                                <div class="messages-conversation-title">@conv.OtherUserFullName</div>
+                                <div class="messages-conversation-preview">@conv.LastMessage</div>
+                            </div>
+                            <div class="messages-conversation-actions">
+                                @if (conv.UnreadCount > 0)
+                                {
+                                    <span class="badge bg-danger rounded-pill">@conv.UnreadCount</span>
+                                }
+                                <button class="btn btn-sm btn-light"
+                                        onclick="event.stopPropagation(); deleteConversation(@conv.ConversationId)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     }
-                </a>
-            }
+                }
+            </div>
+        </aside>
 
-        </div>
-    }
+        <section class="messages-thread" id="inboxThread">
+            <div class="messages-empty">
+                <i class="bi bi-chat-square-text"></i>
+                <p>Bir konuşma seçerek mesajları görüntüleyin.</p>
+            </div>
+        </section>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/messages-index.js"></script>
+    <script>
+        window.initialConversationId = @(Model.Conversations.Any() ? Model.Conversations.First().ConversationId : 0);
+    </script>
+}

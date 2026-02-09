@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\css\\chat-widget.css"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\messages-index.css",
+      "PackagePath": "staticwebassets\\css\\messages-index.css"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
@@ -95,6 +99,10 @@
     {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\chat-page.js",
       "PackagePath": "staticwebassets\\js\\chat-page.js"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\messages-index.js",
+      "PackagePath": "staticwebassets\\js\\messages-index.js"
     },
     {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\site.js",

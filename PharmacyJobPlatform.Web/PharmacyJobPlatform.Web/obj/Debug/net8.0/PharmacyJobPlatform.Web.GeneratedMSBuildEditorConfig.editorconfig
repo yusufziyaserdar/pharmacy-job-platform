@@ -98,6 +98,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcX0NoYXRTaW5nbGVNZXNzYWdlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/Messages/_InboxMessages.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWVzc2FnZXNcX0luYm94TWVzc2FnZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/user/Desktop/pharmacy-job-platform/PharmacyJobPlatform.Web/pharmacyjobplatform.web/Views/PharmacyApplications/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhhcm1hY3lBcHBsaWNhdGlvbnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

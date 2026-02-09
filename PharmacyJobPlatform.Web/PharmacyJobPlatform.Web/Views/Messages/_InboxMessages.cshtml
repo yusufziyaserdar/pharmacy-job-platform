@@ -1,0 +1,53 @@
+﻿@model PharmacyJobPlatform.Domain.Entities.Conversation
+@using System.Security.Claims
+
+@{
+    int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+    var otherUser =
+        Model.User1Id == userId ? Model.User2 : Model.User1;
+}
+
+<div class="messages-thread-header">
+    <div class="d-flex align-items-center gap-2">
+        <span class="messages-avatar">
+            @(string.Concat(otherUser.FirstName?.FirstOrDefault(), otherUser.LastName?.FirstOrDefault()).ToUpper())
+        </span>
+        <div>
+            <a asp-controller="Profile"
+               asp-action="Index"
+               asp-route-id="@otherUser.Id"
+               class="messages-name">
+                @otherUser.FirstName @otherUser.LastName
+            </a>
+            <div class="messages-subtitle">Son mesajlar</div>
+        </div>
+    </div>
+    <button class="btn btn-sm btn-outline-danger"
+            onclick="deleteConversation(@Model.Id)">
+        <i class="bi bi-trash"></i> Konuşmayı sil
+    </button>
+</div>
+
+<div class="messages-thread-body" id="messagesThreadBody">
+    @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+    {
+        bool mine = msg.SenderId == userId;
+        <div class="messages-bubble-row @(mine ? "is-mine" : "")">
+            <div class="messages-bubble">@msg.Content</div>
+            <button class="btn btn-sm btn-light messages-delete"
+                    onclick="deleteMessage(@msg.Id, @Model.Id)">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    }
+</div>
+
+<form class="messages-thread-footer" onsubmit="sendInboxMessage(event, @Model.Id)">
+    <div class="input-group">
+        <input id="inboxMessageInput"
+               class="form-control"
+               placeholder="Mesajınızı yazın..."
+               required />
+        <button class="btn btn-primary" type="submit">Gönder</button>
+    </div>
+</form>

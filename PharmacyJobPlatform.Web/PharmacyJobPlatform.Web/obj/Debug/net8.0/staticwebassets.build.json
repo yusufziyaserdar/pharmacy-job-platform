@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "p+wqknQYqW94dq24wpkgrd5C5CHzWay9iUVSXN6UxUQ=",
+  "Hash": "uvEFPNh8TrVoXDiwlvSjIrGPk3JU8AVt05IqKj7vc9c=",
   "Source": "PharmacyJobPlatform.Web",
   "BasePath": "_content/PharmacyJobPlatform.Web",
   "Mode": "Default",
@@ -72,6 +72,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\chat-widget.css"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\messages-index.css",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "css/messages-index.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\messages-index.css"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\site.css",
@@ -490,6 +509,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\chat-page.js"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\messages-index.js",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "js/messages-index.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\messages-index.js"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\js\\site.js",
