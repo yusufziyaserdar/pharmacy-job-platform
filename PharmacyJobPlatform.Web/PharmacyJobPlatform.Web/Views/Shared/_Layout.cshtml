@@ -175,7 +175,10 @@
         @RenderBody()
     </main>
 
-    @await Component.InvokeAsync("ChatWidget")
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        @await Component.InvokeAsync("ChatWidget")
+    }
 
     <!-- 🔹 FOOTER -->
     <footer class="bg-light text-center py-3 mt-5 border-top">
@@ -198,9 +201,12 @@
 
 
 
-    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.14/dist/browser/signalr.min.js"></script>
-    <script src="~/js/chat-connection.js"></script>
-    <script src="~/js/chat-widget.js"></script>
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.14/dist/browser/signalr.min.js"></script>
+        <script src="~/js/chat-connection.js"></script>
+        <script src="~/js/chat-widget.js"></script>
+    }
 
 
 
