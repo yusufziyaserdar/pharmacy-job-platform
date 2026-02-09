@@ -8,7 +8,7 @@
 <div class="container mt-4">
 
     <h3 class="mb-4">
-        🏥 Eczane Paneli
+        <i class="bi bi-hospital me-2"></i>Eczane Paneli
     </h3>
 
     <!-- 🔹 STAT CARDS -->
@@ -53,11 +53,11 @@
     <!-- 🔹 QUICK ACTIONS -->
     <div class="mb-4">
         <a asp-controller="JobPosts" asp-action="Create" class="btn btn-primary me-2">
-            ➕ Yeni İlan Oluştur
+            <i class="bi bi-plus-circle me-2"></i>Yeni İlan Oluştur
         </a>
 
         <a asp-controller="JobPosts" asp-action="MyPosts" class="btn btn-outline-secondary">
-            📋 İlanlarım
+            <i class="bi bi-card-list me-2"></i>İlanlarım
         </a>
     </div>
 
@@ -67,7 +67,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
                 <div class="card-header fw-bold">
-                    📋 Son İlanlar
+                    <i class="bi bi-card-list me-2"></i>Son İlanlar
                 </div>
                 <ul class="list-group list-group-flush">
                     @if (recentPosts?.Any() == true)
@@ -96,7 +96,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm mb-4">
                 <div class="card-header fw-bold">
-                    📥 Son Başvurular
+                    <i class="bi bi-inbox-arrow-down me-2"></i>Son Başvurular
                 </div>
                 <ul class="list-group list-group-flush">
                     @if (recentApps?.Any() == true)

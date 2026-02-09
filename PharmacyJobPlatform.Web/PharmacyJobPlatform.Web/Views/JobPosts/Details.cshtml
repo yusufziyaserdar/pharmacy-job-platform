@@ -42,8 +42,12 @@
             }
 
             <div class="text-end">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">✏️ Düzenle</a>
-                <a asp-action="MyPosts" class="btn btn-secondary">⬅ Geri</a>
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil me-2"></i>Düzenle
+                </a>
+                <a asp-action="MyPosts" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Geri
+                </a>
             </div>
         </div>
     </div>

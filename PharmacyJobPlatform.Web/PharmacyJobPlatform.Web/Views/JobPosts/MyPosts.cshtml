@@ -8,10 +8,10 @@
 <div class="container mt-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>📋 Benim İş İlanlarım</h3>
+        <h3><i class="bi bi-card-list me-2"></i>Benim İş İlanlarım</h3>
 
         <a asp-action="Create" class="btn btn-primary">
-            ➕ Yeni İlan Oluştur
+            <i class="bi bi-plus-circle me-2"></i>Yeni İlan Oluştur
         </a>
     </div>
 
@@ -86,19 +86,19 @@
                             <td class="text-end">
                                 <a asp-action="Details" asp-route-id="@post.Id"
                                    class="btn btn-sm btn-outline-secondary">
-                                    👁
+                                    <i class="bi bi-eye"></i>
                                 </a>
 
                                 <a asp-action="Edit" asp-route-id="@post.Id"
                                    class="btn btn-sm btn-outline-primary">
-                                    ✏️
+                                    <i class="bi bi-pencil"></i>
                                 </a>
 
                                 <a asp-controller="PharmacyApplications"
                                    asp-action="JobApplications"
                                    asp-route-jobPostId="@post.Id"
                                    class="btn btn-sm btn-outline-success">
-                                    📥 Başvurular
+                                    <i class="bi bi-inbox-arrow-down me-2"></i>Başvurular
                                 </a>
 
                             </td>

@@ -1,12 +1,12 @@
 ﻿@model PharmacyJobPlatform.Web.Models.ViewModels.MessagesInboxViewModel
 
 <div class="container mt-4">
-    <h3 class="mb-4">💬 Mesajlar</h3>
+    <h3 class="mb-4"><i class="bi bi-chat-dots me-2"></i>Mesajlar</h3>
 
     @if (Model.IncomingRequests.Any())
     {
         <div class="mb-4">
-            <h5>📩 Gelen Mesaj İstekleri</h5>
+            <h5><i class="bi bi-envelope-paper me-2"></i>Gelen Mesaj İstekleri</h5>
             <div class="list-group">
                 @foreach (var request in Model.IncomingRequests)
                 {

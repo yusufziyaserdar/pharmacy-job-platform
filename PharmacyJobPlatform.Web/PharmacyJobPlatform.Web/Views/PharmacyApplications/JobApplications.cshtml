@@ -9,7 +9,7 @@
 <div class="container mt-4">
 
     <h4 class="mb-4">
-        📥 @ViewBag.JobTitle — Başvurular
+        <i class="bi bi-inbox-arrow-down me-2"></i>@ViewBag.JobTitle — Başvurular
     </h4>
 
     @if (!Model.Any())
@@ -63,12 +63,12 @@
                                 {
                                     <form asp-action="Accept" method="post" class="d-inline">
                                         <input type="hidden" name="id" value="@app.ApplicationId" />
-                                        <button class="btn btn-sm btn-success">✔</button>
+                                        <button class="btn btn-sm btn-success"><i class="bi bi-check-lg"></i></button>
                                     </form>
 
                                     <form asp-action="Reject" method="post" class="d-inline">
                                         <input type="hidden" name="id" value="@app.ApplicationId" />
-                                        <button class="btn btn-sm btn-danger">✖</button>
+                                        <button class="btn btn-sm btn-danger"><i class="bi bi-x-lg"></i></button>
                                     </form>
                                 }
                             </td>
@@ -80,6 +80,6 @@
     }
 
     <a asp-controller="JobPosts" asp-action="MyPosts" class="btn btn-outline-secondary mt-3">
-        ← İlanlarıma Dön
+        <i class="bi bi-arrow-left me-2"></i>İlanlarıma Dön
     </a>
 </div>

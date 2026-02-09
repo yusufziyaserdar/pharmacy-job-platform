@@ -10,7 +10,7 @@
         <div class="card shadow-sm mt-4">
             <div class="card-body p-4">
 
-                <h3 class="mb-4 text-center">📄 Yeni İş İlanı Oluştur</h3>
+                <h3 class="mb-4 text-center"><i class="bi bi-file-earmark-text me-2"></i>Yeni İş İlanı Oluştur</h3>
 
                 <form method="post">
 
@@ -33,8 +33,8 @@
                         <label asp-for="JobType" class="form-label">İş Türü</label>
                         <select asp-for="JobType" class="form-select" id="jobType">
                             <option value="">Seçiniz</option>
-                            <option value="Permanent">🕒 Kalıcı</option>
-                            <option value="Daily">📆 Günlük</option>
+                            <option value="Permanent">Kalıcı</option>
+                            <option value="Daily">Günlük</option>
                         </select>
                         <span asp-validation-for="JobType" class="text-danger"></span>
                     </div>
@@ -43,7 +43,7 @@
 
                     <!-- Günlük -->
                     <div id="dailyFields" class="border rounded p-3 mb-3 bg-light" style="display:none">
-                        <h6>📆 Günlük İş</h6>
+                        <h6><i class="bi bi-calendar-event me-2"></i>Günlük İş</h6>
                         <div class="row">
                             <div class="col-md-6">
                                 <label asp-for="DailyWage">Günlük Ücret</label>
@@ -58,13 +58,13 @@
 
                     <!-- Kalıcı -->
                     <div id="permanentFields" class="border rounded p-3 mb-3 bg-light" style="display:none">
-                        <h6>🕒 Kalıcı İş</h6>
+                        <h6><i class="bi bi-clock me-2"></i>Kalıcı İş</h6>
                         <label asp-for="MonthlySalary">Aylık Maaş</label>
                         <input asp-for="MonthlySalary" class="form-control" />
                     </div>
 
                     <div class="text-end">
-                        <button class="btn btn-primary">💾 Kaydet</button>
+                        <button class="btn btn-primary"><i class="bi bi-floppy me-2"></i>Kaydet</button>
                     </div>
                 </form>
             </div>

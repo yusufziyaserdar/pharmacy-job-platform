@@ -47,13 +47,13 @@
                     </span>
 
                     <p class="mb-1">
-                        📧 @user.Email
+                        <i class="bi bi-envelope me-2"></i>@user.Email
                     </p>
 
                     @if (!string.IsNullOrEmpty(user.PhoneNumber))
                     {
                         <p class="mb-1">
-                            📞 @user.PhoneNumber
+                            <i class="bi bi-telephone me-2"></i>@user.PhoneNumber
                         </p>
                     }
 
@@ -68,7 +68,7 @@
                         <a asp-controller="Profile"
                            asp-action="Edit"
                            class="btn btn-outline-primary btn-sm float-end">
-                            ✏️ Profili Düzenle
+                            <i class="bi bi-pencil me-2"></i>Profili Düzenle
                         </a>
                     }
 
@@ -80,7 +80,7 @@
             <!-- ABOUT -->
             @if (!string.IsNullOrEmpty(user.About))
             {
-                <h5>📝 Hakkında</h5>
+                <h5><i class="bi bi-card-text me-2"></i>Hakkında</h5>
                 <p>@user.About</p>
                 <hr />
             }
@@ -88,7 +88,7 @@
             <!-- WORK EXPERIENCE -->
             @if (user.Role.Name == "Worker" && user.WorkExperiences?.Any() == true)
             {
-                <h5>🏥 Çalışma Geçmişi</h5>
+                <h5><i class="bi bi-hospital me-2"></i>Çalışma Geçmişi</h5>
 
                 <ul class="list-group mb-3">
                     @foreach (var exp in user.WorkExperiences.OrderByDescending(x => x.StartDate))
@@ -107,7 +107,7 @@
                 </ul>
 
                 <p class="fw-bold">
-                    ⏱ Toplam Deneyim:
+                    <i class="bi bi-stopwatch me-2"></i>Toplam Deneyim:
                     @if (years > 0)
                     {
                         @($"{years} yıl ")
@@ -130,7 +130,7 @@
                        asp-action="Chat"
                        asp-route-id="@Model.ConversationId.Value"
                        class="btn btn-primary">
-                        💬 Mesajlaşmaya Git
+                        <i class="bi bi-chat-dots me-2"></i>Mesajlaşmaya Git
                     </a>
                 }
                 else if (Model.IncomingRequestId.HasValue)
@@ -141,14 +141,14 @@
                           method="post"
                           class="d-inline">
                         <button type="submit" class="btn btn-success">
-                            ✅ Mesaj İsteğini Kabul Et
+                            <i class="bi bi-check-circle me-2"></i>Mesaj İsteğini Kabul Et
                         </button>
                     </form>
                 }
                 else if (Model.HasPendingOutgoingRequest)
                 {
                     <button class="btn btn-outline-secondary" disabled>
-                        ⏳ Mesaj İsteği Gönderildi
+                        <i class="bi bi-hourglass-split me-2"></i>Mesaj İsteği Gönderildi
                     </button>
                 }
                 else if (Model.CanSendRequest)
@@ -159,7 +159,7 @@
                           method="post"
                           class="d-inline">
                         <button type="submit" class="btn btn-primary">
-                            💬 Mesaj İsteği Gönder
+                            <i class="bi bi-chat-dots me-2"></i>Mesaj İsteği Gönder
                         </button>
                     </form>
                 }
