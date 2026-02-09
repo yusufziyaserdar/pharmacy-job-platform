@@ -32,7 +32,7 @@ function scrollThreadToBottom() {
 }
 
 function openInboxConversation(id) {
-    activeConversationId = id;
+    activeConversationId = Number(id);
     fetch(`/Messages/InboxMessages?conversationId=${id}`)
         .then(r => r.text())
         .then(html => {
@@ -42,6 +42,35 @@ function openInboxConversation(id) {
             }
             highlightConversation(id);
         });
+}
+
+function refreshInboxList() {
+    if (!inboxConversations) {
+        return;
+    }
+
+    fetch("/Messages/InboxConversations")
+        .then(r => r.text())
+        .then(html => {
+            inboxConversations.innerHTML = html;
+            if (activeConversationId) {
+                highlightConversation(activeConversationId);
+            }
+            const count = inboxConversations.querySelectorAll(".messages-conversation").length;
+            const countEl = document.getElementById("conversationCount");
+            if (countEl) {
+                countEl.textContent = count;
+            }
+        });
+}
+
+function refreshInboxConversation(conversationId) {
+    const normalizedId = Number(conversationId);
+    refreshInboxList();
+
+    if (activeConversationId && activeConversationId === normalizedId) {
+        openInboxConversation(normalizedId);
+    }
 }
 
 function sendInboxMessage(e, conversationId) {
@@ -129,9 +158,20 @@ window.sendInboxMessage = sendInboxMessage;
 window.deleteConversation = deleteConversation;
 window.deleteMessage = deleteMessage;
 window.refreshInboxConversations = refreshInboxConversations;
+window.refreshInboxConversation = refreshInboxConversation;
+window.refreshInboxList = refreshInboxList;
 
 if (window.initialConversationId && window.initialConversationId > 0) {
     openInboxConversation(window.initialConversationId);
 } else {
     setEmptyThread();
 }
+
+
+document.addEventListener("click", event => {
+    document.querySelectorAll(".messages-menu[open]").forEach(menu => {
+        if (!menu.contains(event.target)) {
+            menu.removeAttribute("open");
+        }
+    });
+});

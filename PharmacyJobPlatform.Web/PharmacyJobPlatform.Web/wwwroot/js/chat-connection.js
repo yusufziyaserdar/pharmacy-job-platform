@@ -27,14 +27,20 @@ async function refreshUnreadCount() {
 }
 
 connection.on("RefreshMessages", (conversationId) => {
+    const normalizedId = Number(conversationId);
     refreshUnreadCount();
 
     if (typeof window.refreshWidgetConversation === "function") {
         window.refreshWidgetConversation();
     }
 
+    if (typeof window.refreshInboxConversation === "function") {
+        window.refreshInboxConversation(normalizedId);
+    }
+
+
     if (typeof window.refreshChatMessages === "function" &&
-        window.currentConversationId === conversationId) {
+        Number(window.currentConversationId) === normalizedId) {
         window.refreshChatMessages();
     }
 });

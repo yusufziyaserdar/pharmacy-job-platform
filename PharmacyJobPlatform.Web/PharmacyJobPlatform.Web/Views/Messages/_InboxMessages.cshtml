@@ -18,14 +18,11 @@
                asp-route-id="@otherUser.Id"
                class="messages-name">
                 @otherUser.FirstName @otherUser.LastName
+                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
             </a>
             <div class="messages-subtitle">Son mesajlar</div>
         </div>
     </div>
-    <button class="btn btn-sm btn-outline-danger"
-            onclick="deleteConversation(@Model.Id)">
-        <i class="bi bi-trash"></i> Konuşmayı sil
-    </button>
 </div>
 
 <div class="messages-thread-body" id="messagesThreadBody">
@@ -34,10 +31,18 @@
         bool mine = msg.SenderId == userId;
         <div class="messages-bubble-row @(mine ? "is-mine" : "")">
             <div class="messages-bubble">@msg.Content</div>
-            <button class="btn btn-sm btn-light messages-delete"
-                    onclick="deleteMessage(@msg.Id, @Model.Id)">
-                <i class="bi bi-trash"></i>
-            </button>
+            <details class="messages-menu">
+                <summary class="messages-menu-toggle" aria-label="Mesaj seçenekleri">
+                    <i class="bi bi-three-dots"></i>
+                </summary>
+                <div class="messages-menu-body">
+                    <button class="messages-menu-item"
+                            type="button"
+                            onclick="deleteMessage(@msg.Id, @Model.Id)">
+                        Sil
+                    </button>
+                </div>
+            </details>
         </div>
     }
 </div>

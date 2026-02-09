@@ -28,36 +28,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var conversations = _context.Conversations
-                .Include(c => c.Messages)
-                .Include(c => c.User1)
-                .Include(c => c.User2)
-                .Where(c => c.User1Id == userId || c.User2Id == userId)
-                .Select(c => new InboxConversationViewModel
-                {
-                    ConversationId = c.Id,
-
-                    OtherUserId = c.User1Id == userId ? c.User2Id : c.User1Id,
-
-                    OtherUserFullName = c.User1Id == userId
-                        ? c.User2.FirstName + " " + c.User2.LastName
-                        : c.User1.FirstName + " " + c.User1.LastName,
-
-                    LastMessage = c.Messages
-                        .OrderByDescending(m => m.SentAt)
-                        .Select(m => m.Content)
-                        .FirstOrDefault(),
-
-                    LastMessageTime = c.Messages
-                        .OrderByDescending(m => m.SentAt)
-                        .Select(m => m.SentAt)
-                        .FirstOrDefault(),
-
-                    UnreadCount = c.Messages.Count(m =>
-                        !m.IsRead && m.SenderId != userId)
-                })
-                .OrderByDescending(x => x.LastMessageTime)
-                .ToList();
+            var conversations = GetInboxConversations(userId);
 
             var requests = _context.ConversationRequests
                 .Include(r => r.FromUser)
@@ -80,6 +51,14 @@ namespace PharmacyJobPlatform.Web.Controllers
             };
 
             return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult InboxConversations()
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var conversations = GetInboxConversations(userId);
+            return PartialView("_InboxConversations", conversations);
         }
 
         // 💬 Chat ekranı
@@ -422,6 +401,39 @@ namespace PharmacyJobPlatform.Web.Controllers
             return true;
         }
 
+        private List<InboxConversationViewModel> GetInboxConversations(int userId)
+        {
+            return _context.Conversations
+                .Include(c => c.Messages)
+                .Include(c => c.User1)
+                .Include(c => c.User2)
+                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Select(c => new InboxConversationViewModel
+                {
+                    ConversationId = c.Id,
+
+                    OtherUserId = c.User1Id == userId ? c.User2Id : c.User1Id,
+
+                    OtherUserFullName = c.User1Id == userId
+                        ? c.User2.FirstName + " " + c.User2.LastName
+                        : c.User1.FirstName + " " + c.User1.LastName,
+
+                    LastMessage = c.Messages
+                        .OrderByDescending(m => m.SentAt)
+                        .Select(m => m.Content)
+                        .FirstOrDefault(),
+
+                    LastMessageTime = c.Messages
+                        .OrderByDescending(m => m.SentAt)
+                        .Select(m => m.SentAt)
+                        .FirstOrDefault(),
+
+                    UnreadCount = c.Messages.Count(m =>
+                        !m.IsRead && m.SenderId != userId)
+                })
+                .OrderByDescending(x => x.LastMessageTime)
+                .ToList();
+        }
     }
 
 

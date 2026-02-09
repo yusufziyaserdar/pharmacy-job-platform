@@ -5,14 +5,15 @@
 .messages-layout {
     display: grid;
     grid-template-columns: minmax(260px, 340px) 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
     align-items: stretch;
 }
 
 .messages-sidebar {
-    background: #ffffff;
+    background: #f8f9fb;
     border-radius: 12px;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
     display: flex;
     flex-direction: column;
     min-height: 520px;
@@ -43,7 +44,7 @@
 }
 
 .messages-conversation:hover {
-    background: #f8f9fb;
+    background: #eef2f7;
 }
 
 .messages-conversation.active {
@@ -84,12 +85,14 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    position: relative;
 }
 
 .messages-thread {
     background: #ffffff;
     border-radius: 12px;
     border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
     display: flex;
     flex-direction: column;
     min-height: 520px;
@@ -107,6 +110,17 @@
     font-weight: 600;
     color: #212529;
     text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.messages-name i {
+    font-size: 0.85rem;
+}
+
+.messages-name:hover {
+    text-decoration: underline;
 }
 
 .messages-subtitle {
@@ -143,12 +157,59 @@
     color: #ffffff;
 }
 
-.messages-delete {
-    opacity: 0.6;
+.messages-menu {
+    position: relative;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
 }
 
-.messages-bubble-row:hover .messages-delete {
+.messages-menu[open],
+.messages-conversation:hover .messages-menu,
+.messages-bubble-row:hover .messages-menu {
     opacity: 1;
+    pointer-events: auto;
+}
+
+.messages-menu-toggle {
+    list-style: none;
+    border: none;
+    background: transparent;
+    padding: 0.15rem 0.35rem;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.messages-menu-toggle::-webkit-details-marker {
+    display: none;
+}
+
+.messages-menu-body {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.25rem);
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+    padding: 0.35rem;
+    min-width: 120px;
+    z-index: 10;
+}
+
+.messages-menu-item {
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 0.4rem 0.6rem;
+    text-align: left;
+    border-radius: 6px;
+    color: #dc3545;
+    font-weight: 500;
+}
+
+.messages-menu-item:hover {
+    background: #fff5f5;
 }
 
 .messages-thread-footer {

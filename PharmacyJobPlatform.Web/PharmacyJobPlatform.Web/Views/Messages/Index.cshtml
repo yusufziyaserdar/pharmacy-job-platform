@@ -57,45 +57,10 @@
         <aside class="messages-sidebar">
             <div class="messages-sidebar-header">
                 <span>Konuşmalar</span>
-                <span class="text-muted small">@Model.Conversations.Count()</span>
+                <span class="text-muted small" id="conversationCount">@Model.Conversations.Count()</span>
             </div>
             <div class="messages-sidebar-body" id="inboxConversations">
-                @if (!Model.Conversations.Any())
-                {
-                    <div class="messages-empty">
-                        <i class="bi bi-chat-left"></i>
-                        <p>Henüz bir mesajlaşmanız yok.</p>
-                    </div>
-                }
-                else
-                {
-                    @foreach (var conv in Model.Conversations)
-                    {
-                        <div class="messages-conversation"
-                             data-id="@conv.ConversationId"
-                             data-name="@conv.OtherUserFullName"
-                             data-profile="/Profile/@conv.OtherUserId"
-                             onclick="openInboxConversation(@conv.ConversationId)">
-                            <div class="messages-avatar">
-                                @(string.IsNullOrWhiteSpace(conv.OtherUserFullName) ? "?" : conv.OtherUserFullName.Substring(0, 1))
-                            </div>
-                            <div class="messages-conversation-body">
-                                <div class="messages-conversation-title">@conv.OtherUserFullName</div>
-                                <div class="messages-conversation-preview">@conv.LastMessage</div>
-                            </div>
-                            <div class="messages-conversation-actions">
-                                @if (conv.UnreadCount > 0)
-                                {
-                                    <span class="badge bg-danger rounded-pill">@conv.UnreadCount</span>
-                                }
-                                <button class="btn btn-sm btn-light"
-                                        onclick="event.stopPropagation(); deleteConversation(@conv.ConversationId)">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    }
-                }
+                @await Html.PartialAsync("_InboxConversations", Model.Conversations)
             </div>
         </aside>
 
