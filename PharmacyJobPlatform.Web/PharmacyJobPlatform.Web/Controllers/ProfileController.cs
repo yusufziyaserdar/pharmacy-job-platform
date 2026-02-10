@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
+using PharmacyJobPlatform.Domain.Enums;
 using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.Profile;
 using PharmacyJobPlatform.Web.Models.ViewModels;
@@ -41,6 +43,14 @@ namespace PharmacyJobPlatform.Web.Controllers
             bool canSendRequest = false;
             bool hasPendingOutgoingRequest = false;
             int? incomingRequestId = null;
+            bool canRateUser = false;
+            int? existingRating = null;
+
+            var ratingQuery = _context.UserRatings.Where(r => r.RatedUserId == user.Id);
+            var ratingCount = ratingQuery.Count();
+            decimal? averageRating = ratingCount > 0
+                ? Math.Round(ratingQuery.Average(r => (decimal)r.Stars), 1)
+                : null;
 
             if (viewerId.HasValue && viewerId.Value != user.Id)
             {
@@ -66,6 +76,16 @@ namespace PharmacyJobPlatform.Web.Controllers
 
                     canSendRequest = !hasPendingOutgoingRequest && !incomingRequestId.HasValue;
                 }
+
+                canRateUser = _context.JobApplications.Any(ja =>
+                    ja.Status == ApplicationStatus.Accepted &&
+                    ((ja.WorkerId == viewerId.Value && ja.JobPost.PharmacyOwnerId == user.Id)
+                    || (ja.WorkerId == user.Id && ja.JobPost.PharmacyOwnerId == viewerId.Value)));
+
+                existingRating = _context.UserRatings
+                    .Where(r => r.RaterId == viewerId.Value && r.RatedUserId == user.Id)
+                    .Select(r => (int?)r.Stars)
+                    .FirstOrDefault();
             }
 
             var vm = new ProfileDetailViewModel
@@ -74,7 +94,11 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ConversationId = conversationId,
                 CanSendRequest = canSendRequest,
                 HasPendingOutgoingRequest = hasPendingOutgoingRequest,
-                IncomingRequestId = incomingRequestId
+                IncomingRequestId = incomingRequestId,
+                AverageRating = averageRating,
+                RatingCount = ratingCount,
+                CanRateUser = canRateUser,
+                ExistingRating = existingRating
             };
 
             return View(vm);
@@ -208,6 +232,66 @@ namespace PharmacyJobPlatform.Web.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", new { id = user.Id });
+        }
+
+        [Authorize]
+        [HttpPost("Rate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(int ratedUserId, int stars)
+        {
+            var raterId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            if (raterId == ratedUserId)
+            {
+                TempData["Error"] = "Kendi profilinize puan veremezsiniz.";
+                return RedirectToAction("Index", new { id = ratedUserId });
+            }
+
+            if (stars < 1 || stars > 5)
+            {
+                TempData["Error"] = "Puan 1 ile 5 arasında olmalıdır.";
+                return RedirectToAction("Index", new { id = ratedUserId });
+            }
+
+            var ratedUserExists = await _context.Users.AnyAsync(u => u.Id == ratedUserId);
+            if (!ratedUserExists)
+            {
+                return NotFound();
+            }
+
+            var workedTogether = await _context.JobApplications.AnyAsync(ja =>
+                ja.Status == ApplicationStatus.Accepted &&
+                ((ja.WorkerId == raterId && ja.JobPost.PharmacyOwnerId == ratedUserId)
+                || (ja.WorkerId == ratedUserId && ja.JobPost.PharmacyOwnerId == raterId)));
+
+            if (!workedTogether)
+            {
+                TempData["Error"] = "Sadece birlikte çalıştığınız kullanıcılara puan verebilirsiniz.";
+                return RedirectToAction("Index", new { id = ratedUserId });
+            }
+
+            var existingRating = await _context.UserRatings
+                .FirstOrDefaultAsync(r => r.RaterId == raterId && r.RatedUserId == ratedUserId);
+
+            if (existingRating == null)
+            {
+                _context.UserRatings.Add(new UserRating
+                {
+                    RaterId = raterId,
+                    RatedUserId = ratedUserId,
+                    Stars = stars
+                });
+            }
+            else
+            {
+                existingRating.Stars = stars;
+                existingRating.UpdatedAt = DateTime.UtcNow;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Değerlendirmeniz kaydedildi.";
+
+            return RedirectToAction("Index", new { id = ratedUserId });
         }
 
 

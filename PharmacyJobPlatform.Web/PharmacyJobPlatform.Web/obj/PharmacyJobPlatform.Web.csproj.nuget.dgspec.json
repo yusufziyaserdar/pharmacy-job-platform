@@ -122,14 +122,14 @@
         }
       }
     },
-    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
+    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
         "projectName": "PharmacyJobPlatform.Infrastructure",
-        "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -254,8 +254,8 @@
               "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Domain\\PharmacyJobPlatform.Domain.csproj": {
                 "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Domain\\PharmacyJobPlatform.Domain.csproj"
               },
-              "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj"
+              "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj"
               }
             }
           }

@@ -41,5 +41,11 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public ICollection<WorkExperience> WorkExperiences { get; set; }
             = new List<WorkExperience>();
+
+        public ICollection<UserRating> RatingsGiven { get; set; }
+            = new List<UserRating>();
+
+        public ICollection<UserRating> RatingsReceived { get; set; }
+            = new List<UserRating>();
     }
 }

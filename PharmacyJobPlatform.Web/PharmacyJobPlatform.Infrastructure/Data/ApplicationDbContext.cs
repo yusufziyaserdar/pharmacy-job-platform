@@ -19,6 +19,7 @@ namespace PharmacyJobPlatform.Infrastructure.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<ConversationRequest> ConversationRequests { get; set; }
         public DbSet<WorkExperience> WorkExperiences { get; set; }
+        public DbSet<UserRating> UserRatings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -95,6 +96,25 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 .WithMany(u => u.WorkExperiences)
                 .HasForeignKey(w => w.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // ============================
+            // UserRating
+            // ============================
+            modelBuilder.Entity<UserRating>()
+                .HasOne(r => r.Rater)
+                .WithMany(u => u.RatingsGiven)
+                .HasForeignKey(r => r.RaterId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserRating>()
+                .HasOne(r => r.RatedUser)
+                .WithMany(u => u.RatingsReceived)
+                .HasForeignKey(r => r.RatedUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserRating>()
+                .HasIndex(r => new { r.RaterId, r.RatedUserId })
+                .IsUnique();
         }
     }
 }
