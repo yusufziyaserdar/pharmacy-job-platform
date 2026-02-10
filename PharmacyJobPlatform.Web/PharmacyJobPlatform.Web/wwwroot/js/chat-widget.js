@@ -1,8 +1,18 @@
-﻿const panel = document.getElementById("chatPanel");
+const panel = document.getElementById("chatPanel");
 const toggleButton = document.getElementById("chat-toggle");
 const closeButton = document.getElementById("chat-close");
 const widgetStorageKey = "chatWidgetOpen";
 let widgetConversationId = null;
+
+function escapeHtml(value) {
+    return (value ?? "")
+        .toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
 
 function setWidgetOpenState(isOpen) {
     if (!panel) {
@@ -43,28 +53,38 @@ function loadConversations() {
         .then(r => r.json())
         .then(data => {
             const box = document.getElementById("chat-messages");
-            scrollWidgetToBottom();
             box.innerHTML = "";
             widgetConversationId = null;
 
+            if (!data.length) {
+                box.innerHTML = '<div class="chat-placeholder text-center pt-4">Henüz konuşma yok.</div>';
+                return;
+            }
+
+            const list = document.createElement("div");
+            list.className = "chat-list";
+
             data.forEach(c => {
-                box.innerHTML += `
-    <div class="border-bottom p-2"
-         style="cursor:pointer"
-         onclick="openConversation(${c.conversationId})">
+                const item = document.createElement("button");
+                item.type = "button";
+                item.className = "chat-list-item";
+                item.onclick = () => openConversation(c.conversationId);
 
-        <strong>
-            <a href="/Profile/${c.otherUserId}"
-               class="text-decoration-none"
-               onclick="event.stopPropagation()">
-                ${c.otherUserName}
-            </a>
-        </strong><br/>
+                const safeName = escapeHtml(c.otherUserName);
+                const safePreview = escapeHtml(c.lastMessage || "Mesaj bulunmuyor");
 
-        <small>${c.lastMessage ?? ""}</small>
-    </div>`;
+                item.innerHTML = `
+                    <strong>
+                        <a href="/Profile/${c.otherUserId}" class="chat-user-link" onclick="event.stopPropagation()">
+                            ${safeName}
+                        </a>
+                    </strong>
+                    <small class="chat-last-message">${safePreview}</small>`;
 
+                list.appendChild(item);
             });
+
+            box.appendChild(list);
         });
 }
 

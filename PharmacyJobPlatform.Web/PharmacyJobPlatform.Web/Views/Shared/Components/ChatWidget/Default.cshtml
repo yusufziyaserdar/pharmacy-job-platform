@@ -1,15 +1,21 @@
 ﻿<div id="chat-widget">
+    <button id="chat-toggle" class="btn btn-primary chat-toggle" aria-label="Mesajlar">
+        <i class="bi bi-chat-dots"></i>
+    </button>
 
-    <button id="chat-toggle" class="btn btn-primary chat-toggle"><i class="bi bi-chat-dots"></i></button>
-
-    <div id="chatPanel" class="chat-panel card shadow d-none">
-
-        <div class="card-header d-flex justify-content-between">
-            <strong>Mesajlar</strong>
-            <button id="chat-close" class="btn-close"></button>
+    <div id="chatPanel" class="chat-panel card shadow d-none" role="dialog" aria-label="Mesaj widget">
+        <div class="chat-panel-header d-flex justify-content-between align-items-center">
+            <div>
+                <p class="chat-panel-title">Mesajlar</p>
+                <p class="chat-panel-subtitle">Hızlıca konuşmana devam et</p>
+            </div>
+            <button id="chat-close" class="chat-close" aria-label="Kapat">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
 
-        <div id="chat-messages" class="p-2"></div>
-
+        <div id="chat-messages" class="chat-content p-2">
+            <div class="chat-placeholder text-center pt-4">Sohbetler yükleniyor...</div>
+        </div>
     </div>
 </div>
