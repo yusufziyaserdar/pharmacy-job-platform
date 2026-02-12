@@ -5,6 +5,10 @@
       "PackagePath": "staticwebassets\\PharmacyJobPlatform.Web.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\admin-panel.css",
+      "PackagePath": "staticwebassets\\css\\admin-panel.css"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\chat-widget.css",
       "PackagePath": "staticwebassets\\css\\chat-widget.css"
     },

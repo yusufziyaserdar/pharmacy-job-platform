@@ -107,6 +107,15 @@
                             </li>
                         }
 
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Index">
+                                    <i class="fa-solid fa-shield-halved"></i> Admin Paneli
+                                </a>
+                            </li>
+                        }
+
                         <!-- Pharmacy Menü -->
                         @if (User.IsInRole("PharmacyOwner"))
                         {

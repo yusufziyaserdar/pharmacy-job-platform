@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "uvEFPNh8TrVoXDiwlvSjIrGPk3JU8AVt05IqKj7vc9c=",
+  "Hash": "5HHS03KWp6MWD54xeiQHbIVmJj+smkowptu4cazR0as=",
   "Source": "PharmacyJobPlatform.Web",
   "BasePath": "_content/PharmacyJobPlatform.Web",
   "Mode": "Default",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\PharmacyJobPlatform.Web.bundle.scp.css"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\admin-panel.css",
+      "SourceId": "PharmacyJobPlatform.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\",
+      "BasePath": "_content/PharmacyJobPlatform.Web",
+      "RelativePath": "css/admin-panel.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\admin-panel.css"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\css\\chat-widget.css",

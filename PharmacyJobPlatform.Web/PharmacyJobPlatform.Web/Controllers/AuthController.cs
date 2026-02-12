@@ -69,6 +69,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             return user.Role.Name switch
             {
                 "PharmacyOwner" => RedirectToAction("Index", "PharmacyDashboard"),
+                "Admin" => RedirectToAction("Index", "Admin"),
                 _ => RedirectToAction("Index", "WorkerDashboard")
             };
         }

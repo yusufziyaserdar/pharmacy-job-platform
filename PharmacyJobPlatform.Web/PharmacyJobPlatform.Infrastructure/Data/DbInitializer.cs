@@ -11,13 +11,20 @@ namespace PharmacyJobPlatform.Infrastructure.Data
     {
         public static async Task SeedRolesAsync(ApplicationDbContext context)
         {
-            if (!context.Roles.Any())
-            {
-                context.Roles.AddRange(
-                    new Role { Name = "Worker" },
-                    new Role { Name = "PharmacyOwner" }
-                );
+            var requiredRoles = new[] { "Worker", "PharmacyOwner", "Admin" };
 
+            var existingRoles = context.Roles
+                .Select(r => r.Name)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var missingRoles = requiredRoles
+                .Where(roleName => !existingRoles.Contains(roleName))
+                .Select(roleName => new Role { Name = roleName })
+                .ToList();
+
+            if (missingRoles.Count > 0)
+            {
+                context.Roles.AddRange(missingRoles);
                 await context.SaveChangesAsync();
             }
         }

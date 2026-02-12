@@ -1,0 +1,55 @@
+.admin-panel {
+    background: linear-gradient(145deg, #111 0%, #1f1f1f 55%, #2a2a2a 100%);
+    color: #f4f4f4;
+    border: 1px solid #3f3f3f;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.admin-title {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.admin-stat-card {
+    background: #1a1a1a;
+    border: 1px solid #3d3d3d;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+}
+
+.admin-stat-card small {
+    color: #bdbdbd;
+}
+
+.admin-stat-card h3 {
+    margin: 0.2rem 0 0;
+    color: #fff;
+}
+
+.admin-tabs .nav-link {
+    color: #ddd;
+    background: #252525;
+    border-color: #404040;
+}
+
+.admin-tabs .nav-link.active {
+    color: #111;
+    background: #f5f5f5;
+    border-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.admin-content {
+    border: 1px solid #3d3d3d;
+    border-top: none;
+    background: #161616;
+    padding: 0.75rem;
+}
+
+.admin-comment-text {
+    max-width: 460px;
+    white-space: normal;
+}
