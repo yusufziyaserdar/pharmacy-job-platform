@@ -21,5 +21,7 @@ namespace PharmacyJobPlatform.Web.Models.Profile
         public bool CanRateUser { get; set; }
 
         public int? ExistingRating { get; set; }
+
+        public List<ProfileCommentItemViewModel> Comments { get; set; } = new();
     }
 }

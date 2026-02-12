@@ -44,6 +44,49 @@
         .rating-star.is-active {
             color: #ffc107;
         }
+
+        .comments-section {
+            background: linear-gradient(145deg, #f8fbff 0%, #eef4ff 100%);
+            border: 1px solid #dce8ff;
+            border-radius: 1rem;
+            padding: 1.25rem;
+        }
+
+        .comment-card,
+        .reply-card {
+            background: #fff;
+            border: 1px solid #e6ebf5;
+            border-radius: 0.9rem;
+            padding: 1rem;
+        }
+
+        .reply-list {
+            border-left: 3px solid #e2e8f6;
+            margin-left: 1rem;
+            padding-left: 1rem;
+        }
+
+        .comment-meta {
+            color: #7a8799;
+            font-size: 0.9rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #253347;
+        }
+
+        .comment-text {
+            white-space: pre-line;
+        }
+
+        .reply-form {
+            display: none;
+        }
+
+        .reply-form.show {
+            display: block;
+        }
     </style>
 }
 
@@ -114,6 +157,50 @@
                         </a>
                     }
 
+                    <!-- MESAJ -->
+                    @if (User.Identity?.IsAuthenticated == true && user.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
+                    {
+                        if (Model.ConversationId.HasValue)
+                        {
+                            <a asp-controller="Messages"
+                               asp-action="Chat"
+                               asp-route-id="@Model.ConversationId.Value"
+                               class="btn btn-primary">
+                                <i class="bi bi-chat-dots me-2"></i>Mesajlaşmaya Git
+                            </a>
+                        }
+                        else if (Model.IncomingRequestId.HasValue)
+                        {
+                            <form asp-controller="Messages"
+                                  asp-action="AcceptRequest"
+                                  asp-route-requestId="@Model.IncomingRequestId.Value"
+                                  method="post"
+                                  class="d-inline">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Mesaj İsteğini Kabul Et
+                                </button>
+                            </form>
+                        }
+                        else if (Model.HasPendingOutgoingRequest)
+                        {
+                            <button class="btn btn-outline-secondary" disabled>
+                                <i class="bi bi-hourglass-split me-2"></i>Mesaj İsteği Gönderildi
+                            </button>
+                        }
+                        else if (Model.CanSendRequest)
+                        {
+                            <form asp-controller="Messages"
+                                  asp-action="Start"
+                                  asp-route-userId="@user.Id"
+                                  method="post"
+                                  class="d-inline">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-chat-dots me-2"></i>Mesaj İsteği Gönder
+                                </button>
+                            </form>
+                        }
+                    }
+
                 </div>
             </div>
 
@@ -126,6 +213,43 @@
                 <p>@user.About</p>
                 <hr />
             }
+
+            <!-- WORK EXPERIENCE -->
+            @if (user.Role.Name == "Worker" && user.WorkExperiences?.Any() == true)
+            {
+                <h5><i class="bi bi-hospital me-2"></i>Çalışma Geçmişi</h5>
+
+                <ul class="list-group mb-3">
+                    @foreach (var exp in user.WorkExperiences.OrderByDescending(x => x.StartDate))
+                    {
+                        <li class="list-group-item">
+                            <strong>@exp.PharmacyName</strong><br />
+                            <small class="text-muted">
+                                @exp.StartDate.ToString("MM/yyyy")
+                                -
+                                @(exp.EndDate.HasValue
+                                    ? exp.EndDate.Value.ToString("MM/yyyy")
+                                    : "Devam ediyor")
+                            </small>
+                        </li>
+                    }
+                </ul>
+
+                <p class="fw-bold">
+                    <i class="bi bi-stopwatch me-2"></i>Toplam Deneyim:
+                    @if (years > 0)
+                    {
+                        @($"{years} yıl ")
+                    }
+                    @if (months > 0)
+                    {
+                        @($"{months} ay")
+                    }
+                </p>
+
+                <hr />
+            }
+
 
             <h5><i class="bi bi-star-fill me-2 text-warning"></i>Değerlendirme</h5>
 
@@ -140,6 +264,7 @@
             {
                 <p class="text-muted mb-2">Henüz değerlendirme yapılmamış.</p>
             }
+
 
             @if (Model.CanRateUser)
             {
@@ -180,85 +305,126 @@
 
             <hr />
 
-            <!-- WORK EXPERIENCE -->
-            @if (user.Role.Name == "Worker" && user.WorkExperiences?.Any() == true)
-            {
-                <h5><i class="bi bi-hospital me-2"></i>Çalışma Geçmişi</h5>
 
-                <ul class="list-group mb-3">
-                    @foreach (var exp in user.WorkExperiences.OrderByDescending(x => x.StartDate))
-                    {
-                        <li class="list-group-item">
-                            <strong>@exp.PharmacyName</strong><br />
-                            <small class="text-muted">
-                                @exp.StartDate.ToString("MM/yyyy")
-                                -
-                                @(exp.EndDate.HasValue
-                                    ? exp.EndDate.Value.ToString("MM/yyyy")
-                                    : "Devam ediyor")
-                            </small>
-                        </li>
-                    }
-                </ul>
 
-                <p class="fw-bold">
-                    <i class="bi bi-stopwatch me-2"></i>Toplam Deneyim:
-                    @if (years > 0)
-                    {
-                        @($"{years} yıl ")
-                    }
-                    @if (months > 0)
-                    {
-                        @($"{months} ay")
-                    }
-                </p>
+            <section class="comments-section mb-4">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-square-quote me-2 text-primary"></i>Profil Yorumları
+                    </h5>
+                    <span class="badge bg-light text-dark border">@Model.Comments.Count yorum</span>
+                </div>
 
-                <hr />
-            }
-
-            <!-- MESAJ -->
-            @if (User.Identity?.IsAuthenticated == true && user.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
-            {
-                if (Model.ConversationId.HasValue)
+                @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <a asp-controller="Messages"
-                       asp-action="Chat"
-                       asp-route-id="@Model.ConversationId.Value"
-                       class="btn btn-primary">
-                        <i class="bi bi-chat-dots me-2"></i>Mesajlaşmaya Git
-                    </a>
-                }
-                else if (Model.IncomingRequestId.HasValue)
-                {
-                    <form asp-controller="Messages"
-                          asp-action="AcceptRequest"
-                          asp-route-requestId="@Model.IncomingRequestId.Value"
-                          method="post"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-2"></i>Mesaj İsteğini Kabul Et
-                        </button>
+                    <form asp-controller="Profile" asp-action="Comment" method="post" class="comment-card mb-3">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="profileUserId" value="@user.Id" />
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Yorumunuz</label>
+                            <textarea name="content" class="form-control" rows="3" maxlength="500" placeholder="Profil hakkında düşüncelerinizi paylaşın..." required></textarea>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="form-check m-0">
+                                <input class="form-check-input" type="checkbox" name="isAnonymous" id="newCommentAnonymous" value="true" />
+                                <label class="form-check-label" for="newCommentAnonymous">Anonim paylaş</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="bi bi-send me-1"></i>Yorumu Paylaş
+                            </button>
+                        </div>
                     </form>
                 }
-                else if (Model.HasPendingOutgoingRequest)
+                else
                 {
-                    <button class="btn btn-outline-secondary" disabled>
-                        <i class="bi bi-hourglass-split me-2"></i>Mesaj İsteği Gönderildi
-                    </button>
+                    <div class="alert alert-info mb-3">
+                        Yorum yapabilmek için giriş yapmanız gerekir.
+                    </div>
                 }
-                else if (Model.CanSendRequest)
+
+                @if (Model.Comments.Any())
                 {
-                    <form asp-controller="Messages"
-                          asp-action="Start"
-                          asp-route-userId="@user.Id"
-                          method="post"
-                          class="d-inline">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-chat-dots me-2"></i>Mesaj İsteği Gönder
-                        </button>
-                    </form>
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <article class="comment-card">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                    <div>
+                                        <div class="comment-author">@comment.AuthorDisplayName</div>
+                                        <div class="comment-meta">@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+                                    @if (comment.IsAnonymous)
+                                    {
+                                        <span class="badge text-bg-secondary">Anonim</span>
+                                    }
+                                </div>
+                                <p class="comment-text mb-2">@comment.Content</p>
+
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <button type="button"
+                                            class="btn btn-link btn-sm p-0 text-decoration-none reply-toggle"
+                                            data-target="reply-form-@comment.Id">
+                                        <i class="bi bi-reply me-1"></i>Yanıtla
+                                    </button>
+
+                                    <form asp-controller="Profile"
+                                          asp-action="Reply"
+                                          method="post"
+                                          id="reply-form-@comment.Id"
+                                          class="reply-form mt-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="profileUserId" value="@user.Id" />
+                                        <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                                        <div class="reply-card">
+                                            <textarea name="content" class="form-control mb-2" rows="2" maxlength="500" placeholder="Yanıtınızı yazın..." required></textarea>
+                                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                                <div class="form-check m-0">
+                                                    <input class="form-check-input" type="checkbox" name="isAnonymous" id="replyAnonymous-@comment.Id" value="true" />
+                                                    <label class="form-check-label" for="replyAnonymous-@comment.Id">Anonim</label>
+                                                </div>
+                                                <button type="submit" class="btn btn-outline-primary btn-sm">Yanıt Gönder</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+
+                                @if (comment.Replies.Any())
+                                {
+                                    <div class="reply-list mt-3 d-flex flex-column gap-2">
+                                        @foreach (var reply in comment.Replies)
+                                        {
+                                            <article class="reply-card">
+                                                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                                    <div>
+                                                        <div class="comment-author">@reply.AuthorDisplayName</div>
+                                                        <div class="comment-meta">@reply.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+                                                    </div>
+                                                    @if (reply.IsAnonymous)
+                                                    {
+                                                        <span class="badge text-bg-secondary">Anonim</span>
+                                                    }
+                                                </div>
+                                                <p class="comment-text mb-0">@reply.Content</p>
+                                            </article>
+                                        }
+                                    </div>
+                                }
+                            </article>
+                        }
+                    </div>
                 }
-            }
+                else
+                {
+                    <p class="text-muted mb-0">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
+                }
+            </section>
+
+            <hr />
+
+
+
+
 
         </div>
     </div>
@@ -271,43 +437,58 @@
             const starsInput = document.getElementById("stars");
             const ratingForm = document.getElementById("ratingForm");
 
-            if (!ratingStars || !starsInput || !ratingForm) {
-                return;
-            }
+            if (ratingStars && starsInput && ratingForm) {
+                const starButtons = Array.from(ratingStars.querySelectorAll(".rating-star"));
+                let selectedRating = Number(ratingStars.dataset.selected || 0);
 
-            const starButtons = Array.from(ratingStars.querySelectorAll(".rating-star"));
-            let selectedRating = Number(ratingStars.dataset.selected || 0);
+                const renderStars = (activeCount) => {
+                    starButtons.forEach((starButton) => {
+                        const value = Number(starButton.dataset.value);
+                        starButton.classList.toggle("is-active", value <= activeCount);
+                    });
+                };
 
-            const renderStars = (activeCount) => {
+                renderStars(selectedRating);
+
                 starButtons.forEach((starButton) => {
-                    const value = Number(starButton.dataset.value);
-                    starButton.classList.toggle("is-active", value <= activeCount);
+                    starButton.addEventListener("mouseenter", () => {
+                        renderStars(Number(starButton.dataset.value));
+                    });
+
+                    starButton.addEventListener("click", () => {
+                        selectedRating = Number(starButton.dataset.value);
+                        starsInput.value = selectedRating;
+                        ratingStars.dataset.selected = selectedRating;
+                        renderStars(selectedRating);
+                    });
                 });
-            };
 
-            renderStars(selectedRating);
-
-            starButtons.forEach((starButton) => {
-                starButton.addEventListener("mouseenter", () => {
-                    renderStars(Number(starButton.dataset.value));
-                });
-
-                starButton.addEventListener("click", () => {
-                    selectedRating = Number(starButton.dataset.value);
-                    starsInput.value = selectedRating;
-                    ratingStars.dataset.selected = selectedRating;
+                ratingStars.addEventListener("mouseleave", () => {
                     renderStars(selectedRating);
                 });
-            });
 
-            ratingStars.addEventListener("mouseleave", () => {
-                renderStars(selectedRating);
-            });
+                ratingForm.addEventListener("submit", (event) => {
+                    if (selectedRating < 1 || selectedRating > 5) {
+                        event.preventDefault();
+                    }
+                });
+            }
 
-            ratingForm.addEventListener("submit", (event) => {
-                if (selectedRating < 1 || selectedRating > 5) {
-                    event.preventDefault();
-                }
+            const replyToggles = document.querySelectorAll(".reply-toggle");
+            replyToggles.forEach((toggleButton) => {
+                toggleButton.addEventListener("click", () => {
+                    const targetId = toggleButton.dataset.target;
+                    if (!targetId) {
+                        return;
+                    }
+
+                    const targetForm = document.getElementById(targetId);
+                    if (!targetForm) {
+                        return;
+                    }
+
+                    targetForm.classList.toggle("show");
+                });
             });
         })();
     </script>

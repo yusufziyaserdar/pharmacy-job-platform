@@ -20,6 +20,7 @@ namespace PharmacyJobPlatform.Infrastructure.Data
         public DbSet<ConversationRequest> ConversationRequests { get; set; }
         public DbSet<WorkExperience> WorkExperiences { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
+        public DbSet<ProfileComment> ProfileComments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -115,6 +116,28 @@ namespace PharmacyJobPlatform.Infrastructure.Data
             modelBuilder.Entity<UserRating>()
                 .HasIndex(r => new { r.RaterId, r.RatedUserId })
                 .IsUnique();
+
+
+            // ============================
+            // ProfileComment
+            // ============================
+            modelBuilder.Entity<ProfileComment>()
+                .HasOne(c => c.ProfileUser)
+                .WithMany(u => u.CommentsReceived)
+                .HasForeignKey(c => c.ProfileUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProfileComment>()
+                .HasOne(c => c.AuthorUser)
+                .WithMany(u => u.CommentsWritten)
+                .HasForeignKey(c => c.AuthorUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ProfileComment>()
+                .HasOne(c => c.ParentComment)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentCommentId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

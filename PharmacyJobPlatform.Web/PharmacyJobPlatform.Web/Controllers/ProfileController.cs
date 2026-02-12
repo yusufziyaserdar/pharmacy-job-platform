@@ -98,7 +98,8 @@ namespace PharmacyJobPlatform.Web.Controllers
                 AverageRating = averageRating,
                 RatingCount = ratingCount,
                 CanRateUser = canRateUser,
-                ExistingRating = existingRating
+                ExistingRating = existingRating,
+                Comments = GetProfileComments(user.Id)
             };
 
             return View(vm);
@@ -292,6 +293,118 @@ namespace PharmacyJobPlatform.Web.Controllers
             TempData["Success"] = "Değerlendirmeniz kaydedildi.";
 
             return RedirectToAction("Index", new { id = ratedUserId });
+        }
+
+        [Authorize]
+        [HttpPost("Comment")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Comment(int profileUserId, string content, bool isAnonymous)
+        {
+            var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            if (!await _context.Users.AnyAsync(u => u.Id == profileUserId))
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                TempData["Error"] = "Yorum metni boş olamaz.";
+                return RedirectToAction("Index", new { id = profileUserId });
+            }
+
+            _context.ProfileComments.Add(new ProfileComment
+            {
+                ProfileUserId = profileUserId,
+                AuthorUserId = authorId,
+                Content = content.Trim(),
+                IsAnonymous = isAnonymous
+            });
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Yorumunuz paylaşıldı.";
+
+            return RedirectToAction("Index", new { id = profileUserId });
+        }
+
+        [Authorize]
+        [HttpPost("Reply")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reply(int profileUserId, int parentCommentId, string content, bool isAnonymous)
+        {
+            var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var parentComment = await _context.ProfileComments
+                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.ProfileUserId == profileUserId && c.ParentCommentId == null);
+
+            if (parentComment == null)
+            {
+                TempData["Error"] = "Yanıtlanacak yorum bulunamadı.";
+                return RedirectToAction("Index", new { id = profileUserId });
+            }
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                TempData["Error"] = "Yanıt metni boş olamaz.";
+                return RedirectToAction("Index", new { id = profileUserId });
+            }
+
+            _context.ProfileComments.Add(new ProfileComment
+            {
+                ProfileUserId = profileUserId,
+                AuthorUserId = authorId,
+                ParentCommentId = parentCommentId,
+                Content = content.Trim(),
+                IsAnonymous = isAnonymous
+            });
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Yanıtınız paylaşıldı.";
+
+            return RedirectToAction("Index", new { id = profileUserId });
+        }
+
+        private List<ProfileCommentItemViewModel> GetProfileComments(int profileUserId)
+        {
+            var comments = _context.ProfileComments
+                .AsNoTracking()
+                .Where(c => c.ProfileUserId == profileUserId)
+                .Include(c => c.AuthorUser)
+                .OrderBy(c => c.CreatedAt)
+                .ToList();
+
+            var commentLookup = comments
+                .Select(c => new ProfileCommentItemViewModel
+                {
+                    Id = c.Id,
+                    ProfileUserId = c.ProfileUserId,
+                    AuthorUserId = c.AuthorUserId,
+                    AuthorDisplayName = c.IsAnonymous
+                        ? "Anonim"
+                        : $"{c.AuthorUser.FirstName} {c.AuthorUser.LastName}",
+                    IsAnonymous = c.IsAnonymous,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt
+                })
+                .ToDictionary(c => c.Id);
+
+            var roots = new List<ProfileCommentItemViewModel>();
+
+            foreach (var comment in comments)
+            {
+                var vm = commentLookup[comment.Id];
+
+                if (comment.ParentCommentId.HasValue && commentLookup.TryGetValue(comment.ParentCommentId.Value, out var parent))
+                {
+                    parent.Replies.Add(vm);
+                }
+                else
+                {
+                    roots.Add(vm);
+                }
+            }
+
+            return roots;
         }
 
 

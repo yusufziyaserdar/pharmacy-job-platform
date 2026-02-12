@@ -47,5 +47,11 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public ICollection<UserRating> RatingsReceived { get; set; }
             = new List<UserRating>();
+
+        public ICollection<ProfileComment> CommentsReceived { get; set; }
+            = new List<ProfileComment>();
+
+        public ICollection<ProfileComment> CommentsWritten { get; set; }
+            = new List<ProfileComment>();
     }
 }
