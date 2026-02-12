@@ -24,6 +24,29 @@
     int months = totalMonths % 12;
 }
 
+@section Styles {
+    <style>
+        .rating-stars {
+            display: inline-flex;
+            gap: 0.15rem;
+        }
+
+        .rating-star {
+            border: none;
+            background: transparent;
+            padding: 0;
+            color: #cfd4da;
+            font-size: 1.75rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .rating-star.is-active {
+            color: #ffc107;
+        }
+    </style>
+}
+
 <div class="container mt-4">
     @if (TempData["Success"] is string successMessage)
     {
@@ -123,30 +146,30 @@
                 <form asp-controller="Profile"
                       asp-action="Rate"
                       method="post"
-                      class="row g-2 align-items-center mb-2">
+                      class="row g-2 align-items-center mb-2"
+                      id="ratingForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="ratedUserId" value="@user.Id" />
+                    <input type="hidden" id="stars" name="stars" value="@(Model.ExistingRating ?? 0)" />
 
                     <div class="col-auto">
-                        <label for="stars" class="col-form-label">Puanınız:</label>
+                        <label class="col-form-label">Puanınız:</label>
                     </div>
                     <div class="col-auto">
-                        <select id="stars" name="stars" class="form-select form-select-sm">
+                        <div class="rating-stars" id="ratingStars" data-selected="@(Model.ExistingRating ?? 0)">
                             @for (int i = 1; i <= 5; i++)
                             {
-                                if (Model.ExistingRating == i)
-                                {
-                                    <option value="@i" selected>@i Yıldız</option>
-                                }
-                                else
-                                {
-                                    <option value="@i">@i Yıldız</option>
-                                }
+                                <button type="button"
+                                        class="rating-star"
+                                        data-value="@i"
+                                        aria-label="@i yıldız ver">
+                                    <i class="bi bi-star-fill"></i>
+                                </button>
                             }
-                        </select>
+                        </div>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-warning btn-sm">
+                        <button type="submit" class="btn btn-warning btn-sm" id="ratingSubmitButton">
                             <i class="bi bi-star me-1"></i>
                             @(Model.ExistingRating.HasValue ? "Puanı Güncelle" : "Puan Ver")
                         </button>
@@ -240,3 +263,52 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const ratingStars = document.getElementById("ratingStars");
+            const starsInput = document.getElementById("stars");
+            const ratingForm = document.getElementById("ratingForm");
+
+            if (!ratingStars || !starsInput || !ratingForm) {
+                return;
+            }
+
+            const starButtons = Array.from(ratingStars.querySelectorAll(".rating-star"));
+            let selectedRating = Number(ratingStars.dataset.selected || 0);
+
+            const renderStars = (activeCount) => {
+                starButtons.forEach((starButton) => {
+                    const value = Number(starButton.dataset.value);
+                    starButton.classList.toggle("is-active", value <= activeCount);
+                });
+            };
+
+            renderStars(selectedRating);
+
+            starButtons.forEach((starButton) => {
+                starButton.addEventListener("mouseenter", () => {
+                    renderStars(Number(starButton.dataset.value));
+                });
+
+                starButton.addEventListener("click", () => {
+                    selectedRating = Number(starButton.dataset.value);
+                    starsInput.value = selectedRating;
+                    ratingStars.dataset.selected = selectedRating;
+                    renderStars(selectedRating);
+                });
+            });
+
+            ratingStars.addEventListener("mouseleave", () => {
+                renderStars(selectedRating);
+            });
+
+            ratingForm.addEventListener("submit", (event) => {
+                if (selectedRating < 1 || selectedRating > 5) {
+                    event.preventDefault();
+                }
+            });
+        })();
+    </script>
+}

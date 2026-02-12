@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "k6zUTqb7ECc0MBBIPfPN0IVsf+1/ehq4/OWXw2qQbaIKzzommIgDr5TeOJsGqX83D+Qp+cmzF+7xg/TLMw5jsg==",
+  "dgSpecHash": "vwWCXZ1lZ8kBM6g8qXSQbkDEB4nT5f925qE1KE7YzZh3etHa6nTvM8ZXBJrrRfhf78SDbVlpn2IbL/HRi17b1Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

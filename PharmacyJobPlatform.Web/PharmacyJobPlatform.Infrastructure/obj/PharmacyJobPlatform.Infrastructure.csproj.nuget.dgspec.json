@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {}
+    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {}
   },
   "projects": {
     "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Application\\PharmacyJobPlatform.Application.csproj": {
@@ -122,14 +122,14 @@
         }
       }
     },
-    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
+    "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
         "projectName": "PharmacyJobPlatform.Infrastructure",
-        "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\PharmacyJobPlatform.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\PharmacyJobPlatform.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
