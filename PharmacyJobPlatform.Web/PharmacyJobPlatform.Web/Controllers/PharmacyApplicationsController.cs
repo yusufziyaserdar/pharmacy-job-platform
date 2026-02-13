@@ -26,7 +26,7 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             // Güvenlik: İlan bana mı ait?
             var job = _context.JobPosts
-                .FirstOrDefault(j => j.Id == jobPostId && j.PharmacyOwnerId == ownerId);
+                .FirstOrDefault(j => j.Id == jobPostId && j.PharmacyOwnerId == ownerId && !j.IsDeleted);
 
             if (job == null)
                 return Unauthorized();

@@ -28,7 +28,7 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var posts = _context.JobPosts
                 .Include(x => x.Address)
-                .Where(x => x.PharmacyOwnerId == userId)
+                .Where(x => x.PharmacyOwnerId == userId && !x.IsDeleted)
                 .OrderByDescending(x => x.CreatedAt)
                 .Select(x => new JobPostListViewModel
                 {
@@ -68,7 +68,7 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var user = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == userId);
+                .FirstOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
 
             if (user == null || user.AddressId == null)
             {
@@ -103,7 +103,7 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var post = _context.JobPosts
                 .Include(x => x.Address)
-                .Where(x => x.Id == id && x.PharmacyOwnerId == userId)
+                .Where(x => x.Id == id && x.PharmacyOwnerId == userId && !x.IsDeleted)
                 .Select(x => new JobPostDetailsViewModel
                 {
                     Id = x.Id,
@@ -135,7 +135,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var post = _context.JobPosts
-                .FirstOrDefault(x => x.Id == id && x.PharmacyOwnerId == userId);
+                .FirstOrDefault(x => x.Id == id && x.PharmacyOwnerId == userId && !x.IsDeleted);
 
             if (post == null)
                 return NotFound();
@@ -167,7 +167,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var post = await _context.JobPosts
-                .FirstOrDefaultAsync(x => x.Id == model.Id && x.PharmacyOwnerId == userId);
+                .FirstOrDefaultAsync(x => x.Id == model.Id && x.PharmacyOwnerId == userId && !x.IsDeleted);
 
             if (post == null)
                 return NotFound();

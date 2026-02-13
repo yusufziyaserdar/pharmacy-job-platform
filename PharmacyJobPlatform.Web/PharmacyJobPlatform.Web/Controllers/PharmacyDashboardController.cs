@@ -21,7 +21,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             var myJobPosts = _context.JobPosts
-                .Where(j => j.PharmacyOwnerId == userId)
+                .Where(j => j.PharmacyOwnerId == userId && !j.IsDeleted)
                 .ToList();
 
             var jobPostIds = myJobPosts.Select(j => j.Id).ToList();

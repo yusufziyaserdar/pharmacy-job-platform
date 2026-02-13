@@ -28,7 +28,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             var user = _context.Users
                 .Include(u => u.Role)
                 .Include(u => u.WorkExperiences)
-                .FirstOrDefault(u => u.Id == id);
+                .FirstOrDefault(u => u.Id == id && !u.IsDeleted);
 
             if (user == null)
                 return NotFound();
@@ -114,7 +114,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(u => u.WorkExperiences)
                 .Include(u => u.Role)
                 .Include(u => u.Address)
-                .FirstOrDefault(u => u.Id == userId);
+                .FirstOrDefault(u => u.Id == userId && !u.IsDeleted);
 
             if (user == null)
                 return NotFound();
@@ -166,7 +166,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(u => u.WorkExperiences)
                 .Include(u => u.Role)
                 .Include(u => u.Address)
-                .FirstOrDefault(u => u.Id == userId);
+                .FirstOrDefault(u => u.Id == userId && !u.IsDeleted);
 
             if (user == null)
                 return NotFound();
@@ -254,7 +254,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return RedirectToAction("Index", new { id = ratedUserId });
             }
 
-            var ratedUserExists = await _context.Users.AnyAsync(u => u.Id == ratedUserId);
+            var ratedUserExists = await _context.Users.AnyAsync(u => u.Id == ratedUserId && !u.IsDeleted);
             if (!ratedUserExists)
             {
                 return NotFound();
@@ -302,7 +302,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            if (!await _context.Users.AnyAsync(u => u.Id == profileUserId))
+            if (!await _context.Users.AnyAsync(u => u.Id == profileUserId && !u.IsDeleted))
             {
                 return NotFound();
             }
@@ -335,7 +335,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             var parentComment = await _context.ProfileComments
-                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.ProfileUserId == profileUserId && c.ParentCommentId == null);
+                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.ProfileUserId == profileUserId && c.ParentCommentId == null && !c.IsDeleted);
 
             if (parentComment == null)
             {
@@ -368,7 +368,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             var comments = _context.ProfileComments
                 .AsNoTracking()
-                .Where(c => c.ProfileUserId == profileUserId)
+                .Where(c => c.ProfileUserId == profileUserId && !c.IsDeleted)
                 .Include(c => c.AuthorUser)
                 .OrderBy(c => c.CreatedAt)
                 .ToList();

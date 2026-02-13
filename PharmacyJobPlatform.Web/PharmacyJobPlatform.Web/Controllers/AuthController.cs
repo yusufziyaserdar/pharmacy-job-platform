@@ -37,7 +37,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             var user = _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == model.Email);
+                .FirstOrDefault(u => u.Email == model.Email && !u.IsDeleted);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
@@ -100,7 +100,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return View(model);
             }
 
-            if (_context.Users.Any(u => u.Email == model.Email))
+            if (_context.Users.Any(u => u.Email == model.Email && !u.IsDeleted))
             {
                 ModelState.AddModelError("", "Bu email zaten kayıtlı");
                 SetGoogleMapsApiKey();
@@ -238,7 +238,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return View();
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
             if (user == null)
             {
                 ViewData["ConfirmMessage"] = "Kullanıcı bulunamadı.";
