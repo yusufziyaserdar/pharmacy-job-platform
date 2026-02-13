@@ -138,6 +138,7 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 .WithMany(c => c.Replies)
                 .HasForeignKey(c => c.ParentCommentId)
                 .OnDelete(DeleteBehavior.NoAction);
+
         }
     }
 }

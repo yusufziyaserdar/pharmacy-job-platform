@@ -18,6 +18,7 @@ namespace PharmacyJobPlatform.Web.Models.Admin
         public string Email { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class AdminJobPostItemViewModel
@@ -27,6 +28,7 @@ namespace PharmacyJobPlatform.Web.Models.Admin
         public string OwnerName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsDeleted { get; set; }
     }
 
     public class AdminCommentItemViewModel
@@ -36,5 +38,6 @@ namespace PharmacyJobPlatform.Web.Models.Admin
         public string AuthorName { get; set; } = string.Empty;
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

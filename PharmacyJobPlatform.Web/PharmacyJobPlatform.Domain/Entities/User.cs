@@ -39,6 +39,9 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
+
         public ICollection<WorkExperience> WorkExperiences { get; set; }
             = new List<WorkExperience>();
 

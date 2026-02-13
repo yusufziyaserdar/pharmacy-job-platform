@@ -77,20 +77,39 @@
                                 <td>@user.Id</td>
                                 <td>@user.FullName</td>
                                 <td>@user.Email</td>
-                                <td>@user.RoleName</td>
+                                <td>
+                                    @user.RoleName
+                                    @if (user.IsDeleted)
+                                    {
+                                        <span class="badge text-bg-secondary ms-1">Kaldırıldı</span>
+                                    }
+                                </td>
                                 <td>@user.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-outline-light" asp-controller="Profile" asp-action="Index" asp-route-id="@user.Id">Profili Aç</a>
                                     @if (user.RoleName != "Admin")
                                     {
-                                        <form asp-action="DeleteUser" method="post" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@user.Id" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    onclick="return confirm('Bu kullanıcıyı ve ilişkili verilerini silmek istediğinize emin misiniz?')">
-                                                Profili Sil
-                                            </button>
-                                        </form>
+                                        if (user.IsDeleted)
+                                        {
+                                            <form asp-action="RestoreUser" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@user.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                    Geri Al
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="DeleteUser" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@user.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                        onclick="return confirm('Bu kullanıcı profilini kaldırmak istediğinize emin misiniz?')">
+                                                    Profili Kaldır
+                                                </button>
+                                            </form>
+                                        }
                                     }
                                 </td>
                             </tr>
@@ -121,27 +140,40 @@
                                 <td>@post.Title</td>
                                 <td>@post.OwnerName</td>
                                 <td>
-                                    <span class="badge @(post.IsActive ? "text-bg-success" : "text-bg-secondary")">
-                                        @(post.IsActive ? "Aktif" : "Pasif")
+                                    <span class="badge @(post.IsDeleted ? "text-bg-secondary" : post.IsActive ? "text-bg-success" : "text-bg-warning")">
+                                        @(post.IsDeleted ? "Kaldırıldı" : post.IsActive ? "Aktif" : "Pasif")
                                     </span>
                                 </td>
                                 <td>@post.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                 <td class="text-end">
-                                    <form asp-action="ToggleJobPostStatus" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@post.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-warning">
-                                            @(post.IsActive ? "Pasife Al" : "Aktifleştir")
-                                        </button>
-                                    </form>
-                                    <form asp-action="DeleteJobPost" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@post.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Bu ilanı kaldırmak istediğinize emin misiniz?')">
-                                            İlanı Kaldır
-                                        </button>
-                                    </form>
+                                    @if (!post.IsDeleted)
+                                    {
+                                        <form asp-action="ToggleJobPostStatus" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@post.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-warning">
+                                                @(post.IsActive ? "Pasife Al" : "Aktifleştir")
+                                            </button>
+                                        </form>
+                                        <form asp-action="DeleteJobPost" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@post.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Bu ilanı kaldırmak istediğinize emin misiniz?')">
+                                                İlanı Kaldır
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="RestoreJobPost" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@post.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success">
+                                                Geri Al
+                                            </button>
+                                        </form>
+                                    }
                                 </td>
                             </tr>
                         }
@@ -168,18 +200,29 @@
                             <tr>
                                 <td>@comment.Id</td>
                                 <td>@comment.AuthorName</td>
-                                <td class="admin-comment-text">@comment.Content</td>
+                                <td class="admin-comment-text">@(comment.IsDeleted ? "[Kaldırılmış yorum]" : comment.Content)</td>
                                 <td>@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                                 <td class="text-end">
                                     <a asp-controller="Profile" asp-action="Index" asp-route-id="@comment.ProfileUserId" class="btn btn-sm btn-outline-light">Profile Git</a>
-                                    <form asp-action="DeleteComment" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@comment.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">
-                                            Yorumu Sil
-                                        </button>
-                                    </form>
+                                    @if (comment.IsDeleted)
+                                    {
+                                        <form asp-action="RestoreComment" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@comment.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success">Geri Al</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="DeleteComment" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@comment.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Bu yorumu kaldırmak istediğinize emin misiniz?')">
+                                                Yorumu Kaldır
+                                            </button>
+                                        </form>
+                                    }
                                 </td>
                             </tr>
                         }

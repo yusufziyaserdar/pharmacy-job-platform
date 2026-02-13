@@ -25,6 +25,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 TotalJobPosts = await _context.JobPosts.CountAsync(),
                 TotalComments = await _context.ProfileComments.CountAsync(),
                 Users = await _context.Users
+
                     .AsNoTracking()
                     .Include(u => u.Role)
                     .OrderByDescending(u => u.CreatedAt)
@@ -35,11 +36,13 @@ namespace PharmacyJobPlatform.Web.Controllers
                         FullName = u.FirstName + " " + u.LastName,
                         Email = u.Email,
                         RoleName = u.Role.Name,
+                        IsDeleted = u.IsDeleted,
                         CreatedAt = u.CreatedAt
                     })
                     .ToListAsync(),
                 JobPosts = await _context.JobPosts
                     .AsNoTracking()
+
                     .Include(p => p.PharmacyOwner)
                     .OrderByDescending(p => p.CreatedAt)
                     .Take(50)
@@ -49,11 +52,13 @@ namespace PharmacyJobPlatform.Web.Controllers
                         Title = p.Title,
                         OwnerName = p.PharmacyOwner.FirstName + " " + p.PharmacyOwner.LastName,
                         IsActive = p.IsActive,
+                        IsDeleted=p.IsDeleted,
                         CreatedAt = p.CreatedAt
                     })
                     .ToListAsync(),
                 Comments = await _context.ProfileComments
                     .AsNoTracking()
+
                     .Include(c => c.AuthorUser)
                     .OrderByDescending(c => c.CreatedAt)
                     .Take(100)
@@ -63,6 +68,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                         ProfileUserId = c.ProfileUserId,
                         AuthorName = c.IsAnonymous ? "Anonim" : c.AuthorUser.FirstName + " " + c.AuthorUser.LastName,
                         Content = c.Content,
+                        IsDeleted = c.IsDeleted,
                         CreatedAt = c.CreatedAt
                     })
                     .ToListAsync()
@@ -75,11 +81,46 @@ namespace PharmacyJobPlatform.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteJobPost(int id)
         {
-            var deletedRows = await _context.JobPosts.Where(p => p.Id == id).ExecuteDeleteAsync();
+            var post = await _context.JobPosts
 
-            TempData[deletedRows > 0 ? "Success" : "Error"] = deletedRows > 0
-                ? "İlan kaldırıldı."
-                : "İlan bulunamadı.";
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (post == null)
+            {
+                TempData["Error"] = "İlan bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            post.IsDeleted = true;
+            post.DeletedAt = DateTime.UtcNow;
+            post.IsActive = false;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "İlan kaldırıldı.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreJobPost(int id)
+        {
+            var post = await _context.JobPosts
+
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (post == null)
+            {
+                TempData["Error"] = "İlan bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            post.IsDeleted = false;
+            post.DeletedAt = null;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "İlan geri alındı.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -92,6 +133,11 @@ namespace PharmacyJobPlatform.Web.Controllers
             if (post == null)
             {
                 TempData["Error"] = "İlan bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+            if (post.IsDeleted)
+            {
+                TempData["Error"] = "Kaldırılmış ilan için durum değiştirilemez. Önce ilanı geri alın.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -108,6 +154,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         {
             var allComments = await _context.ProfileComments
                 .AsNoTracking()
+
                 .Select(c => new { c.Id, c.ParentCommentId })
                 .ToListAsync();
 
@@ -117,33 +164,59 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var toDelete = new HashSet<int> { id };
-            var queue = new Queue<int>();
-            queue.Enqueue(id);
+            var ids = GetCommentTreeIds(id, allComments.Select(c => (c.Id, c.ParentCommentId)).ToList());
+            var utcNow = DateTime.UtcNow;
 
-            while (queue.Count > 0)
+            var comments = await _context.ProfileComments
+
+                .Where(c => ids.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var comment in comments)
             {
-                var current = queue.Dequeue();
-                var children = allComments
-                    .Where(c => c.ParentCommentId == current)
-                    .Select(c => c.Id)
-                    .ToList();
-
-                foreach (var childId in children)
-                {
-                    if (toDelete.Add(childId))
-                    {
-                        queue.Enqueue(childId);
-                    }
-                }
+                comment.IsDeleted = true;
+                comment.DeletedAt = utcNow;
             }
 
-            await _context.ProfileComments
-                .Where(c => toDelete.Contains(c.Id))
-                .ExecuteDeleteAsync();
+            await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Yorum ve yanıtları silindi.";
+            TempData["Success"] = "Yorum ve yanıtları kaldırıldı.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreComment(int id)
+        {
+            var allComments = await _context.ProfileComments
+
+                .AsNoTracking()
+                .Select(c => new { c.Id, c.ParentCommentId })
+                .ToListAsync();
+
+            if (!allComments.Any(c => c.Id == id))
+            {
+                TempData["Error"] = "Yorum bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var ids = GetCommentTreeIds(id, allComments.Select(c => (c.Id, c.ParentCommentId)).ToList());
+
+            var comments = await _context.ProfileComments
+
+                .Where(c => ids.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var comment in comments)
+            {
+                comment.IsDeleted = false;
+                comment.DeletedAt = null;
+            }
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Yorum ve yanıtları geri alındı.";
+                return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -154,11 +227,12 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             if (currentAdminId == id)
             {
-                TempData["Error"] = "Kendi hesabınızı admin panelinden silemezsiniz.";
-                return RedirectToAction(nameof(Index));
+                    TempData["Error"] = "Kendi hesabınızı admin panelinden kaldıramazsınız.";
+                    return RedirectToAction(nameof(Index));
             }
 
             var user = await _context.Users
+
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
@@ -170,73 +244,67 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             if (user.Role.Name == "Admin")
             {
-                TempData["Error"] = "Başka bir admin hesabı bu panelden silinemez.";
+                    TempData["Error"] = "Başka bir admin hesabı bu panelden kaldırılamaz.";
+                    return RedirectToAction(nameof(Index));
+            }
+
+                user.IsDeleted = true;
+                user.DeletedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Kullanıcı profili kaldırıldı.";
                 return RedirectToAction(nameof(Index));
             }
 
-            await _context.UserRatings
-                .Where(r => r.RatedUserId == id || r.RaterId == id)
-                .ExecuteDeleteAsync();
-
-            var allComments = await _context.ProfileComments
-                .AsNoTracking()
-                .Select(c => new { c.Id, c.ParentCommentId, c.ProfileUserId, c.AuthorUserId })
-                .ToListAsync();
-
-            var baseCommentIds = allComments
-                .Where(c => c.ProfileUserId == id || c.AuthorUserId == id)
-                .Select(c => c.Id)
-                .ToList();
-
-            var commentsToDelete = new HashSet<int>(baseCommentIds);
-            var commentQueue = new Queue<int>(baseCommentIds);
-
-            while (commentQueue.Count > 0)
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public async Task<IActionResult> RestoreUser(int id)
             {
-                var current = commentQueue.Dequeue();
-                var childIds = allComments
-                    .Where(c => c.ParentCommentId == current)
+                var user = await _context.Users
+
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (user == null)
+                {
+                    TempData["Error"] = "Kullanıcı bulunamadı.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                user.IsDeleted = false;
+                user.DeletedAt = null;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Kullanıcı profili geri alındı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            private static HashSet<int> GetCommentTreeIds(int rootId, List<(int Id, int? ParentCommentId)> allComments)
+            {
+                var ids = new HashSet<int> { rootId };
+                var queue = new Queue<int>();
+                queue.Enqueue(rootId);
+
+                while (queue.Count > 0)
+                {
+                    var current = queue.Dequeue();
+                    var children = allComments
+                        .Where(c => c.ParentCommentId == current)
                     .Select(c => c.Id)
                     .ToList();
 
-                foreach (var childId in childIds)
-                {
-                    if (commentsToDelete.Add(childId))
+                    foreach (var childId in children)
                     {
-                        commentQueue.Enqueue(childId);
-                    }
+                        if (ids.Add(childId))
+                        {
+                            queue.Enqueue(childId);
+                        }
                 }
             }
 
-            if (commentsToDelete.Count > 0)
-            {
-                await _context.ProfileComments
-                    .Where(c => commentsToDelete.Contains(c.Id))
-                    .ExecuteDeleteAsync();
+                return ids;
             }
-
-            await _context.ConversationRequests
-                .Where(r => r.FromUserId == id || r.ToUserId == id)
-                .ExecuteDeleteAsync();
-
-            await _context.Conversations
-                .Where(c => c.User1Id == id || c.User2Id == id)
-                .ExecuteDeleteAsync();
-
-            await _context.JobApplications
-                .Where(a => a.WorkerId == id)
-                .ExecuteDeleteAsync();
-
-            await _context.JobPosts
-                .Where(p => p.PharmacyOwnerId == id)
-                .ExecuteDeleteAsync();
-
-            await _context.Users
-                .Where(u => u.Id == id)
-                .ExecuteDeleteAsync();
-
-            TempData["Success"] = "Kullanıcı ve ilişkili verileri silindi.";
-            return RedirectToAction(nameof(Index));
-        }
     }
 }
