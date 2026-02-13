@@ -110,6 +110,11 @@
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
+                                <a class="nav-link" asp-controller="Jobs" asp-action="Index">
+                                    <i class="fa-solid fa-briefcase"></i> İş İlanları
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" asp-controller="Admin" asp-action="Index">
                                     <i class="fa-solid fa-shield-halved"></i> Admin Paneli
                                 </a>

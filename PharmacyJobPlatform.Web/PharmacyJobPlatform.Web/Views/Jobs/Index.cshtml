@@ -3,6 +3,16 @@
 
 <div class="container mt-4">
 
+    @if (TempData["Success"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (TempData["Error"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
     <h3><i class="bi bi-search me-2"></i>İş İlanları</h3>
 
     <!-- FİLTRE -->
@@ -97,9 +107,20 @@
                         {
                             <span class="badge bg-secondary">Başvuruldu</span>
                         }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <form asp-action="DeleteByAdmin" method="post" class="position-relative">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@job.Id" />
+                                <button class="btn btn-outline-danger w-100" type="submit">
+                                    İlanı Kaldır
+                                </button>
+                            </form>
+                        }
                         else
                         {
                             <form asp-action="Apply" method="post" class="position-relative">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="jobPostId" value="@job.Id" />
                                 <button class="btn btn-success w-100">
                                     Başvur

@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace PharmacyJobPlatform.Web.Controllers
 {
-    [Authorize(Roles = "Worker")]
+    [Authorize(Roles = "Worker,Admin")]
     public class JobsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -141,10 +141,39 @@ namespace PharmacyJobPlatform.Web.Controllers
             return View(post);
         }
 
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteByAdmin(int id)
+        {
+            var post = await _context.JobPosts.FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
+            if (post == null)
+            {
+                TempData["Error"] = "İlan bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            post.IsDeleted = true;
+            post.IsActive = false;
+            post.DeletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "İlan admin tarafından kaldırıldı.";
+            return RedirectToAction(nameof(Index));
+        }
+
         // 👇 BAŞVURU ACTION
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Apply(int jobPostId)
         {
+            if (User.IsInRole("Admin"))
+            {
+                TempData["Error"] = "Admin hesabı ile başvuru yapılamaz.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var workerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             var exists = _context.JobApplications

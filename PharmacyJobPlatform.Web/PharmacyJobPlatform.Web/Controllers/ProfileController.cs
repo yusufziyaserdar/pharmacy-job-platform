@@ -364,6 +364,69 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction("Index", new { id = profileUserId });
         }
 
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DeleteComment")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteComment(int id, int profileUserId)
+        {
+            var allComments = await _context.ProfileComments
+                .AsNoTracking()
+                .Select(c => new { c.Id, c.ParentCommentId })
+                .ToListAsync();
+
+            if (!allComments.Any(c => c.Id == id))
+            {
+                TempData["Error"] = "Yorum bulunamadı.";
+                return RedirectToAction("Index", new { id = profileUserId });
+            }
+
+            var ids = GetCommentTreeIds(id, allComments.Select(c => (c.Id, c.ParentCommentId)).ToList());
+            var utcNow = DateTime.UtcNow;
+
+            var comments = await _context.ProfileComments
+                .Where(c => ids.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var comment in comments)
+            {
+                comment.IsDeleted = true;
+                comment.DeletedAt = utcNow;
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Yorum kaldırıldı.";
+            return RedirectToAction("Index", new { id = profileUserId });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("DeleteUser")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.Role?.Name == "Admin")
+            {
+                TempData["Error"] = "Admin profili bu ekrandan kaldırılamaz.";
+                return RedirectToAction("Index", new { id });
+            }
+
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Profil kaldırıldı.";
+            return RedirectToAction("Index", "Jobs");
+        }
+
         private List<ProfileCommentItemViewModel> GetProfileComments(int profileUserId)
         {
             var comments = _context.ProfileComments
@@ -407,6 +470,32 @@ namespace PharmacyJobPlatform.Web.Controllers
             return roots;
         }
 
+
+        private static HashSet<int> GetCommentTreeIds(int rootId, List<(int Id, int? ParentCommentId)> allComments)
+        {
+            var ids = new HashSet<int> { rootId };
+            var queue = new Queue<int>();
+            queue.Enqueue(rootId);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                var children = allComments
+                    .Where(c => c.ParentCommentId == current)
+                    .Select(c => c.Id)
+                    .ToList();
+
+                foreach (var childId in children)
+                {
+                    if (ids.Add(childId))
+                    {
+                        queue.Enqueue(childId);
+                    }
+                }
+            }
+
+            return ids;
+        }
 
         private void RemoveModelStateByPrefix(string prefix)
         {

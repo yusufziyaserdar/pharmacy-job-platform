@@ -47,13 +47,22 @@
                     <i class="bi bi-arrow-left me-2"></i>Geri
                 </a>
 
-                @if (Model.AlreadyApplied)
+                @if (User.IsInRole("Admin"))
+                {
+                    <form asp-action="DeleteByAdmin" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button class="btn btn-outline-danger">İlanı Kaldır</button>
+                    </form>
+                }
+                else if (Model.AlreadyApplied)
                 {
                     <span class="badge bg-secondary">Başvuruldu</span>
                 }
                 else
                 {
                     <form asp-action="Apply" method="post">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="jobPostId" value="@Model.Id" />
                         <button class="btn btn-success">Başvur</button>
                     </form>

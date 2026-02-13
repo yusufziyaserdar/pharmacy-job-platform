@@ -156,6 +156,20 @@
                             <i class="bi bi-pencil me-2"></i>Profili Düzenle
                         </a>
                     }
+                    @if (User.IsInRole("Admin") && user.Role.Name != "Admin")
+                    {
+                        <form asp-controller="Profile"
+                              asp-action="DeleteUser"
+                              method="post"
+                              class="mt-2 d-inline-block">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@user.Id" />
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash me-2"></i>Profili Kaldır
+                            </button>
+                        </form>
+                    }
+
 
                     <!-- MESAJ -->
                     @if (User.Identity?.IsAuthenticated == true && user.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value))
@@ -358,6 +372,18 @@
                                         <span class="badge text-bg-secondary">Anonim</span>
                                     }
                                 </div>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <form asp-controller="Profile"
+                                          asp-action="DeleteComment"
+                                          method="post"
+                                          class="mb-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@comment.Id" />
+                                        <input type="hidden" name="profileUserId" value="@user.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Yorumu Kaldır</button>
+                                    </form>
+                                }
                                 <p class="comment-text mb-2">@comment.Content</p>
 
                                 @if (User.Identity?.IsAuthenticated == true)
@@ -405,6 +431,18 @@
                                                         <span class="badge text-bg-secondary">Anonim</span>
                                                     }
                                                 </div>
+                                                @if (User.IsInRole("Admin"))
+                                                {
+                                                    <form asp-controller="Profile"
+                                                          asp-action="DeleteComment"
+                                                          method="post"
+                                                          class="mb-2">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@reply.Id" />
+                                                        <input type="hidden" name="profileUserId" value="@user.Id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Yorumu Kaldır</button>
+                                                    </form>
+                                                }
                                                 <p class="comment-text mb-0">@reply.Content</p>
                                             </article>
                                         }
