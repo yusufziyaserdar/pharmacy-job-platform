@@ -31,6 +31,17 @@
         bool mine = msg.SenderId == userId;
         <div class="messages-bubble-row @(mine ? "is-mine" : "")">
             <div class="messages-bubble">@msg.Content</div>
+            <form asp-controller="Reports" asp-action="Create" method="post" class="mt-1">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="entityType" value="Message" />
+                <input type="hidden" name="entityId" value="@msg.Id" />
+                <input type="hidden" name="returnController" value="Messages" />
+                <input type="hidden" name="returnAction" value="Index" />
+                <div class="input-group input-group-sm">
+                    <input class="form-control" name="reason" maxlength="500" placeholder="Mesaj rapor nedeni" required />
+                    <button class="btn btn-outline-danger btn-sm" type="submit">Rapor</button>
+                </div>
+            </form>
             <details class="messages-menu">
                 <summary class="messages-menu-toggle" aria-label="Mesaj seçenekleri">
                     <i class="bi bi-three-dots"></i>

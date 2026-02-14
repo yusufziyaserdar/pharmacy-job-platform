@@ -21,6 +21,7 @@ namespace PharmacyJobPlatform.Infrastructure.Data
         public DbSet<WorkExperience> WorkExperiences { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
         public DbSet<ProfileComment> ProfileComments { get; set; }
+        public DbSet<Report> Reports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -138,6 +139,24 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 .WithMany(c => c.Replies)
                 .HasForeignKey(c => c.ParentCommentId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // ============================
+            // Report
+            // ============================
+            modelBuilder.Entity<Report>()
+                .HasOne(r => r.ReporterUser)
+                .WithMany(u => u.ReportsCreated)
+                .HasForeignKey(r => r.ReporterUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasOne(r => r.ReviewedByAdmin)
+                .WithMany()
+                .HasForeignKey(r => r.ReviewedByAdminId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Report>()
+                .HasIndex(r => new { r.EntityType, r.EntityId, r.Status });
 
         }
     }

@@ -56,5 +56,8 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public ICollection<ProfileComment> CommentsWritten { get; set; }
             = new List<ProfileComment>();
+
+        public ICollection<Report> ReportsCreated { get; set; }
+            = new List<Report>();
     }
 }

@@ -277,6 +277,53 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
                     b.ToTable("ProfileComments");
                 });
 
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Report", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ReporterUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReviewedByAdminId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReporterUserId");
+
+                    b.HasIndex("ReviewedByAdminId");
+
+                    b.HasIndex("EntityType", "EntityId", "Status");
+
+                    b.ToTable("Reports");
+                });
+
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -546,6 +593,24 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
                     b.Navigation("ProfileUser");
                 });
 
+            modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.Report", b =>
+                {
+                    b.HasOne("PharmacyJobPlatform.Domain.Entities.User", "ReporterUser")
+                        .WithMany("ReportsCreated")
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PharmacyJobPlatform.Domain.Entities.User", "ReviewedByAdmin")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ReporterUser");
+
+                    b.Navigation("ReviewedByAdmin");
+                });
+
             modelBuilder.Entity("PharmacyJobPlatform.Domain.Entities.User", b =>
                 {
                     b.HasOne("PharmacyJobPlatform.Domain.Entities.Address", "Address")
@@ -625,6 +690,8 @@ namespace PharmacyJobPlatform.Infrastructure.Migrations
                     b.Navigation("RatingsGiven");
 
                     b.Navigation("RatingsReceived");
+
+                    b.Navigation("ReportsCreated");
 
                     b.Navigation("WorkExperiences");
                 });

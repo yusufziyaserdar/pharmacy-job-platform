@@ -213,6 +213,19 @@
                                 </button>
                             </form>
                         }
+
+                        <form asp-controller="Reports" asp-action="Create" method="post" class="mt-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="entityType" value="User" />
+                            <input type="hidden" name="entityId" value="@user.Id" />
+                            <input type="hidden" name="returnController" value="Profile" />
+                            <input type="hidden" name="returnAction" value="Index" />
+                            <input type="hidden" name="returnId" value="@user.Id" />
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" name="reason" maxlength="500" placeholder="Kullanıcıyı neden raporluyorsunuz?" required />
+                                <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
+                            </div>
+                        </form>
                     }
 
                 </div>
@@ -388,6 +401,22 @@
 
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
+                                    <form asp-controller="Reports" asp-action="Create" method="post" class="mb-2">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="entityType" value="Comment" />
+                                        <input type="hidden" name="entityId" value="@comment.Id" />
+                                        <input type="hidden" name="returnController" value="Profile" />
+                                        <input type="hidden" name="returnAction" value="Index" />
+                                        <input type="hidden" name="returnId" value="@user.Id" />
+                                        <div class="input-group input-group-sm">
+                                            <input class="form-control" name="reason" maxlength="500" placeholder="Bu yorumu neden raporluyorsunuz?" required />
+                                            <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
+                                        </div>
+                                    </form>
+                                }
+
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
                                     <button type="button"
                                             class="btn btn-link btn-sm p-0 text-decoration-none reply-toggle"
                                             data-target="reply-form-@comment.Id">
@@ -444,6 +473,21 @@
                                                     </form>
                                                 }
                                                 <p class="comment-text mb-0">@reply.Content</p>
+                                                @if (User.Identity?.IsAuthenticated == true)
+                                                {
+                                                    <form asp-controller="Reports" asp-action="Create" method="post" class="mt-2">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="entityType" value="Comment" />
+                                                        <input type="hidden" name="entityId" value="@reply.Id" />
+                                                        <input type="hidden" name="returnController" value="Profile" />
+                                                        <input type="hidden" name="returnAction" value="Index" />
+                                                        <input type="hidden" name="returnId" value="@user.Id" />
+                                                        <div class="input-group input-group-sm">
+                                                            <input class="form-control" name="reason" maxlength="500" placeholder="Bu yanıtı neden raporluyorsunuz?" required />
+                                                            <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
+                                                        </div>
+                                                    </form>
+                                                }
                                             </article>
                                         }
                                     </div>

@@ -55,17 +55,35 @@
                         <button class="btn btn-outline-danger">İlanı Kaldır</button>
                     </form>
                 }
-                else if (Model.AlreadyApplied)
-                {
-                    <span class="badge bg-secondary">Başvuruldu</span>
-                }
                 else
                 {
-                    <form asp-action="Apply" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="jobPostId" value="@Model.Id" />
-                        <button class="btn btn-success">Başvur</button>
-                    </form>
+                    <div class="d-flex flex-column align-items-end gap-2">
+                        @if (Model.AlreadyApplied)
+                        {
+                            <span class="badge bg-secondary">Başvuruldu</span>
+                        }
+                        else
+                        {
+                            <form asp-action="Apply" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="jobPostId" value="@Model.Id" />
+                                <button class="btn btn-success">Başvur</button>
+                            </form>
+                        }
+
+                        <form asp-controller="Reports" asp-action="Create" method="post" class="w-100">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="entityType" value="JobPost" />
+                            <input type="hidden" name="entityId" value="@Model.Id" />
+                            <input type="hidden" name="returnController" value="Jobs" />
+                            <input type="hidden" name="returnAction" value="Details" />
+                            <input type="hidden" name="returnId" value="@Model.Id" />
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" name="reason" maxlength="500" placeholder="İlanı neden raporluyorsunuz?" required />
+                                <button class="btn btn-outline-danger" type="submit">Rapor Et</button>
+                            </div>
+                        </form>
+                    </div>
                 }
             </div>
         </div>

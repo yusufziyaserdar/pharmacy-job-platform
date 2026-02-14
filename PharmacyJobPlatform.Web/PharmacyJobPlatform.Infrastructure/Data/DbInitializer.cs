@@ -1,9 +1,7 @@
-﻿using PharmacyJobPlatform.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Generators;
+using PharmacyJobPlatform.Domain.Entities;
+
 
 namespace PharmacyJobPlatform.Infrastructure.Data
 {
@@ -27,6 +25,35 @@ namespace PharmacyJobPlatform.Infrastructure.Data
                 context.Roles.AddRange(missingRoles);
                 await context.SaveChangesAsync();
             }
+        }
+
+        public static async Task SeedSystemUserAsync(ApplicationDbContext context)
+        {
+            const string systemEmail = "system@pharmacyjobplatform.local";
+
+            if (await context.Users.AnyAsync(u => u.Email == systemEmail))
+            {
+                return;
+            }
+
+            var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            if (adminRole == null)
+            {
+                return;
+            }
+
+            context.Users.Add(new User
+            {
+                FirstName = "Platform",
+                LastName = "Sistem",
+                Email = systemEmail,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
+                PhoneNumber = "0000000000",
+                RoleId = adminRole.Id,
+                EmailConfirmed = true
+            });
+
+            await context.SaveChangesAsync();
         }
     }
 }
