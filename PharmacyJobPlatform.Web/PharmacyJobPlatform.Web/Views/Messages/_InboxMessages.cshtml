@@ -29,19 +29,10 @@
     @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
     {
         bool mine = msg.SenderId == userId;
+        var reportModalId = $"reportMessageModal-{msg.Id}";
+
         <div class="messages-bubble-row @(mine ? "is-mine" : "")">
             <div class="messages-bubble">@msg.Content</div>
-            <form asp-controller="Reports" asp-action="Create" method="post" class="mt-1">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="entityType" value="Message" />
-                <input type="hidden" name="entityId" value="@msg.Id" />
-                <input type="hidden" name="returnController" value="Messages" />
-                <input type="hidden" name="returnAction" value="Index" />
-                <div class="input-group input-group-sm">
-                    <input class="form-control" name="reason" maxlength="500" placeholder="Mesaj rapor nedeni" required />
-                    <button class="btn btn-outline-danger btn-sm" type="submit">Rapor</button>
-                </div>
-            </form>
             <details class="messages-menu">
                 <summary class="messages-menu-toggle" aria-label="Mesaj seçenekleri">
                     <i class="bi bi-three-dots"></i>
@@ -52,8 +43,41 @@
                             onclick="deleteMessage(@msg.Id, @Model.Id)">
                         Sil
                     </button>
+                    <button class="messages-menu-item messages-menu-item-report"
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#@reportModalId">
+                        Rapor Et
+                    </button>
                 </div>
             </details>
+        </div>
+
+        <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+                    <form asp-controller="Reports" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="entityType" value="Message" />
+                        <input type="hidden" name="entityId" value="@msg.Id" />
+                        <input type="hidden" name="returnController" value="Messages" />
+                        <input type="hidden" name="returnAction" value="Index" />
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Mesajı Rapor Et</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label class="form-label">Rapor nedeni</label>
+                            <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     }
 </div>

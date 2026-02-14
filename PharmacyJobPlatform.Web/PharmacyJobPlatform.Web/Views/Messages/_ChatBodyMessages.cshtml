@@ -8,6 +8,7 @@
 @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
 {
     bool mine = msg.SenderId == userId;
+    var reportModalId = $"chatReportMessageModal-{msg.Id}";
 
     <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
         <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
@@ -16,18 +17,39 @@
             <div class="text-end">
                 <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
             </div>
-            <form asp-controller="Reports" asp-action="Create" method="post" class="mt-1">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="entityType" value="Message" />
-                <input type="hidden" name="entityId" value="@msg.Id" />
-                <input type="hidden" name="returnController" value="Messages" />
-                <input type="hidden" name="returnAction" value="Chat" />
-                <input type="hidden" name="returnId" value="@Model.Id" />
-                <div class="input-group input-group-sm">
-                    <input class="form-control" name="reason" maxlength="500" placeholder="Mesaj rapor nedeni" required />
-                    <button class="btn btn-outline-danger btn-sm" type="submit">Rapor</button>
-                </div>
-            </form>
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger mt-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#@reportModalId">
+                Rapor Et
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-controller="Reports" asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="entityType" value="Message" />
+                    <input type="hidden" name="entityId" value="@msg.Id" />
+                    <input type="hidden" name="returnController" value="Messages" />
+                    <input type="hidden" name="returnAction" value="Chat" />
+                    <input type="hidden" name="returnId" value="@Model.Id" />
+                    <div class="modal-header">
+                        <h5 class="modal-title">Mesajı Rapor Et</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Rapor nedeni</label>
+                        <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 }

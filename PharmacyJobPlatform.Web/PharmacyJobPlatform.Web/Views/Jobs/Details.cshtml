@@ -71,21 +71,43 @@
                             </form>
                         }
 
-                        <form asp-controller="Reports" asp-action="Create" method="post" class="w-100">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="entityType" value="JobPost" />
-                            <input type="hidden" name="entityId" value="@Model.Id" />
-                            <input type="hidden" name="returnController" value="Jobs" />
-                            <input type="hidden" name="returnAction" value="Details" />
-                            <input type="hidden" name="returnId" value="@Model.Id" />
-                            <div class="input-group input-group-sm">
-                                <input class="form-control" name="reason" maxlength="500" placeholder="İlanı neden raporluyorsunuz?" required />
-                                <button class="btn btn-outline-danger" type="submit">Rapor Et</button>
-                            </div>
-                        </form>
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reportJobModal">
+                            Rapor Et
+                        </button>
                     </div>
                 }
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="reportJobModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Reports" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="entityType" value="JobPost" />
+                <input type="hidden" name="entityId" value="@Model.Id" />
+                <input type="hidden" name="returnController" value="Jobs" />
+                <input type="hidden" name="returnAction" value="Details" />
+                <input type="hidden" name="returnId" value="@Model.Id" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">İlanı Rapor Et</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label">Rapor nedeni</label>
+                    <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

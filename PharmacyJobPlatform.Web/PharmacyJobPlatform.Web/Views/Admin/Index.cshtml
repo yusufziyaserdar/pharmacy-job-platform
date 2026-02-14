@@ -244,7 +244,7 @@
             <h5 class="mt-3">Yeni Gelen Raporlar</h5>
             <div class="table-responsive mb-4">
                 <table class="table table-dark table-striped align-middle">
-                    <thead><tr><th>#</th><th>Tür</th><th>İçerik ID</th><th>Raporlayan</th><th>Neden</th><th>Tarih</th><th class="text-end">İşlem</th></tr></thead>
+                    <thead><tr><th>#</th><th>Tür</th><th>İçerik ID</th><th>Raporlayan</th><th>Neden</th><th>Raporlanan İçerik</th><th>Tarih</th><th class="text-end">İşlem</th></tr></thead>
                     <tbody>
                     @foreach (var report in Model.PendingReports)
                     {
@@ -254,13 +254,28 @@
                             <td>@report.EntityId</td>
                             <td>@report.ReporterName</td>
                             <td>@report.Reason</td>
+                            <td>@report.ReportedContent</td>
                             <td>@report.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                             <td class="text-end">
                                 <form asp-action="ResolveReportRemove" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="reportId" value="@report.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-warning">Sadece Kaldır</button>
+                                </form>
+                                <form asp-action="ResolveReportRemoveWithWarning" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="reportId" value="@report.Id" />
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Kaldır + Uyarı Gönder</button>
                                 </form>
+                                @if (!string.IsNullOrEmpty(report.ContentLinkController) && !string.IsNullOrEmpty(report.ContentLinkAction) && report.ContentLinkId.HasValue)
+                                {
+                                    <a asp-controller="@report.ContentLinkController"
+                                       asp-action="@report.ContentLinkAction"
+                                       asp-route-id="@report.ContentLinkId.Value"
+                                       class="btn btn-sm btn-outline-info">
+                                        İçeriğe Git
+                                    </a>
+                                }
                                 <form asp-action="ResolveReportKeep" method="post" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="reportId" value="@report.Id" />
@@ -276,7 +291,7 @@
             <h5>İşlem Yapılmış Raporlar</h5>
             <div class="table-responsive">
                 <table class="table table-dark table-striped align-middle">
-                    <thead><tr><th>#</th><th>Tür</th><th>İçerik ID</th><th>Raporlayan</th><th>Neden</th><th>Durum</th><th>İnceleyen</th><th>İnceleme Tarihi</th></tr></thead>
+                    <thead><tr><th>#</th><th>Tür</th><th>İçerik ID</th><th>Raporlayan</th><th>Neden</th><th>Raporlanan İçerik</th><th>Durum</th><th>İnceleyen</th><th>İnceleme Tarihi</th><th>Link</th></tr></thead>
                     <tbody>
                     @foreach (var report in Model.ReviewedReports)
                     {
@@ -286,9 +301,21 @@
                             <td>@report.EntityId</td>
                             <td>@report.ReporterName</td>
                             <td>@report.Reason</td>
+                            <td>@report.ReportedContent</td>
                             <td>@(report.Status == PharmacyJobPlatform.Domain.Enums.ReportStatus.ResolvedRemoved ? "İçerik Kaldırıldı" : "İçerik Bırakıldı")</td>
                             <td>@report.ReviewedByAdminName</td>
                             <td>@report.ReviewedAt?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(report.ContentLinkController) && !string.IsNullOrEmpty(report.ContentLinkAction) && report.ContentLinkId.HasValue)
+                                {
+                                    <a asp-controller="@report.ContentLinkController"
+                                       asp-action="@report.ContentLinkAction"
+                                       asp-route-id="@report.ContentLinkId.Value"
+                                       class="btn btn-sm btn-outline-info">
+                                        İçeriğe Git
+                                    </a>
+                                }
+                            </td>
                         </tr>
                     }
                     </tbody>

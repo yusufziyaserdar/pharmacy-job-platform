@@ -53,6 +53,10 @@ namespace PharmacyJobPlatform.Web.Models.Admin
         public int EntityId { get; set; }
         public string ReporterName { get; set; } = string.Empty;
         public string Reason { get; set; } = string.Empty;
+        public string ReportedContent { get; set; } = string.Empty;
+        public string? ContentLinkController { get; set; }
+        public string? ContentLinkAction { get; set; }
+        public int? ContentLinkId { get; set; }
         public ReportStatus Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ReviewedAt { get; set; }

@@ -214,18 +214,12 @@
                             </form>
                         }
 
-                        <form asp-controller="Reports" asp-action="Create" method="post" class="mt-2">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="entityType" value="User" />
-                            <input type="hidden" name="entityId" value="@user.Id" />
-                            <input type="hidden" name="returnController" value="Profile" />
-                            <input type="hidden" name="returnAction" value="Index" />
-                            <input type="hidden" name="returnId" value="@user.Id" />
-                            <div class="input-group input-group-sm">
-                                <input class="form-control" name="reason" maxlength="500" placeholder="Kullanıcıyı neden raporluyorsunuz?" required />
-                                <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
-                            </div>
-                        </form>
+                        <button type="button"
+                                class="btn btn-outline-danger btn-sm mt-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reportUserModal">
+                            Rapor Et
+                        </button>
                     }
 
                 </div>
@@ -401,18 +395,39 @@
 
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
-                                    <form asp-controller="Reports" asp-action="Create" method="post" class="mb-2">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="entityType" value="Comment" />
-                                        <input type="hidden" name="entityId" value="@comment.Id" />
-                                        <input type="hidden" name="returnController" value="Profile" />
-                                        <input type="hidden" name="returnAction" value="Index" />
-                                        <input type="hidden" name="returnId" value="@user.Id" />
-                                        <div class="input-group input-group-sm">
-                                            <input class="form-control" name="reason" maxlength="500" placeholder="Bu yorumu neden raporluyorsunuz?" required />
-                                            <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm mb-2"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#reportCommentModal-@comment.Id">
+                                        Rapor Et
+                                    </button>
+
+                                    <div class="modal fade" id="reportCommentModal-@comment.Id" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <form asp-controller="Reports" asp-action="Create" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="entityType" value="Comment" />
+                                                    <input type="hidden" name="entityId" value="@comment.Id" />
+                                                    <input type="hidden" name="returnController" value="Profile" />
+                                                    <input type="hidden" name="returnAction" value="Index" />
+                                                    <input type="hidden" name="returnId" value="@user.Id" />
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Yorumu Rapor Et</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <label class="form-label">Rapor nedeni</label>
+                                                        <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </form>
+                                    </div>
                                 }
 
                                 @if (User.Identity?.IsAuthenticated == true)
@@ -475,18 +490,39 @@
                                                 <p class="comment-text mb-0">@reply.Content</p>
                                                 @if (User.Identity?.IsAuthenticated == true)
                                                 {
-                                                    <form asp-controller="Reports" asp-action="Create" method="post" class="mt-2">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="entityType" value="Comment" />
-                                                        <input type="hidden" name="entityId" value="@reply.Id" />
-                                                        <input type="hidden" name="returnController" value="Profile" />
-                                                        <input type="hidden" name="returnAction" value="Index" />
-                                                        <input type="hidden" name="returnId" value="@user.Id" />
-                                                        <div class="input-group input-group-sm">
-                                                            <input class="form-control" name="reason" maxlength="500" placeholder="Bu yanıtı neden raporluyorsunuz?" required />
-                                                            <button type="submit" class="btn btn-outline-danger">Rapor Et</button>
+                                                    <button type="button"
+                                                            class="btn btn-outline-danger btn-sm mt-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#reportReplyModal-@reply.Id">
+                                                        Rapor Et
+                                                    </button>
+
+                                                    <div class="modal fade" id="reportReplyModal-@reply.Id" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-sm modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <form asp-controller="Reports" asp-action="Create" method="post">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <input type="hidden" name="entityType" value="Comment" />
+                                                                    <input type="hidden" name="entityId" value="@reply.Id" />
+                                                                    <input type="hidden" name="returnController" value="Profile" />
+                                                                    <input type="hidden" name="returnAction" value="Index" />
+                                                                    <input type="hidden" name="returnId" value="@user.Id" />
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Yanıtı Rapor Et</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <label class="form-label">Rapor nedeni</label>
+                                                                        <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                                                        <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                    </form>
+                                                    </div>
                                                 }
                                             </article>
                                         }
@@ -508,6 +544,34 @@
 
 
 
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="reportUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-controller="Reports" asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="entityType" value="User" />
+                <input type="hidden" name="entityId" value="@user.Id" />
+                <input type="hidden" name="returnController" value="Profile" />
+                <input type="hidden" name="returnAction" value="Index" />
+                <input type="hidden" name="returnId" value="@user.Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Profili Rapor Et</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label">Rapor nedeni</label>
+                    <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -250,3 +250,11 @@
         gap: 0.75rem;
     }
 }
+
+.messages-menu-item-report {
+    color: #212529;
+}
+
+.messages-menu-item-report:hover {
+    background: #f1f3f5;
+}

@@ -22,6 +22,23 @@ namespace PharmacyJobPlatform.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var pendingReportsRaw = await _context.Reports
+                .AsNoTracking()
+                .Where(r => r.Status == ReportStatus.Pending)
+                .Include(r => r.ReporterUser)
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(200)
+                .ToListAsync();
+
+            var reviewedReportsRaw = await _context.Reports
+                .AsNoTracking()
+                .Where(r => r.Status != ReportStatus.Pending)
+                .Include(r => r.ReporterUser)
+                .Include(r => r.ReviewedByAdmin)
+                .OrderByDescending(r => r.ReviewedAt)
+                .Take(200)
+                .ToListAsync();
+
             var model = new AdminDashboardViewModel
             {
                 TotalUsers = await _context.Users.CountAsync(),
@@ -73,43 +90,12 @@ namespace PharmacyJobPlatform.Web.Controllers
                         CreatedAt = c.CreatedAt
                     })
                     .ToListAsync(),
-                PendingReports = await _context.Reports
-                    .AsNoTracking()
-                    .Where(r => r.Status == ReportStatus.Pending)
-                    .Include(r => r.ReporterUser)
-                    .OrderByDescending(r => r.CreatedAt)
-                    .Take(200)
-                    .Select(r => new AdminReportItemViewModel
-                    {
-                        Id = r.Id,
-                        EntityType = r.EntityType,
-                        EntityId = r.EntityId,
-                        ReporterName = r.ReporterUser.FirstName + " " + r.ReporterUser.LastName,
-                        Reason = r.Reason,
-                        Status = r.Status,
-                        CreatedAt = r.CreatedAt
-                    }).ToListAsync(),
-                ReviewedReports = await _context.Reports
-                    .AsNoTracking()
-                    .Where(r => r.Status != ReportStatus.Pending)
-                    .Include(r => r.ReporterUser)
-                    .Include(r => r.ReviewedByAdmin)
-                    .OrderByDescending(r => r.ReviewedAt)
-                    .Take(200)
-                    .Select(r => new AdminReportItemViewModel
-                    {
-                        Id = r.Id,
-                        EntityType = r.EntityType,
-                        EntityId = r.EntityId,
-                        ReporterName = r.ReporterUser.FirstName + " " + r.ReporterUser.LastName,
-                        Reason = r.Reason,
-                        Status = r.Status,
-                        CreatedAt = r.CreatedAt,
-                        ReviewedAt = r.ReviewedAt,
-                        ReviewedByAdminName = r.ReviewedByAdmin != null
-                            ? r.ReviewedByAdmin.FirstName + " " + r.ReviewedByAdmin.LastName
-                            : null
-                    }).ToListAsync()
+                PendingReports = pendingReportsRaw
+                    .Select(r => MapReport(r, includeReviewedBy: false))
+                    .ToList(),
+                ReviewedReports = reviewedReportsRaw
+                    .Select(r => MapReport(r, includeReviewedBy: true))
+                    .ToList()
             };
 
             return View(model);
@@ -139,14 +125,43 @@ namespace PharmacyJobPlatform.Web.Controllers
             report.ReviewedByAdminId = adminId;
             report.ReviewedAt = DateTime.UtcNow;
 
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Rapor işlendi, içerik kaldırıldı.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResolveReportRemoveWithWarning(int reportId)
+        {
+            var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var report = await _context.Reports.FirstOrDefaultAsync(r => r.Id == reportId);
+
+            if (report == null || report.Status != ReportStatus.Pending)
+            {
+                TempData["Error"] = "Rapor bulunamadı ya da zaten işlenmiş.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var offenderId = await RemoveReportedContentAsync(report.EntityType, report.EntityId);
+            if (!offenderId.HasValue)
+            {
+                TempData["Error"] = "Raporlanan içerik bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            report.Status = ReportStatus.ResolvedRemoved;
+            report.ReviewedByAdminId = adminId;
+            report.ReviewedAt = DateTime.UtcNow;
+
             if (offenderId.Value != adminId)
             {
                 await SendSystemWarningAsync(offenderId.Value);
             }
 
             await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Rapor işlendi, içerik kaldırıldı ve kullanıcıya uyarı mesajı gönderildi.";
+            TempData["Success"] = "Rapor işlendi, içerik kaldırıldı ve kullanıcıya uyarı gönderildi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -170,6 +185,28 @@ namespace PharmacyJobPlatform.Web.Controllers
             await _context.SaveChangesAsync();
             TempData["Success"] = "Rapor incelendi, içerik yayında bırakıldı.";
             return RedirectToAction(nameof(Index));
+        }
+
+        private AdminReportItemViewModel MapReport(Report report, bool includeReviewedBy)
+        {
+            return new AdminReportItemViewModel
+            {
+                Id = report.Id,
+                EntityType = report.EntityType,
+                EntityId = report.EntityId,
+                ReporterName = report.ReporterUser.FirstName + " " + report.ReporterUser.LastName,
+                Reason = report.Reason,
+                ReportedContent = GetReportedContentPreview(report.EntityType, report.EntityId),
+                ContentLinkController = GetContentLinkController(report.EntityType),
+                ContentLinkAction = GetContentLinkAction(report.EntityType),
+                ContentLinkId = GetContentLinkId(report.EntityType, report.EntityId),
+                Status = report.Status,
+                CreatedAt = report.CreatedAt,
+                ReviewedAt = report.ReviewedAt,
+                ReviewedByAdminName = includeReviewedBy && report.ReviewedByAdmin != null
+                    ? report.ReviewedByAdmin.FirstName + " " + report.ReviewedByAdmin.LastName
+                    : null
+            };
         }
 
         private async Task<int?> RemoveReportedContentAsync(string entityType, int entityId)
@@ -214,6 +251,60 @@ namespace PharmacyJobPlatform.Web.Controllers
                 default:
                     return null;
             }
+        }
+
+
+        private string GetReportedContentPreview(string entityType, int entityId)
+        {
+            return entityType switch
+            {
+                "JobPost" => _context.JobPosts
+                    .Where(p => p.Id == entityId)
+                    .Select(p => p.Title)
+                    .FirstOrDefault() ?? "(İçerik bulunamadı)",
+                "User" => _context.Users
+                    .Where(u => u.Id == entityId)
+                    .Select(u => u.FirstName + " " + u.LastName)
+                    .FirstOrDefault() ?? "(İçerik bulunamadı)",
+                "Comment" => _context.ProfileComments
+                    .Where(c => c.Id == entityId)
+                    .Select(c => c.Content)
+                    .FirstOrDefault() ?? "(İçerik bulunamadı)",
+                "Message" => _context.Messages
+                    .Where(m => m.Id == entityId)
+                    .Select(m => m.Content)
+                    .FirstOrDefault() ?? "(İçerik bulunamadı)",
+                _ => "(Desteklenmeyen içerik türü)"
+            };
+        }
+
+        private string? GetContentLinkController(string entityType) => entityType switch
+        {
+            "JobPost" => "Jobs",
+            "User" => "Profile",
+            "Comment" => "Profile",
+            _ => null
+        };
+
+        private string? GetContentLinkAction(string entityType) => entityType switch
+        {
+            "JobPost" => "Details",
+            "User" => "Index",
+            "Comment" => "Index",
+            _ => null
+        };
+
+        private int? GetContentLinkId(string entityType, int entityId)
+        {
+            if (entityType == "Comment")
+            {
+                return _context.ProfileComments
+                    .Where(c => c.Id == entityId)
+                    .Select(c => (int?)c.ProfileUserId)
+                    .FirstOrDefault();
+            }
+
+            return entityType is "JobPost" or "User" ? entityId : null;
         }
 
         private async Task SendSystemWarningAsync(int targetUserId)
