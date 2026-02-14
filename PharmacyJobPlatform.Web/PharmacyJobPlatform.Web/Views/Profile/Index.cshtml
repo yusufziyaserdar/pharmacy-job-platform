@@ -214,12 +214,25 @@
                             </form>
                         }
 
-                        <button type="button"
-                                class="btn btn-outline-danger btn-sm mt-2"
-                                data-bs-toggle="modal"
-                                data-bs-target="#reportUserModal">
-                            Rapor Et
-                        </button>
+                        <div class="dropdown mt-2">
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    aria-label="Profil seçenekleri">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <button type="button"
+                                            class="dropdown-item text-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#reportUserModal">
+                                        Rapor Et
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     }
 
                 </div>
@@ -395,12 +408,25 @@
 
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
-                                    <button type="button"
-                                            class="btn btn-outline-danger btn-sm mb-2"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#reportCommentModal-@comment.Id">
-                                        Rapor Et
-                                    </button>
+                                    <div class="dropdown mb-2">
+                                        <button class="btn btn-outline-secondary btn-sm"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                aria-expanded="false"
+                                                aria-label="Yorum seçenekleri">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <button type="button"
+                                                        class="dropdown-item text-danger"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#reportCommentModal-@comment.Id">
+                                                    Rapor Et
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
 
                                     <div class="modal fade" id="reportCommentModal-@comment.Id" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -490,12 +516,25 @@
                                                 <p class="comment-text mb-0">@reply.Content</p>
                                                 @if (User.Identity?.IsAuthenticated == true)
                                                 {
-                                                    <button type="button"
-                                                            class="btn btn-outline-danger btn-sm mt-2"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#reportReplyModal-@reply.Id">
-                                                        Rapor Et
-                                                    </button>
+                                                    <div class="dropdown mt-2">
+                                                        <button class="btn btn-outline-secondary btn-sm"
+                                                                type="button"
+                                                                data-bs-toggle="dropdown"
+                                                                aria-expanded="false"
+                                                                aria-label="Yanıt seçenekleri">
+                                                            <i class="bi bi-three-dots"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <button type="button"
+                                                                        class="dropdown-item text-danger"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#reportReplyModal-@reply.Id">
+                                                                    Rapor Et
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
 
                                                     <div class="modal fade" id="reportReplyModal-@reply.Id" tabindex="-1" aria-hidden="true">
                                                         <div class="modal-dialog modal-sm modal-dialog-centered">

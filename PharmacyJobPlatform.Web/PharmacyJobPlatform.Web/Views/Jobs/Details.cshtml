@@ -71,12 +71,25 @@
                             </form>
                         }
 
-                        <button type="button"
-                                class="btn btn-outline-danger btn-sm w-100"
-                                data-bs-toggle="modal"
-                                data-bs-target="#reportJobModal">
-                            Rapor Et
-                        </button>
+                        <div class="dropdown w-100">
+                            <button class="btn btn-outline-secondary btn-sm w-100"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    aria-label="İlan seçenekleri">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end w-100">
+                                <li>
+                                    <button type="button"
+                                            class="dropdown-item text-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#reportJobModal">
+                                        Rapor Et
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 }
             </div>

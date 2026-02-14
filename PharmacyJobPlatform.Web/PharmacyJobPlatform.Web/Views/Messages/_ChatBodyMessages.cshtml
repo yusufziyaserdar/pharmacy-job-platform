@@ -13,16 +13,29 @@
     <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
         <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
              style="max-width:70%">
+            <div class="dropdown text-end mb-1">
+                <button class="btn btn-sm @(mine ? "btn-outline-light" : "btn-outline-secondary") border-0 py-0 px-1"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Mesaj seçenekleri">
+                    <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <button type="button"
+                                class="dropdown-item text-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@reportModalId">
+                            Rapor Et
+                        </button>
+                    </li>
+                </ul>
+            </div>
             @msg.Content
             <div class="text-end">
                 <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
             </div>
-            <button type="button"
-                    class="btn btn-sm btn-outline-danger mt-1"
-                    data-bs-toggle="modal"
-                    data-bs-target="#@reportModalId">
-                Rapor Et
-            </button>
         </div>
     </div>
 
