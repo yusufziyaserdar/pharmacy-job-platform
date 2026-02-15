@@ -1,0 +1,142 @@
+@model PharmacyJobPlatform.Web.Models.Profile.ProfileCommentItemViewModel
+@using System.Security.Claims
+
+@{
+    var profileUserId = (int)(ViewData["ProfileUserId"] ?? 0);
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    int? currentUserId = isAuthenticated
+        ? int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
+        : null;
+    var canReport = isAuthenticated && currentUserId != Model.AuthorUserId;
+}
+
+<article class="comment-card">
+    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+        <div>
+            <div class="comment-author">@Model.AuthorDisplayName</div>
+            <div class="comment-meta">@Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
+        </div>
+        @if (Model.IsAnonymous)
+        {
+            <span class="badge text-bg-secondary">Anonim</span>
+        }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+        <p class="comment-text mb-0 flex-grow-1">@Model.Content</p>
+
+        @if (User.IsInRole("Admin") || canReport)
+        {
+            <div class="comment-actions mb-0">
+                @if (User.IsInRole("Admin"))
+                {
+                    <form asp-controller="Profile"
+                          asp-action="DeleteComment"
+                          method="post"
+                          class="m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="profileUserId" value="@profileUserId" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Yorumu Kaldır</button>
+                    </form>
+                }
+
+                @if (canReport)
+                {
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-label="Yorum seçenekleri">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item text-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#reportCommentModal-@Model.Id">
+                                    Rapor Et
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (canReport)
+    {
+        <div class="modal fade" id="reportCommentModal-@Model.Id" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content">
+                    <form asp-controller="Reports" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="entityType" value="Comment" />
+                        <input type="hidden" name="entityId" value="@Model.Id" />
+                        <input type="hidden" name="returnController" value="Profile" />
+                        <input type="hidden" name="returnAction" value="Index" />
+                        <input type="hidden" name="returnId" value="@profileUserId" />
+                        <div class="modal-header">
+                            <h5 class="modal-title">Yorumu Rapor Et</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                        </div>
+                        <div class="modal-body">
+                            <label class="form-label">Rapor nedeni</label>
+                            <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                            <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (isAuthenticated)
+    {
+        <div class="reply-tools mt-2">
+            <button type="button"
+                    class="btn btn-link btn-sm p-0 text-decoration-none reply-toggle"
+                    data-target="reply-form-@Model.Id">
+                <i class="bi bi-reply me-1"></i>Yanıtla
+            </button>
+        </div>
+
+        <form asp-controller="Profile"
+              asp-action="Reply"
+              method="post"
+              id="reply-form-@Model.Id"
+              class="reply-form mt-2">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="profileUserId" value="@profileUserId" />
+            <input type="hidden" name="parentCommentId" value="@Model.Id" />
+            <div class="reply-card">
+                <textarea name="content" class="form-control mb-2" rows="2" maxlength="500" placeholder="Yanıtınızı yazın..." required></textarea>
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                    <div class="form-check m-0">
+                        <input class="form-check-input" type="checkbox" name="isAnonymous" id="replyAnonymous-@Model.Id" value="true" />
+                        <label class="form-check-label" for="replyAnonymous-@Model.Id">Anonim</label>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Yanıt Gönder</button>
+                </div>
+            </div>
+        </form>
+    }
+
+    @if (Model.Replies.Any())
+    {
+        <div class="reply-children">
+            @foreach (var reply in Model.Replies)
+            {
+                <partial name="_CommentNode"
+                         model="reply"
+                         view-data='new ViewDataDictionary(ViewData) { ["ProfileUserId"] = profileUserId }' />
+            }
+        </div>
+    }
+</article>

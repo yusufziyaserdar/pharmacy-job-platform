@@ -9,11 +9,14 @@
 {
     bool mine = msg.SenderId == userId;
     var reportModalId = $"chatReportMessageModal-{msg.Id}";
+    var canReport = !mine;
 
     <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
         <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
              style="max-width:70%">
-            <div class="dropdown text-end mb-1">
+            @if (canReport)
+            {
+                <div class="dropdown text-end mb-1">
                 <button class="btn btn-sm @(mine ? "btn-outline-light" : "btn-outline-secondary") border-0 py-0 px-1"
                         type="button"
                         data-bs-toggle="dropdown"
@@ -31,7 +34,8 @@
                         </button>
                     </li>
                 </ul>
-            </div>
+                </div>
+            }
             @msg.Content
             <div class="text-end">
                 <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
@@ -39,7 +43,9 @@
         </div>
     </div>
 
-    <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
+    @if (canReport)
+    {
+        <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <form asp-controller="Reports" asp-action="Create" method="post">
@@ -64,5 +70,6 @@
                 </form>
             </div>
         </div>
-    </div>
+        </div>
+    }
 }

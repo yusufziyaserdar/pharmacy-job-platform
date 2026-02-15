@@ -335,7 +335,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             var authorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
             var parentComment = await _context.ProfileComments
-                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.ProfileUserId == profileUserId && c.ParentCommentId == null && !c.IsDeleted);
+                .FirstOrDefaultAsync(c => c.Id == parentCommentId && c.ProfileUserId == profileUserId && !c.IsDeleted);
 
             if (parentComment == null)
             {

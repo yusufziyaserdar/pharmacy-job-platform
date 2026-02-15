@@ -87,6 +87,50 @@
         .reply-form.show {
             display: block;
         }
+
+        .profile-main-column {
+            min-height: 210px;
+            padding-right: 3.25rem;
+            padding-bottom: 3.25rem;
+        }
+
+        .profile-report-dropdown {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .profile-admin-remove-form {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+        }
+
+        .comment-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .reply-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .reply-children {
+            border-left: 2px dashed #d6e0f5;
+            margin-top: 0.75rem;
+            margin-left: 0.5rem;
+            padding-left: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
     </style>
 }
 
@@ -113,7 +157,7 @@
                          alt="Profil Fotoğrafı" />
                 </div>
 
-                <div class="col-md-9">
+                <div class="col-md-9 position-relative profile-main-column">
                     <h3 class="mb-1">
                         @user.FirstName @user.LastName
                     </h3>
@@ -152,7 +196,7 @@
                     {
                         <a asp-controller="Profile"
                            asp-action="Edit"
-                           class="btn btn-outline-primary btn-sm float-end">
+                           class="btn btn-outline-primary btn-sm mb-2">
                             <i class="bi bi-pencil me-2"></i>Profili Düzenle
                         </a>
                     }
@@ -161,7 +205,7 @@
                         <form asp-controller="Profile"
                               asp-action="DeleteUser"
                               method="post"
-                              class="mt-2 d-inline-block">
+                              class="profile-admin-remove-form">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@user.Id" />
                             <button type="submit" class="btn btn-outline-danger btn-sm">
@@ -214,7 +258,7 @@
                             </form>
                         }
 
-                        <div class="dropdown mt-2">
+                        <div class="dropdown profile-report-dropdown">
                             <button class="btn btn-outline-secondary btn-sm"
                                     type="button"
                                     data-bs-toggle="dropdown"
@@ -381,193 +425,9 @@
                     <div class="d-flex flex-column gap-3">
                         @foreach (var comment in Model.Comments)
                         {
-                            <article class="comment-card">
-                                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-                                    <div>
-                                        <div class="comment-author">@comment.AuthorDisplayName</div>
-                                        <div class="comment-meta">@comment.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
-                                    </div>
-                                    @if (comment.IsAnonymous)
-                                    {
-                                        <span class="badge text-bg-secondary">Anonim</span>
-                                    }
-                                </div>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <form asp-controller="Profile"
-                                          asp-action="DeleteComment"
-                                          method="post"
-                                          class="mb-2">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="id" value="@comment.Id" />
-                                        <input type="hidden" name="profileUserId" value="@user.Id" />
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Yorumu Kaldır</button>
-                                    </form>
-                                }
-                                <p class="comment-text mb-2">@comment.Content</p>
-
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <div class="dropdown mb-2">
-                                        <button class="btn btn-outline-secondary btn-sm"
-                                                type="button"
-                                                data-bs-toggle="dropdown"
-                                                aria-expanded="false"
-                                                aria-label="Yorum seçenekleri">
-                                            <i class="bi bi-three-dots"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end">
-                                            <li>
-                                                <button type="button"
-                                                        class="dropdown-item text-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#reportCommentModal-@comment.Id">
-                                                    Rapor Et
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="modal fade" id="reportCommentModal-@comment.Id" tabindex="-1" aria-hidden="true">
-                                        <div class="modal-dialog modal-sm modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <form asp-controller="Reports" asp-action="Create" method="post">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="entityType" value="Comment" />
-                                                    <input type="hidden" name="entityId" value="@comment.Id" />
-                                                    <input type="hidden" name="returnController" value="Profile" />
-                                                    <input type="hidden" name="returnAction" value="Index" />
-                                                    <input type="hidden" name="returnId" value="@user.Id" />
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Yorumu Rapor Et</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <label class="form-label">Rapor nedeni</label>
-                                                        <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
-                                                        <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-
-                                @if (User.Identity?.IsAuthenticated == true)
-                                {
-                                    <button type="button"
-                                            class="btn btn-link btn-sm p-0 text-decoration-none reply-toggle"
-                                            data-target="reply-form-@comment.Id">
-                                        <i class="bi bi-reply me-1"></i>Yanıtla
-                                    </button>
-
-                                    <form asp-controller="Profile"
-                                          asp-action="Reply"
-                                          method="post"
-                                          id="reply-form-@comment.Id"
-                                          class="reply-form mt-2">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="profileUserId" value="@user.Id" />
-                                        <input type="hidden" name="parentCommentId" value="@comment.Id" />
-                                        <div class="reply-card">
-                                            <textarea name="content" class="form-control mb-2" rows="2" maxlength="500" placeholder="Yanıtınızı yazın..." required></textarea>
-                                            <div class="d-flex align-items-center justify-content-between gap-2">
-                                                <div class="form-check m-0">
-                                                    <input class="form-check-input" type="checkbox" name="isAnonymous" id="replyAnonymous-@comment.Id" value="true" />
-                                                    <label class="form-check-label" for="replyAnonymous-@comment.Id">Anonim</label>
-                                                </div>
-                                                <button type="submit" class="btn btn-outline-primary btn-sm">Yanıt Gönder</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                }
-
-                                @if (comment.Replies.Any())
-                                {
-                                    <div class="reply-list mt-3 d-flex flex-column gap-2">
-                                        @foreach (var reply in comment.Replies)
-                                        {
-                                            <article class="reply-card">
-                                                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
-                                                    <div>
-                                                        <div class="comment-author">@reply.AuthorDisplayName</div>
-                                                        <div class="comment-meta">@reply.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</div>
-                                                    </div>
-                                                    @if (reply.IsAnonymous)
-                                                    {
-                                                        <span class="badge text-bg-secondary">Anonim</span>
-                                                    }
-                                                </div>
-                                                @if (User.IsInRole("Admin"))
-                                                {
-                                                    <form asp-controller="Profile"
-                                                          asp-action="DeleteComment"
-                                                          method="post"
-                                                          class="mb-2">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="id" value="@reply.Id" />
-                                                        <input type="hidden" name="profileUserId" value="@user.Id" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Yorumu Kaldır</button>
-                                                    </form>
-                                                }
-                                                <p class="comment-text mb-0">@reply.Content</p>
-                                                @if (User.Identity?.IsAuthenticated == true)
-                                                {
-                                                    <div class="dropdown mt-2">
-                                                        <button class="btn btn-outline-secondary btn-sm"
-                                                                type="button"
-                                                                data-bs-toggle="dropdown"
-                                                                aria-expanded="false"
-                                                                aria-label="Yanıt seçenekleri">
-                                                            <i class="bi bi-three-dots"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <button type="button"
-                                                                        class="dropdown-item text-danger"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#reportReplyModal-@reply.Id">
-                                                                    Rapor Et
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-
-                                                    <div class="modal fade" id="reportReplyModal-@reply.Id" tabindex="-1" aria-hidden="true">
-                                                        <div class="modal-dialog modal-sm modal-dialog-centered">
-                                                            <div class="modal-content">
-                                                                <form asp-controller="Reports" asp-action="Create" method="post">
-                                                                    @Html.AntiForgeryToken()
-                                                                    <input type="hidden" name="entityType" value="Comment" />
-                                                                    <input type="hidden" name="entityId" value="@reply.Id" />
-                                                                    <input type="hidden" name="returnController" value="Profile" />
-                                                                    <input type="hidden" name="returnAction" value="Index" />
-                                                                    <input type="hidden" name="returnId" value="@user.Id" />
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title">Yanıtı Rapor Et</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        <label class="form-label">Rapor nedeni</label>
-                                                                        <textarea class="form-control" name="reason" maxlength="500" rows="4" required></textarea>
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
-                                                                        <button type="submit" class="btn btn-danger btn-sm">Gönder</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </article>
-                                        }
-                                    </div>
-                                }
-                            </article>
+                            <partial name="_CommentNode"
+                                     model="comment"
+                                     view-data='new ViewDataDictionary(ViewData) { ["ProfileUserId"] = user.Id }' />
                         }
                     </div>
                 }

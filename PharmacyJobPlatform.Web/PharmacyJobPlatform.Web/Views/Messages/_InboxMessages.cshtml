@@ -30,6 +30,7 @@
     {
         bool mine = msg.SenderId == userId;
         var reportModalId = $"reportMessageModal-{msg.Id}";
+        var canReport = !mine;
 
         <div class="messages-bubble-row @(mine ? "is-mine" : "")">
             <div class="messages-bubble">@msg.Content</div>
@@ -43,17 +44,22 @@
                             onclick="deleteMessage(@msg.Id, @Model.Id)">
                         Sil
                     </button>
-                    <button class="messages-menu-item messages-menu-item-report"
-                            type="button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#@reportModalId">
-                        Rapor Et
-                    </button>
+                    @if (canReport)
+                    {
+                        <button class="messages-menu-item messages-menu-item-report"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@reportModalId">
+                            Rapor Et
+                        </button>
+                    }
                 </div>
             </details>
         </div>
 
-        <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
+        @if (canReport)
+        {
+            <div class="modal fade" id="@reportModalId" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-sm modal-dialog-centered">
                 <div class="modal-content">
                     <form asp-controller="Reports" asp-action="Create" method="post">
@@ -78,7 +84,8 @@
                     </form>
                 </div>
             </div>
-        </div>
+            </div>
+        }
     }
 </div>
 
