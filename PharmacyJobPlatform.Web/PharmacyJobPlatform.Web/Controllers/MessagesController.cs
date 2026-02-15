@@ -61,6 +61,40 @@ namespace PharmacyJobPlatform.Web.Controllers
             return PartialView("_InboxConversations", conversations);
         }
 
+        [HttpGet]
+        public IActionResult SearchUsers(string term)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            string searchTerm = term?.Trim() ?? string.Empty;
+
+            if (searchTerm.Length < 2)
+                return Json(Array.Empty<object>());
+
+            var interactedUserIdsQuery = _context.Conversations
+                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Select(c => c.User1Id == userId ? c.User2Id : c.User1Id)
+                .Concat(_context.ConversationRequests
+                    .Where(r => r.FromUserId == userId || r.ToUserId == userId)
+                    .Select(r => r.FromUserId == userId ? r.ToUserId : r.FromUserId))
+                .Distinct();
+
+            var users = _context.Users
+                .Where(u => u.Id != userId)
+                .Where(u => EF.Functions.Like((u.FirstName + " " + u.LastName), $"%{searchTerm}%"))
+                .Select(u => new
+                {
+                    id = u.Id,
+                    fullName = u.FirstName + " " + u.LastName,
+                    isInteracted = interactedUserIdsQuery.Contains(u.Id)
+                })
+                .OrderByDescending(u => u.isInteracted)
+                .ThenBy(u => u.fullName)
+                .Take(8)
+                .ToList();
+
+            return Json(users);
+        }
+
         // 💬 Chat ekranı
         public async Task<IActionResult> Chat(int id)
         {

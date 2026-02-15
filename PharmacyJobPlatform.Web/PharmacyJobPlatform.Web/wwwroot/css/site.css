@@ -74,3 +74,39 @@ main {
     border-radius: 12px;
     box-shadow: 0 16px 32px rgba(15, 23, 42, 0.16);
 }
+
+.navbar-user-search {
+    position: relative;
+    width: min(320px, 78vw);
+}
+
+.navbar-user-search__icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 2;
+}
+
+.navbar-user-search__input {
+    padding-left: 34px;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.navbar-user-search__results {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    max-height: 320px;
+    overflow-y: auto;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-user-search {
+        width: 100%;
+    }
+}
