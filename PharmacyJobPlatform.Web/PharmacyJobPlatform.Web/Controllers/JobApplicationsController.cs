@@ -55,6 +55,7 @@ public class JobApplicationsController : Controller
             .Select(a => new MyApplicationViewModel
             {
                 ApplicationId = a.Id,
+                JobPostId = a.JobPostId,
                 JobTitle = a.JobPost.Title,
                 PharmacyName = string.IsNullOrWhiteSpace(a.JobPost.PharmacyOwner.PharmacyName)
                     ? a.JobPost.PharmacyOwner.FirstName + " " + a.JobPost.PharmacyOwner.LastName

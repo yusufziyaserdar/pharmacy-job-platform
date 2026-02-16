@@ -78,7 +78,7 @@ namespace PharmacyJobPlatform.Web.Controllers
         public IActionResult Register()
         {
             SetGoogleMapsApiKey();
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
@@ -184,6 +184,8 @@ namespace PharmacyJobPlatform.Web.Controllers
                 Email = model.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
                 PhoneNumber = model.PhoneNumber,
+                IsEmailVisible = model.IsEmailVisible,
+                IsPhoneNumberVisible = model.IsPhoneNumberVisible,
                 About = model.About,
                 ProfileImagePath = profileImagePath,
                 PharmacyName = model.PharmacyName,

@@ -56,11 +56,13 @@
             }
         }
 
-        async function refreshChatMessages() {
+        async function refreshChatMessages(forceScrollToBottom = false) {
             const response = await fetch(`/Messages/ChatMessages?conversationId=${conversationId}`);
             if (response.ok && chatMessages) {
                 chatMessages.innerHTML = await response.text();
-                scrollChatToBottom();
+                if (forceScrollToBottom) {
+                    scrollChatToBottom();
+                }
             }
         }
 
@@ -89,11 +91,11 @@
 
                 if (response.ok) {
                     chatInput.value = "";
-                    refreshChatMessages();
+                    refreshChatMessages(true);
                 }
             });
         }
 
-        scrollChatToBottom();
+        refreshChatMessages(true);
     </script>
 }

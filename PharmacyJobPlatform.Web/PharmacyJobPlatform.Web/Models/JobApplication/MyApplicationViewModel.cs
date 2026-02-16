@@ -8,6 +8,8 @@ namespace PharmacyJobPlatform.Web.Models.JobApplication
     {
         public int ApplicationId { get; set; }
 
+        public int JobPostId { get; set; }
+
         public string JobTitle { get; set; }
         public string PharmacyName { get; set; }
 

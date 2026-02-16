@@ -125,6 +125,8 @@ namespace PharmacyJobPlatform.Web.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
+                IsEmailVisible = user.IsEmailVisible,
+                IsPhoneNumberVisible = user.IsPhoneNumberVisible,
                 About = user.About,
                 PharmacyName = user.PharmacyName,
                 Address = user.Address == null
@@ -191,6 +193,8 @@ namespace PharmacyJobPlatform.Web.Controllers
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.PhoneNumber = model.PhoneNumber;
+            user.IsEmailVisible = model.IsEmailVisible;
+            user.IsPhoneNumberVisible = model.IsPhoneNumberVisible;
             user.About = model.About;
             if (user.Role?.Name == "PharmacyOwner")
             {

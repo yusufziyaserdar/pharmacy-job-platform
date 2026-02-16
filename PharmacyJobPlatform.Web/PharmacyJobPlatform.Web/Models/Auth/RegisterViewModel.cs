@@ -17,7 +17,11 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
 
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = "+90";
+
+        public bool IsEmailVisible { get; set; } = true;
+
+        public bool IsPhoneNumberVisible { get; set; } = true;
         public string? About { get; set; }
         public IFormFile? ProfileImage { get; set; }
 

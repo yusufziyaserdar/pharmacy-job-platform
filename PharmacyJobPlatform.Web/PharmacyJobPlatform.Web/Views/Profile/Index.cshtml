@@ -175,11 +175,14 @@
                         </span>
                     }
 
-                    <p class="mb-1">
-                        <i class="bi bi-envelope me-2"></i>@user.Email
-                    </p>
+                    @if (user.IsEmailVisible)
+                    {
+                        <p class="mb-1">
+                            <i class="bi bi-envelope me-2"></i>@user.Email
+                        </p>
+                    }
 
-                    @if (!string.IsNullOrEmpty(user.PhoneNumber))
+                    @if (user.IsPhoneNumberVisible && !string.IsNullOrEmpty(user.PhoneNumber))
                     {
                         <p class="mb-1">
                             <i class="bi bi-telephone me-2"></i>@user.PhoneNumber

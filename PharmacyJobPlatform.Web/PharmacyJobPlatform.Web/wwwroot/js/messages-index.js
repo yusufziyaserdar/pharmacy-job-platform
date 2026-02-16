@@ -31,14 +31,16 @@ function scrollThreadToBottom() {
     }
 }
 
-function openInboxConversation(id) {
+function openInboxConversation(id, forceScrollToBottom = true) {
     activeConversationId = Number(id);
     fetch(`/Messages/InboxMessages?conversationId=${id}`)
         .then(r => r.text())
         .then(html => {
             if (inboxThread) {
                 inboxThread.innerHTML = html;
-                scrollThreadToBottom();
+                if (forceScrollToBottom) {
+                    scrollThreadToBottom();
+                }
             }
             highlightConversation(id);
         });
@@ -69,7 +71,7 @@ function refreshInboxConversation(conversationId) {
     refreshInboxList();
 
     if (activeConversationId && activeConversationId === normalizedId) {
-        openInboxConversation(normalizedId);
+        openInboxConversation(normalizedId, false);
     }
 }
 
@@ -91,7 +93,7 @@ function sendInboxMessage(e, conversationId) {
     }).then(response => {
         if (response.ok) {
             input.value = "";
-            openInboxConversation(conversationId);
+            openInboxConversation(conversationId, true);
             updateConversationPreview(conversationId, payload.get("content"));
         }
     });
@@ -144,7 +146,7 @@ function deleteMessage(messageId, conversationId) {
         body: `messageId=${messageId}`
     }).then(response => {
         if (response.ok) {
-            openInboxConversation(conversationId);
+            openInboxConversation(conversationId, true);
         }
     });
 }
@@ -162,7 +164,7 @@ window.refreshInboxConversation = refreshInboxConversation;
 window.refreshInboxList = refreshInboxList;
 
 if (window.initialConversationId && window.initialConversationId > 0) {
-    openInboxConversation(window.initialConversationId);
+    openInboxConversation(window.initialConversationId, true);
 } else {
     setEmptyThread();
 }

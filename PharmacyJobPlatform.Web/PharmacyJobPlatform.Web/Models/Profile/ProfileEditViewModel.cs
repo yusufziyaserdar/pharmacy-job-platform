@@ -16,6 +16,10 @@ namespace PharmacyJobPlatform.Web.Models.Profile
         [Phone]
         public string PhoneNumber { get; set; }
 
+        public bool IsEmailVisible { get; set; }
+
+        public bool IsPhoneNumberVisible { get; set; }
+
         public string? About { get; set; }
 
         public string? PharmacyName { get; set; }

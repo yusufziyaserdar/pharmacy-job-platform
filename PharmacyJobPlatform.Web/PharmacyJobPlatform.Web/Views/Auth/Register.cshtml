@@ -64,6 +64,18 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label d-block">İletişim Bilgisi Görünürlüğü</label>
+                        <div class="form-check mb-2">
+                            <input asp-for="IsEmailVisible" class="form-check-input" />
+                            <label asp-for="IsEmailVisible" class="form-check-label">Email profilimde görünsün</label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="IsPhoneNumberVisible" class="form-check-input" />
+                            <label asp-for="IsPhoneNumberVisible" class="form-check-label">Telefon profilimde görünsün</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label asp-for="ProfileImage">Profil Fotoğrafı</label>
                         <input asp-for="ProfileImage" type="file" class="form-control" />
                     </div>

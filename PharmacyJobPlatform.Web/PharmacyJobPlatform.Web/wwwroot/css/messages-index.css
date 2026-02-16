@@ -132,6 +132,7 @@
     padding: 1.25rem 1.5rem;
     overflow-y: auto;
     flex: 1;
+    max-height: 430px;
 }
 
 .messages-bubble-row {
