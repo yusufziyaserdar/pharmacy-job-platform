@@ -50,12 +50,32 @@
 
                     <div class="mb-3">
                         <label asp-for="Password"></label>
-                        <input asp-for="Password" class="form-control" />
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" id="registerPasswordInput" />
+                            <button class="btn btn-outline-secondary" type="button" id="registerPasswordToggle" aria-label="Şifreyi göster/gizle">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <div id="passwordRules" class="small text-muted mt-2 d-none">
+                            Şifreniz en az 8 karakter olmalı; büyük harf, küçük harf, en az bir rakam ve bir noktalama işareti içermelidir.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword">Şifre (Tekrar)</label>
+                        <input asp-for="ConfirmPassword" class="form-control" id="confirmPasswordInput" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="PhoneNumber">Telefon</label>
-                        <input asp-for="PhoneNumber" class="form-control" />
+                        <div class="input-group">
+                            <span class="input-group-text">+90</span>
+                            <input asp-for="PhoneNumber" class="form-control" maxlength="10" inputmode="numeric" pattern="\d{10}" placeholder="5*********" />
+                        </div>
+                        <small class="text-muted">Örnek: 5*********</small>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
@@ -288,6 +308,44 @@
                 event.target.closest(".experience-item")?.remove();
                 reindexExperiences();
             });
+
+            const passwordInput = document.getElementById("registerPasswordInput");
+            const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+            const passwordToggle = document.getElementById("registerPasswordToggle");
+            const passwordRules = document.getElementById("passwordRules");
+            const phoneInput = document.getElementById("PhoneNumber");
+
+            if (passwordInput && passwordToggle) {
+                passwordInput.addEventListener("focus", () => {
+                    passwordRules?.classList.remove("d-none");
+                });
+
+                passwordInput.addEventListener("blur", () => {
+                    if (!passwordInput.value) {
+                        passwordRules?.classList.add("d-none");
+                    }
+                });
+
+                passwordToggle.addEventListener("click", () => {
+                    const isPassword = passwordInput.type === "password";
+                    passwordInput.type = isPassword ? "text" : "password";
+                    passwordToggle.innerHTML = isPassword
+                        ? '<i class="fa-regular fa-eye-slash"></i>'
+                        : '<i class="fa-regular fa-eye"></i>';
+                });
+            }
+
+            if (confirmPasswordInput) {
+                ["paste", "copy", "cut", "drop"].forEach(eventName => {
+                    confirmPasswordInput.addEventListener(eventName, event => event.preventDefault());
+                });
+            }
+
+            if (phoneInput) {
+                phoneInput.addEventListener("input", () => {
+                    phoneInput.value = phoneInput.value.replace(/\D/g, "").slice(0, 10);
+                });
+            }
 
         });
 

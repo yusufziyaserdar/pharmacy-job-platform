@@ -14,10 +14,19 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         [Required, EmailAddress]
         public string Email { get; set; }
 
-        [Required, DataType(DataType.Password)]
+        [Required(ErrorMessage = "Şifre zorunludur")]
+        [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$", ErrorMessage = "Şifre en az 8 karakter olmalı; büyük harf, küçük harf, rakam ve noktalama işareti içermelidir")]
         public string Password { get; set; }
 
-        public string PhoneNumber { get; set; } = "+90";
+        [Required(ErrorMessage = "Şifre tekrarı zorunludur")]
+        [DataType(DataType.Password)]
+        [Compare(nameof(Password), ErrorMessage = "Şifreler eşleşmiyor")]
+        public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Telefon numarası zorunludur")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Telefon numarası 10 haneli olmalıdır")]
+        public string PhoneNumber { get; set; } = string.Empty;
 
         public bool IsEmailVisible { get; set; } = true;
 

@@ -11,5 +11,7 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         [Required(ErrorMessage = "Şifre zorunludur")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
     }
 }

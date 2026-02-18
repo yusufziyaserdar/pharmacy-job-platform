@@ -23,6 +23,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Auth/Login";
         options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.SlidingExpiration = true;
     });
 
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));

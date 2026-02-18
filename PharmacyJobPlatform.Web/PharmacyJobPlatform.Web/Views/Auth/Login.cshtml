@@ -25,8 +25,18 @@
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control">
+                        <div class="input-group">
+                            <input asp-for="Password" class="form-control" id="loginPasswordInput">
+                            <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle" aria-label="Şifreyi göster/gizle">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Oturumumu açık tut</label>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">
@@ -44,4 +54,23 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const passwordInput = document.getElementById("loginPasswordInput");
+            const passwordToggle = document.getElementById("loginPasswordToggle");
+
+            if (!passwordInput || !passwordToggle) {
+                return;
+            }
+
+            passwordToggle.addEventListener("click", () => {
+                const isPassword = passwordInput.type === "password";
+                passwordInput.type = isPassword ? "text" : "password";
+                passwordToggle.innerHTML = isPassword
+                    ? '<i class="fa-regular fa-eye-slash"></i>'
+                    : '<i class="fa-regular fa-eye"></i>';
+            });
+        });
+    </script>
 }

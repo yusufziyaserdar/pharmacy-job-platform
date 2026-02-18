@@ -9,6 +9,7 @@ using PharmacyJobPlatform.Domain.Entities;
 using PharmacyJobPlatform.Web.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace PharmacyJobPlatform.Web.Controllers
 {
@@ -61,9 +62,16 @@ namespace PharmacyJobPlatform.Web.Controllers
         };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe,
+                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : null
+            };
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+                new ClaimsPrincipal(identity),
+                authProperties);
 
             // 🎯 Role bazlı yönlendirme
             return user.Role.Name switch
@@ -93,6 +101,8 @@ namespace PharmacyJobPlatform.Web.Controllers
             {
                 RemoveModelStateByPrefix("WorkExperiences");
             }
+
+            model.PhoneNumber = Regex.Replace(model.PhoneNumber ?? string.Empty, @"\D", string.Empty);
 
             if (!ModelState.IsValid)
             {
@@ -183,7 +193,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 LastName = model.LastName,
                 Email = model.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                PhoneNumber = model.PhoneNumber,
+                PhoneNumber = $"+90{model.PhoneNumber}",
                 IsEmailVisible = model.IsEmailVisible,
                 IsPhoneNumberVisible = model.IsPhoneNumberVisible,
                 About = model.About,
