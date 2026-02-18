@@ -69,6 +69,40 @@
         window.refreshChatMessages = refreshChatMessages;
         window.currentConversationId = conversationId;
 
+
+        async function deleteMessage(messageId, conversationId) {
+            const payload = new URLSearchParams();
+            payload.set("messageId", messageId);
+
+            const response = await fetch("/Messages/DeleteMessage", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: payload.toString()
+            });
+
+            if (response.ok) {
+                refreshChatMessages(true);
+            }
+        }
+
+        async function recallMessage(messageId, conversationId) {
+            const payload = new URLSearchParams();
+            payload.set("messageId", messageId);
+
+            const response = await fetch("/Messages/RecallMessage", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: payload.toString()
+            });
+
+            if (response.ok) {
+                refreshChatMessages(true);
+            }
+        }
+
+        window.deleteMessage = deleteMessage;
+        window.recallMessage = recallMessage;
+
         const chatForm = document.getElementById("chatSendForm");
         const chatInput = document.getElementById("chatMessageInput");
 

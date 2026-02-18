@@ -3,9 +3,12 @@
 
 @{
     int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+    bool IsVisible(PharmacyJobPlatform.Domain.Entities.Message m) =>
+        m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver;
 }
 
-@foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+@foreach (var msg in Model.Messages.Where(IsVisible).OrderBy(m => m.SentAt))
 {
     bool mine = msg.SenderId == userId;
     var reportModalId = $"chatReportMessageModal-{msg.Id}";
@@ -14,9 +17,7 @@
     <div class="d-flex mb-2 @(mine ? "justify-content-end" : "")">
         <div class="p-2 rounded @(mine ? "bg-primary text-white" : "bg-light")"
              style="max-width:70%">
-            @if (canReport)
-            {
-                <div class="dropdown text-end mb-1">
+            <div class="dropdown text-end mb-1">
                 <button class="btn btn-sm @(mine ? "btn-outline-light" : "btn-outline-secondary") border-0 py-0 px-1"
                         type="button"
                         data-bs-toggle="dropdown"
@@ -27,16 +28,35 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <button type="button"
-                                class="dropdown-item text-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#@reportModalId">
-                            Rapor Et
+                                class="dropdown-item"
+                                onclick="deleteMessage(@msg.Id, @Model.Id)">
+                            Sil
                         </button>
                     </li>
+                    @if (mine && !msg.IsRecalled)
+                    {
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item"
+                                    onclick="recallMessage(@msg.Id, @Model.Id)">
+                                Geri al
+                            </button>
+                        </li>
+                    }
+                    @if (canReport)
+                    {
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item text-danger"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#@reportModalId">
+                                Rapor Et
+                            </button>
+                        </li>
+                    }
                 </ul>
-                </div>
-            }
-            @msg.Content
+            </div>
+            @(msg.IsRecalled ? "Bu mesaj geri alındı." : msg.Content)
             <div class="text-end">
                 <small>@msg.SentAt.ToLocalTime().ToString("HH:mm")</small>
             </div>

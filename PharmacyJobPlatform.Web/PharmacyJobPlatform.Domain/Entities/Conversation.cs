@@ -18,7 +18,14 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime? EndedAt { get; set; }
+
+        public int? EndedByUserId { get; set; }
+
+        public bool User1Deleted { get; set; } = false;
+
+        public bool User2Deleted { get; set; } = false;
+
         public ICollection<Message> Messages { get; set; }
     }
 }
-

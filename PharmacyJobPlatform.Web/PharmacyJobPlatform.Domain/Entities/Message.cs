@@ -20,5 +20,13 @@ namespace PharmacyJobPlatform.Domain.Entities
         public DateTime SentAt { get; set; } = DateTime.UtcNow;
 
         public bool IsRead { get; set; } = false;
+
+        public bool IsRecalled { get; set; } = false;
+
+        public DateTime? RecalledAt { get; set; }
+
+        public bool DeletedBySender { get; set; } = false;
+
+        public bool DeletedByReceiver { get; set; } = false;
     }
 }

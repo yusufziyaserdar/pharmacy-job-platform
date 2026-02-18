@@ -5,6 +5,9 @@
     int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
     var otherUser =
         Model.User1Id == userId ? Model.User2 : Model.User1;
+
+    bool IsVisible(PharmacyJobPlatform.Domain.Entities.Message m) =>
+        m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver;
 }
 
 <div class="messages-thread-header">
@@ -26,14 +29,14 @@
 </div>
 
 <div class="messages-thread-body" id="messagesThreadBody">
-    @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+    @foreach (var msg in Model.Messages.Where(IsVisible).OrderBy(m => m.SentAt))
     {
         bool mine = msg.SenderId == userId;
         var reportModalId = $"reportMessageModal-{msg.Id}";
         var canReport = !mine;
 
         <div class="messages-bubble-row @(mine ? "is-mine" : "")">
-            <div class="messages-bubble">@msg.Content</div>
+            <div class="messages-bubble">@(msg.IsRecalled ? "Bu mesaj geri alındı." : msg.Content)</div>
             <details class="messages-menu">
                 <summary class="messages-menu-toggle" aria-label="Mesaj seçenekleri">
                     <i class="bi bi-three-dots"></i>
@@ -44,6 +47,14 @@
                             onclick="deleteMessage(@msg.Id, @Model.Id)">
                         Sil
                     </button>
+                    @if (mine && !msg.IsRecalled)
+                    {
+                        <button class="messages-menu-item"
+                                type="button"
+                                onclick="recallMessage(@msg.Id, @Model.Id)">
+                            Geri al
+                        </button>
+                    }
                     @if (canReport)
                     {
                         <button class="messages-menu-item messages-menu-item-report"

@@ -18,11 +18,11 @@
     </div>
 
     <div id="widgetMessagesInner">
-        @foreach (var msg in Model.Messages.OrderBy(m => m.SentAt))
+        @foreach (var msg in Model.Messages.Where(m => m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver).OrderBy(m => m.SentAt))
         {
             bool mine = msg.SenderId == userId;
             <div class="chat-bubble-row @(mine ? "mine" : "")">
-                <span class="chat-bubble @(mine ? "mine" : "")">@msg.Content</span>
+                <span class="chat-bubble @(mine ? "mine" : "")">@(msg.IsRecalled ? "Bu mesaj geri alındı." : msg.Content)</span>
             </div>
         }
     </div>

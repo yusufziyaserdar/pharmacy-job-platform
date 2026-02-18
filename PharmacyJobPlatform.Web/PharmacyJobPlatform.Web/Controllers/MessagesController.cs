@@ -23,7 +23,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             _hubContext = hubContext;
         }
 
-        // 📥 Inbox
         public IActionResult Index()
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -71,7 +70,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return Json(Array.Empty<object>());
 
             var interactedUserIdsQuery = _context.Conversations
-                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Where(c => !c.EndedAt.HasValue && (c.User1Id == userId || c.User2Id == userId))
                 .Select(c => c.User1Id == userId ? c.User2Id : c.User1Id)
                 .Concat(_context.ConversationRequests
                     .Where(r => r.FromUserId == userId || r.ToUserId == userId)
@@ -95,7 +94,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return Json(users);
         }
 
-        // 💬 Chat ekranı
         public async Task<IActionResult> Chat(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -106,7 +104,9 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.User2)
                 .FirstOrDefaultAsync(c =>
                     c.Id == id &&
-                    (c.User1Id == userId || c.User2Id == userId));
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)));
 
             if (conv == null)
                 return Unauthorized();
@@ -121,7 +121,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return View(conv);
         }
 
-        // ✉ Mesaj gönder
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> SendMessage(int conversationId, string content)
@@ -131,11 +130,9 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             int senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-
             bool sent = await TrySendMessageAsync(conversationId, senderId, content);
             if (!sent)
                 return RedirectToAction("Chat", new { id = conversationId });
-
 
             return RedirectToAction("Chat", new { id = conversationId });
         }
@@ -156,8 +153,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return Ok();
         }
 
-
-        // 📩 Mesaj isteği gönder
         [HttpPost]
         public async Task<IActionResult> Start(int userId)
         {
@@ -168,11 +163,20 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var existingConversation = _context.Conversations
                 .FirstOrDefault(c =>
-                    (c.User1Id == senderId && c.User2Id == userId) ||
-                    (c.User1Id == userId && c.User2Id == senderId));
+                    !c.EndedAt.HasValue &&
+                    ((c.User1Id == senderId && c.User2Id == userId) ||
+                     (c.User1Id == userId && c.User2Id == senderId)));
 
             if (existingConversation != null)
+            {
+                if (existingConversation.User1Id == senderId)
+                    existingConversation.User1Deleted = false;
+                else
+                    existingConversation.User2Deleted = false;
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction("Chat", new { id = existingConversation.Id });
+            }
 
             bool hasPendingRequest = _context.ConversationRequests.Any(r =>
                 !r.IsAccepted &&
@@ -192,7 +196,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction("Index", "Profile", new { id = userId });
         }
 
-        // ✅ Mesaj isteği kabul et
         [HttpPost]
         public async Task<IActionResult> AcceptRequest(int requestId)
         {
@@ -211,8 +214,9 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var conversation = await _context.Conversations
                 .FirstOrDefaultAsync(c =>
-                    (c.User1Id == request.FromUserId && c.User2Id == request.ToUserId) ||
-                    (c.User1Id == request.ToUserId && c.User2Id == request.FromUserId));
+                    !c.EndedAt.HasValue &&
+                    ((c.User1Id == request.FromUserId && c.User2Id == request.ToUserId) ||
+                     (c.User1Id == request.ToUserId && c.User2Id == request.FromUserId)));
 
             if (conversation == null)
             {
@@ -224,12 +228,16 @@ namespace PharmacyJobPlatform.Web.Controllers
                 _context.Conversations.Add(conversation);
             }
 
+            if (conversation.User1Id == userId)
+                conversation.User1Deleted = false;
+            else
+                conversation.User2Deleted = false;
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Chat", new { id = conversation.Id });
         }
 
-        // 🧩 Widget – conversation list
         [HttpGet]
         public IActionResult WidgetConversations()
         {
@@ -239,7 +247,10 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.Messages)
                 .Include(c => c.User1)
                 .Include(c => c.User2)
-                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Where(c =>
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)))
                 .Select(c => new ChatWidgetConversationVM
                 {
                     ConversationId = c.Id,
@@ -253,12 +264,13 @@ namespace PharmacyJobPlatform.Web.Controllers
                         : c.User1.FirstName + " " + c.User1.LastName,
 
                     LastMessage = c.Messages
+                        .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver))
                         .OrderByDescending(m => m.SentAt)
-                        .Select(m => m.Content)
+                        .Select(m => m.IsRecalled ? "Bu mesaj karşı taraf tarafından geri alındı." : m.Content)
                         .FirstOrDefault(),
 
                     UnreadCount = c.Messages.Count(m =>
-                        !m.IsRead && m.SenderId != userId)
+                        (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) && !m.IsRead && m.SenderId != userId)
                 })
                 .ToList();
 
@@ -276,13 +288,15 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.User2)
                 .FirstOrDefaultAsync(c =>
                     c.Id == conversationId &&
-                    (c.User1Id == userId || c.User2Id == userId));
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)));
 
             if (conv == null)
                 return Unauthorized();
 
             foreach (var msg in conv.Messages
-                .Where(m => !m.IsRead && m.SenderId != userId))
+                .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) && !m.IsRead && m.SenderId != userId))
             {
                 msg.IsRead = true;
             }
@@ -298,17 +312,46 @@ namespace PharmacyJobPlatform.Web.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var conversation = await _context.Conversations
-                .Include(c => c.Messages)
                 .FirstOrDefaultAsync(c =>
                     c.Id == conversationId &&
+                    !c.EndedAt.HasValue &&
                     (c.User1Id == userId || c.User2Id == userId));
 
             if (conversation == null)
                 return Unauthorized();
 
-            _context.Messages.RemoveRange(conversation.Messages);
-            _context.Conversations.Remove(conversation);
+            if (conversation.User1Id == userId)
+                conversation.User1Deleted = true;
+            else
+                conversation.User2Deleted = true;
+
             await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EndConversation(int conversationId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var conversation = await _context.Conversations
+                .FirstOrDefaultAsync(c =>
+                    c.Id == conversationId &&
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId));
+
+            if (conversation == null)
+                return Unauthorized();
+
+            conversation.EndedAt = DateTime.UtcNow;
+            conversation.EndedByUserId = userId;
+
+            await _context.SaveChangesAsync();
+
+            var otherUserId = conversation.User1Id == userId ? conversation.User2Id : conversation.User1Id;
+            await _hubContext.Clients.Users(userId.ToString(), otherUserId.ToString())
+                .SendAsync("RefreshMessages", conversation.Id);
 
             return Ok();
         }
@@ -328,14 +371,52 @@ namespace PharmacyJobPlatform.Web.Controllers
             if (message.Conversation.User1Id != userId && message.Conversation.User2Id != userId)
                 return Unauthorized();
 
-            _context.Messages.Remove(message);
+            if (message.Conversation.EndedAt.HasValue)
+                return BadRequest();
+
+            if (message.SenderId == userId)
+                message.DeletedBySender = true;
+            else
+                message.DeletedByReceiver = true;
+
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RecallMessage(int messageId)
+        {
+            int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        // 🧩 Widget – messages
+            var message = await _context.Messages
+                .Include(m => m.Conversation)
+                .FirstOrDefaultAsync(m => m.Id == messageId);
+
+            if (message == null)
+                return NotFound();
+
+            if (message.SenderId != userId)
+                return Unauthorized();
+
+            if (message.Conversation.EndedAt.HasValue)
+                return BadRequest();
+
+            message.IsRecalled = true;
+            message.RecalledAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            var otherUserId = message.Conversation.User1Id == userId
+                ? message.Conversation.User2Id
+                : message.Conversation.User1Id;
+
+            await _hubContext.Clients.Users(userId.ToString(), otherUserId.ToString())
+                .SendAsync("RefreshMessages", message.ConversationId);
+
+            return Ok();
+        }
+
         [HttpGet]
         public async Task<IActionResult> WidgetChat(int conversationId)
         {
@@ -347,14 +428,16 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.User2)
                 .FirstOrDefaultAsync(c =>
                     c.Id == conversationId &&
-                    (c.User1Id == userId || c.User2Id == userId));
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)));
 
 
             if (conv == null)
                 return Unauthorized();
 
             foreach (var msg in conv.Messages
-                .Where(m => !m.IsRead && m.SenderId != userId))
+                .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) && !m.IsRead && m.SenderId != userId))
             {
                 msg.IsRead = true;
             }
@@ -374,13 +457,15 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.User2)
                 .FirstOrDefaultAsync(c =>
                     c.Id == conversationId &&
-                    (c.User1Id == userId || c.User2Id == userId));
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)));
 
             if (conv == null)
                 return Unauthorized();
 
             foreach (var msg in conv.Messages
-                .Where(m => !m.IsRead && m.SenderId != userId))
+                .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) && !m.IsRead && m.SenderId != userId))
             {
                 msg.IsRead = true;
             }
@@ -396,8 +481,11 @@ namespace PharmacyJobPlatform.Web.Controllers
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             int unreadCount = _context.Messages.Count(m =>
+                (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) &&
                 !m.IsRead &&
                 m.SenderId != userId &&
+                !m.Conversation.EndedAt.HasValue &&
+                ((m.Conversation.User1Id == userId && !m.Conversation.User1Deleted) || (m.Conversation.User2Id == userId && !m.Conversation.User2Deleted)) &&
                 (m.Conversation.User1Id == userId ||
                  m.Conversation.User2Id == userId));
 
@@ -409,7 +497,11 @@ namespace PharmacyJobPlatform.Web.Controllers
             var conversation = await _context.Conversations
                 .Include(c => c.User1)
                 .Include(c => c.User2)
-                .FirstOrDefaultAsync(c => c.Id == conversationId);
+                .FirstOrDefaultAsync(c =>
+                    c.Id == conversationId &&
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == senderId || c.User2Id == senderId) &&
+                    !IsConversationDeletedForUser(c, senderId));
 
             if (conversation == null)
                 return false;
@@ -441,7 +533,10 @@ namespace PharmacyJobPlatform.Web.Controllers
                 .Include(c => c.Messages)
                 .Include(c => c.User1)
                 .Include(c => c.User2)
-                .Where(c => c.User1Id == userId || c.User2Id == userId)
+                .Where(c =>
+                    !c.EndedAt.HasValue &&
+                    (c.User1Id == userId || c.User2Id == userId) &&
+                    ((c.User1Id == userId && !c.User1Deleted) || (c.User2Id == userId && !c.User2Deleted)))
                 .Select(c => new InboxConversationViewModel
                 {
                     ConversationId = c.Id,
@@ -453,24 +548,29 @@ namespace PharmacyJobPlatform.Web.Controllers
                         : c.User1.FirstName + " " + c.User1.LastName,
 
                     LastMessage = c.Messages
+                        .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver))
                         .OrderByDescending(m => m.SentAt)
-                        .Select(m => m.Content)
+                        .Select(m => m.IsRecalled ? "Bu mesaj karşı taraf tarafından geri alındı." : m.Content)
                         .FirstOrDefault(),
 
                     LastMessageTime = c.Messages
+                        .Where(m => (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver))
                         .OrderByDescending(m => m.SentAt)
-                        .Select(m => m.SentAt)
+                        .Select(m => (DateTime?)m.SentAt)
                         .FirstOrDefault(),
 
                     UnreadCount = c.Messages.Count(m =>
+                        (m.SenderId == userId ? !m.DeletedBySender : !m.DeletedByReceiver) &&
                         !m.IsRead && m.SenderId != userId)
                 })
                 .OrderByDescending(x => x.LastMessageTime)
                 .ToList();
         }
+
+        private static bool IsConversationDeletedForUser(Conversation conversation, int userId)
+        {
+            return (conversation.User1Id == userId && conversation.User1Deleted)
+                || (conversation.User2Id == userId && conversation.User2Deleted);
+        }
     }
-
-
-
-
 }

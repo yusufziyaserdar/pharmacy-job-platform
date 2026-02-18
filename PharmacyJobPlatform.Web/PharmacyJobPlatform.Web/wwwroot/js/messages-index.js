@@ -34,7 +34,12 @@ function scrollThreadToBottom() {
 function openInboxConversation(id, forceScrollToBottom = true) {
     activeConversationId = Number(id);
     fetch(`/Messages/InboxMessages?conversationId=${id}`)
-        .then(r => r.text())
+        .then(r => {
+            if (!r.ok) {
+                throw new Error("not-authorized");
+            }
+            return r.text();
+        })
         .then(html => {
             if (inboxThread) {
                 inboxThread.innerHTML = html;
@@ -43,6 +48,11 @@ function openInboxConversation(id, forceScrollToBottom = true) {
                 }
             }
             highlightConversation(id);
+        })
+        .catch(() => {
+            activeConversationId = null;
+            setEmptyThread();
+            refreshInboxList();
         });
 }
 
@@ -116,7 +126,7 @@ function updateConversationPreview(conversationId, message) {
 }
 
 function deleteConversation(conversationId) {
-    if (!confirm("Bu konuşmayı silmek istediğinize emin misiniz?")) {
+    if (!confirm("Bu konuşmayı sadece kendi tarafınızdan silmek istediğinize emin misiniz?")) {
         return;
     }
 
@@ -132,7 +142,30 @@ function deleteConversation(conversationId) {
         const item = inboxConversations?.querySelector(`.messages-conversation[data-id="${conversationId}"]`);
         item?.remove();
 
-        if (activeConversationId === conversationId) {
+        if (activeConversationId === Number(conversationId)) {
+            activeConversationId = null;
+            setEmptyThread();
+        }
+    });
+}
+
+function endConversation(conversationId) {
+    if (!confirm("Bu sohbeti bitirmek istediğinize emin misiniz?")) {
+        return;
+    }
+
+    fetch("/Messages/EndConversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `conversationId=${conversationId}`
+    }).then(response => {
+        if (!response.ok) {
+            return;
+        }
+
+        refreshInboxList();
+
+        if (activeConversationId === Number(conversationId)) {
             activeConversationId = null;
             setEmptyThread();
         }
@@ -147,6 +180,20 @@ function deleteMessage(messageId, conversationId) {
     }).then(response => {
         if (response.ok) {
             openInboxConversation(conversationId, true);
+            refreshInboxList();
+        }
+    });
+}
+
+function recallMessage(messageId, conversationId) {
+    fetch("/Messages/RecallMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `messageId=${messageId}`
+    }).then(response => {
+        if (response.ok) {
+            openInboxConversation(conversationId, true);
+            refreshInboxList();
         }
     });
 }
@@ -158,7 +205,9 @@ function refreshInboxConversations() {
 window.openInboxConversation = openInboxConversation;
 window.sendInboxMessage = sendInboxMessage;
 window.deleteConversation = deleteConversation;
+window.endConversation = endConversation;
 window.deleteMessage = deleteMessage;
+window.recallMessage = recallMessage;
 window.refreshInboxConversations = refreshInboxConversations;
 window.refreshInboxConversation = refreshInboxConversation;
 window.refreshInboxList = refreshInboxList;
