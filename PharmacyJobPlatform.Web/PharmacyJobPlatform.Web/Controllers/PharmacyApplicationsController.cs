@@ -64,17 +64,24 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             app.Status = ApplicationStatus.Accepted;
 
-            bool exists = _context.Conversations.Any(c =>
-                (c.User1Id == app.WorkerId && c.User2Id == app.JobPost.PharmacyOwnerId) ||
-                (c.User1Id == app.JobPost.PharmacyOwnerId && c.User2Id == app.WorkerId));
+            var existingConversation = await _context.Conversations
+                .FirstOrDefaultAsync(c =>
+                    !c.EndedAt.HasValue &&
+                    ((c.User1Id == app.WorkerId && c.User2Id == app.JobPost.PharmacyOwnerId) ||
+                     (c.User1Id == app.JobPost.PharmacyOwnerId && c.User2Id == app.WorkerId)));
 
-            if (!exists)
+            if (existingConversation == null)
             {
                 _context.Conversations.Add(new Conversation
                 {
                     User1Id = app.WorkerId,
                     User2Id = app.JobPost.PharmacyOwnerId
                 });
+            }
+            else
+            {
+                existingConversation.User1Deleted = false;
+                existingConversation.User2Deleted = false;
             }
 
             await _context.SaveChangesAsync();

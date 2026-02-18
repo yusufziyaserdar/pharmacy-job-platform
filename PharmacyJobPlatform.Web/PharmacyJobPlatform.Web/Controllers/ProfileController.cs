@@ -57,6 +57,10 @@ namespace PharmacyJobPlatform.Web.Controllers
                 conversationId = _context.Conversations
                     .Where(c => (c.User1Id == viewerId && c.User2Id == user.Id) ||
                                 (c.User1Id == user.Id && c.User2Id == viewerId))
+                    .Where(c =>
+                        !c.EndedAt.HasValue &&
+                        ((c.User1Id == viewerId && !c.User1Deleted) ||
+                         (c.User2Id == viewerId && !c.User2Deleted)))
                     .Select(c => (int?)c.Id)
                     .FirstOrDefault();
 
