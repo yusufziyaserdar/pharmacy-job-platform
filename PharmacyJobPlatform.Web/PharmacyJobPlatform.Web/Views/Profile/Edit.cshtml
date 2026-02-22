@@ -146,6 +146,8 @@
         </div>
     }
 
+    @if (!isPharmacyOwner)
+    {
     <hr />
     <h5><i class="bi bi-hospital me-2"></i>Çalışma Geçmişi</h5>
 
@@ -203,15 +205,18 @@
     </button>
 
 
+    }
+
     <button class="btn btn-success">Kaydet</button>
 </form>
 
 @section Scripts {
     <script>
             let experienceIndex = @Model.WorkExperiences.Count;
+            const addExperienceButton = document.getElementById("add-experience");
 
-            document.getElementById("add-experience")
-                .addEventListener("click", function () {
+            if (addExperienceButton) {
+                addExperienceButton.addEventListener("click", function () {
 
                     const container = document.getElementById("experience-list");
 
@@ -252,11 +257,14 @@
                     container.insertAdjacentHTML("beforeend", html);
                     experienceIndex++;
                 });
+            }
 
             document.addEventListener("click", function (e) {
                 if (e.target.classList.contains("remove-experience")) {
                     e.target.closest(".experience-item").remove();
-                    reindexExperiences();
+                    if (document.getElementById("experience-list")) {
+                        reindexExperiences();
+                    }
                 }
             });
 

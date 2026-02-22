@@ -15,11 +15,13 @@ namespace PharmacyJobPlatform.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public ProfileController(ApplicationDbContext context, IConfiguration configuration)
+        public ProfileController(ApplicationDbContext context, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _context = context;
             _configuration = configuration;
+            _environment = environment;
         }
 
         [HttpGet("{id}")]
@@ -242,17 +244,20 @@ namespace PharmacyJobPlatform.Web.Controllers
                 user.CvFilePath = "/files/cvs/" + fileName;
             }
 
-            // 🏥 Work Experiences (basit versiyon)
-            _context.WorkExperiences.RemoveRange(user.WorkExperiences);
-
-            foreach (var exp in model.WorkExperiences)
+            if (user.Role?.Name != "PharmacyOwner")
             {
-                user.WorkExperiences.Add(new WorkExperience
+                // 🏥 Work Experiences (basit versiyon)
+                _context.WorkExperiences.RemoveRange(user.WorkExperiences);
+
+                foreach (var exp in model.WorkExperiences)
                 {
-                    PharmacyName = exp.PharmacyName,
-                    StartDate = exp.StartDate,
-                    EndDate = exp.EndDate
-                });
+                    user.WorkExperiences.Add(new WorkExperience
+                    {
+                        PharmacyName = exp.PharmacyName,
+                        StartDate = exp.StartDate,
+                        EndDate = exp.EndDate
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -278,8 +283,16 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return Forbid();
             }
 
-            var relativePath = user.CvFilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
-            var fullPath = Path.Combine("wwwroot", relativePath);
+            var webRootPath = _environment.WebRootPath;
+            var normalizedCvPath = user.CvFilePath.Replace('\\', '/');
+            var relativePath = normalizedCvPath.TrimStart('/');
+
+            var fullPath = Path.IsPathRooted(user.CvFilePath)
+                ? user.CvFilePath
+                : normalizedCvPath.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase)
+                    ? Path.GetFullPath(Path.Combine(_environment.ContentRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)))
+                    : Path.GetFullPath(Path.Combine(webRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)));
+
             if (!System.IO.File.Exists(fullPath))
             {
                 return NotFound();

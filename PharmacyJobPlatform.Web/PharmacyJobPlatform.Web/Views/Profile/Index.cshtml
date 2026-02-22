@@ -192,18 +192,6 @@
                         </p>
                     }
 
-                    @if ((user.IsCvVisible || currentUserId == user.Id.ToString()) && !string.IsNullOrEmpty(user.CvFilePath))
-                    {
-                        <p class="mb-1">
-                            <a asp-controller="Profile"
-                               asp-action="DownloadCv"
-                               asp-route-id="@user.Id"
-                               class="btn btn-outline-secondary btn-sm">
-                                <i class="bi bi-file-earmark-arrow-down me-2"></i>CV İndir
-                            </a>
-                        </p>
-                    }
-
                     <p class="text-muted">
                         Platforma katılma:
                         @user.CreatedAt.ToShortDateString()
@@ -238,12 +226,24 @@
                     {
                         if (Model.ConversationId.HasValue)
                         {
-                            <a asp-controller="Messages"
-                               asp-action="Chat"
-                               asp-route-id="@Model.ConversationId.Value"
-                               class="btn btn-primary">
-                                <i class="bi bi-chat-dots me-2"></i>Mesajlaşmaya Git
-                            </a>
+                            <div class="d-flex gap-2 flex-wrap">
+                                @if ((user.IsCvVisible || currentUserId == user.Id.ToString()) && !string.IsNullOrEmpty(user.CvFilePath))
+                                {
+                                    <a asp-controller="Profile"
+                                       asp-action="DownloadCv"
+                                       asp-route-id="@user.Id"
+                                       class="btn btn-outline-secondary">
+                                        <i class="bi bi-file-earmark-arrow-down me-2"></i>CV İndir
+                                    </a>
+                                }
+
+                                <a asp-controller="Messages"
+                                   asp-action="Chat"
+                                   asp-route-id="@Model.ConversationId.Value"
+                                   class="btn btn-primary">
+                                    <i class="bi bi-chat-dots me-2"></i>Mesajlaşmaya Git
+                                </a>
+                            </div>
                         }
                         else if (Model.IncomingRequestId.HasValue)
                         {

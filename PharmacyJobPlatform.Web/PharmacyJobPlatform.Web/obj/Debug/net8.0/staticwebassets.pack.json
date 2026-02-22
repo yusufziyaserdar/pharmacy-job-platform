@@ -53,6 +53,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\files\\cvs\\user-2.txt",
+      "PackagePath": "staticwebassets\\files\\cvs\\user-2.txt"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\pharmacy-job-platform\\PharmacyJobPlatform.Web\\pharmacyjobplatform.web\\wwwroot\\images\\profiles\\0f31fbc3-7015-4a3a-8a62-06693c2e20d9.jpg",
       "PackagePath": "staticwebassets\\images\\profiles\\0f31fbc3-7015-4a3a-8a62-06693c2e20d9.jpg"
     },
