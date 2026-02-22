@@ -27,9 +27,11 @@ namespace PharmacyJobPlatform.Web.Models.Profile
         public AddressInputViewModel Address { get; set; } = new();
 
         public string? ExistingProfileImagePath { get; set; }
+        [FileExtensions(Extensions = "jpg,jpeg,png,webp", ErrorMessage = "Profil fotoğrafı sadece jpg, jpeg, png veya webp formatında olmalıdır")]
         public IFormFile? ProfileImage { get; set; }
 
         public string? ExistingCvFilePath { get; set; }
+        [FileExtensions(Extensions = "pdf,txt,doc,docx", ErrorMessage = "CV dosyası sadece pdf, txt, doc veya docx formatında olmalıdır")]
         public IFormFile? CvFile { get; set; }
 
         public bool IsCvVisible { get; set; }
