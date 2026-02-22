@@ -1,0 +1,40 @@
+incur : katlanmak, uğramak, girmek, yaratmak, maruz kalmak, yakalanmak, tutulmak
+allocation : paylaştırma, tahsis, ödenek, pay, dağıtma, pay ayırma
+transient : geçici, süreksiz, fani, geçici dalga, kısa süreli konuk
+subsequent : sonraki, daha sonraki, müteakip
+dispose : elden çıkarmak, düzenlemek, kullanmak, isteklendirmek, ikna etmek, kontrolünde tutmak
+explicit : açık, belirgin, belli, aşikar, açık sözlü
+assert : iddia etmek, savunmak, söylemek, ileri sürmek, öne sürmek
+relay : röle, bayrak yarışı, vardiya, naklen yayın, yedek at, yerini alan kimse, nöbetleşe çalışma
+supersede : yerini almak, yerine geçmek, ayağını kaydırmak
+scatter : dağılmak, saçmak, dağıtmak, perişan etmek, saçıp savurmak, serpmek, savurmak, boşa harcamak, saçılmak, yayılmak
+precede : önce gelmek, önce olmak, önce davranmak, önünde gitmek, üstün olmak, önde olmak
+demonstrate : göstermek, kanıtlamak, ispatlamak, ispat etmek, gösteri yapmak, örnekle açıklamak
+concatenate : birleştirmek, bağlamak, sıralamak
+dispatch : sevk etmek, sevk, göndermek, idam, mesaj, yollama, acele, hız, telgraf çekme, öldürme
+immutable : değişmez, sabit, durağan
+impose : empoze etmek, yüklemek, zorlamak, yük olmak, uygulamaya koymak, etkilenmek, yararlanmak, kötüye kullanmak
+arbitrary : keyfi, isteğe bağlı, gaddar, zalim, hakem kararı ile belirlenen
+impeccable : kusursuz, hatasız, günahsız, şüphe edilmeyen
+mitigate : hafifletmek, azaltmak, yatıştırmak
+daunting : korkutucu
+adhere : uymak, bağlı kalmak, yapışmak, katılmak, bağlanmak, bitiştirmek
+interoperability : birlikte çalışabilirlik
+boilerplate : kalıp
+inference : çıkarım, sonuç çıkarma, sonuç, anlam
+attrition : aşınma, yıpratma, yıpranma, aşındırma
+retain : sürdürmek, tutmak, kaybetmemek, alıkoymak, elinden kaçırmamak, unutmamak, parayla tutmak
+stipulation : şart, koşul, taahhüt, kayıt, şart koşma, garanti edilen şey
+commoner : avam, halktan olan kimse
+backlash : tepki , boşluk, ters tepki, salgı, laçka, beklenmedik sonuç
+stall : durak, ahır, oyalanmak, stand, geciktirmek, koltuk, oyalama,tezgah, sargı, zaman kazanmak, saplanmak
+precarious : güvencesiz, istikrarsız, belirsiz, riskli, kararsız, güvenilmez, şüpheli, tutarsız
+Intriguing : ilgi çekici
+feud : kavga, düşmanlık, tımar
+bemoan : yakınmak, sızlanmak, şikayet etmek
+solidify : katılaştırmak, sağlamlaştırmak, pekiştirmek
+akin : benzer, yakın, akraba
+laminate : laminat, yaprak haline getirmek, kat kat yapmak, üst üste koymak
+indecipherable : çözülemez, okunamaz, deşifre edilemez
+pivotal : önemli, esas, eksen, asıl, odak
+tedious : sıkıcı

@@ -25,6 +25,10 @@ namespace PharmacyJobPlatform.Domain.Entities
 
         public bool IsPhoneNumberVisible { get; set; } = true;
 
+        public string? CvFilePath { get; set; }
+
+        public bool IsCvVisible { get; set; } = true;
+
         public string? PharmacyName { get; set; }
 
         public string? ProfileImagePath { get; set; }

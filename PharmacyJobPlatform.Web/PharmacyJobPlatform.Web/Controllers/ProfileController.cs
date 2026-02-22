@@ -131,6 +131,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                 PhoneNumber = user.PhoneNumber,
                 IsEmailVisible = user.IsEmailVisible,
                 IsPhoneNumberVisible = user.IsPhoneNumberVisible,
+                IsCvVisible = user.IsCvVisible,
                 About = user.About,
                 PharmacyName = user.PharmacyName,
                 Address = user.Address == null
@@ -145,6 +146,7 @@ namespace PharmacyJobPlatform.Web.Controllers
                         Description = user.Address.Description
                     },
                 ExistingProfileImagePath = user.ProfileImagePath,
+                ExistingCvFilePath = user.CvFilePath,
                 WorkExperiences = user.WorkExperiences.Select(x => new WorkExperienceEditModel
                 {
                     Id = x.Id,
@@ -199,6 +201,7 @@ namespace PharmacyJobPlatform.Web.Controllers
             user.PhoneNumber = model.PhoneNumber;
             user.IsEmailVisible = model.IsEmailVisible;
             user.IsPhoneNumberVisible = model.IsPhoneNumberVisible;
+            user.IsCvVisible = model.IsCvVisible;
             user.About = model.About;
             if (user.Role?.Name == "PharmacyOwner")
             {
@@ -225,6 +228,20 @@ namespace PharmacyJobPlatform.Web.Controllers
                 user.ProfileImagePath = "/images/profiles/" + fileName;
             }
 
+            if (model.CvFile != null)
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "files", "cvs");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"user-{user.Id}{Path.GetExtension(model.CvFile.FileName)}";
+                var path = Path.Combine(uploadsFolder, fileName);
+
+                using var stream = new FileStream(path, FileMode.Create);
+                await model.CvFile.CopyToAsync(stream);
+
+                user.CvFilePath = "/files/cvs/" + fileName;
+            }
+
             // 🏥 Work Experiences (basit versiyon)
             _context.WorkExperiences.RemoveRange(user.WorkExperiences);
 
@@ -241,6 +258,36 @@ namespace PharmacyJobPlatform.Web.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", new { id = user.Id });
+        }
+
+        [HttpGet("DownloadCv/{id}")]
+        public IActionResult DownloadCv(int id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == id && !u.IsDeleted);
+            if (user == null || string.IsNullOrWhiteSpace(user.CvFilePath))
+            {
+                return NotFound();
+            }
+
+            var viewerId = User.Identity?.IsAuthenticated == true
+                ? User.FindFirstValue(ClaimTypes.NameIdentifier)
+                : null;
+            var isOwner = viewerId == id.ToString();
+            if (!user.IsCvVisible && !isOwner)
+            {
+                return Forbid();
+            }
+
+            var relativePath = user.CvFilePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var fullPath = Path.Combine("wwwroot", relativePath);
+            if (!System.IO.File.Exists(fullPath))
+            {
+                return NotFound();
+            }
+
+            var extension = Path.GetExtension(fullPath);
+            var downloadName = $"cv-{user.FirstName}-{user.LastName}{extension}";
+            return PhysicalFile(fullPath, "application/octet-stream", downloadName);
         }
 
         [Authorize]

@@ -100,6 +100,18 @@
                         <input asp-for="ProfileImage" type="file" class="form-control" />
                     </div>
 
+                    <div class="mb-3">
+                        <label asp-for="CvFile">CV</label>
+                        <input asp-for="CvFile" type="file" class="form-control" />
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input asp-for="IsCvVisible" class="form-check-input" />
+                            <label asp-for="IsCvVisible" class="form-check-label">CV profilimde görünsün</label>
+                        </div>
+                    </div>
+
                     <!-- ================= WORKER ================= -->
                     <div id="workerSection" class="d-none">
                         <hr />

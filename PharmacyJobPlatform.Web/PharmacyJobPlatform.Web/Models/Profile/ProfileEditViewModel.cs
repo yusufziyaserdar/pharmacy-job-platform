@@ -29,6 +29,11 @@ namespace PharmacyJobPlatform.Web.Models.Profile
         public string? ExistingProfileImagePath { get; set; }
         public IFormFile? ProfileImage { get; set; }
 
+        public string? ExistingCvFilePath { get; set; }
+        public IFormFile? CvFile { get; set; }
+
+        public bool IsCvVisible { get; set; }
+
         public List<WorkExperienceEditModel> WorkExperiences { get; set; }
             = new();
     }

@@ -34,6 +34,10 @@ namespace PharmacyJobPlatform.Web.Models.Auth
         public string? About { get; set; }
         public IFormFile? ProfileImage { get; set; }
 
+        public IFormFile? CvFile { get; set; }
+
+        public bool IsCvVisible { get; set; } = true;
+
         public string? PharmacyName { get; set; }
 
         // 🔥 BURASI ÇOK ÖNEMLİ

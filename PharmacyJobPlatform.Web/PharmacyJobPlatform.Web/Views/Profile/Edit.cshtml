@@ -57,9 +57,13 @@
             <input asp-for="IsEmailVisible" class="form-check-input" />
             <label asp-for="IsEmailVisible" class="form-check-label">Email profilimde görünsün</label>
         </div>
-        <div class="form-check">
+        <div class="form-check mb-2">
             <input asp-for="IsPhoneNumberVisible" class="form-check-input" />
             <label asp-for="IsPhoneNumberVisible" class="form-check-label">Telefon profilimde görünsün</label>
+        </div>
+        <div class="form-check">
+            <input asp-for="IsCvVisible" class="form-check-input" />
+            <label asp-for="IsCvVisible" class="form-check-label">CV profilimde görünsün</label>
         </div>
     </div>
 
@@ -71,6 +75,15 @@
     <div class="mb-3">
         <label>Profil Fotoğrafı</label>
         <input asp-for="ProfileImage" type="file" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>CV</label>
+        <input asp-for="CvFile" type="file" class="form-control" />
+        @if (!string.IsNullOrWhiteSpace(Model.ExistingCvFilePath))
+        {
+            <small class="text-muted d-block mt-1">Mevcut CV dosyası yüklü.</small>
+        }
     </div>
 
     @if (isPharmacyOwner)

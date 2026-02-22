@@ -146,6 +146,22 @@ namespace PharmacyJobPlatform.Web.Controllers
                 profileImagePath = "/images/profiles/" + fileName;
             }
 
+            string? cvFilePath = null;
+
+            if (model.CvFile != null && model.CvFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "files", "cvs");
+                Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.CvFile.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await model.CvFile.CopyToAsync(stream);
+
+                cvFilePath = "/files/cvs/" + fileName;
+            }
+
             // ============================
             // 🏠 Address (SADECE PharmacyOwner)
             // ============================
@@ -196,8 +212,10 @@ namespace PharmacyJobPlatform.Web.Controllers
                 PhoneNumber = $"+90{model.PhoneNumber}",
                 IsEmailVisible = model.IsEmailVisible,
                 IsPhoneNumberVisible = model.IsPhoneNumberVisible,
+                IsCvVisible = model.IsCvVisible,
                 About = model.About,
                 ProfileImagePath = profileImagePath,
+                CvFilePath = cvFilePath,
                 PharmacyName = model.PharmacyName,
                 RoleId = role.Id,
                 Address = address, // 🔥 EF otomatik AddressId set eder

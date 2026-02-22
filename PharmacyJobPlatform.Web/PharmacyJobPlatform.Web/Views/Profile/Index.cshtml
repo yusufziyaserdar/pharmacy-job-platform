@@ -22,6 +22,9 @@
 
     int years = totalMonths / 12;
     int months = totalMonths % 12;
+    var currentUserId = User.Identity?.IsAuthenticated == true
+        ? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+        : null;
 }
 
 @section Styles {
@@ -186,6 +189,18 @@
                     {
                         <p class="mb-1">
                             <i class="bi bi-telephone me-2"></i>@user.PhoneNumber
+                        </p>
+                    }
+
+                    @if ((user.IsCvVisible || currentUserId == user.Id.ToString()) && !string.IsNullOrEmpty(user.CvFilePath))
+                    {
+                        <p class="mb-1">
+                            <a asp-controller="Profile"
+                               asp-action="DownloadCv"
+                               asp-route-id="@user.Id"
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-file-earmark-arrow-down me-2"></i>CV İndir
+                            </a>
                         </p>
                     }
 
