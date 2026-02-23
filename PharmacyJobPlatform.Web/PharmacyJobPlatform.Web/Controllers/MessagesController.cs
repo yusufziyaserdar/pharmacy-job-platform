@@ -16,11 +16,16 @@ namespace PharmacyJobPlatform.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHubContext<ChatHub> _hubContext;
+        private readonly ILogger<MessagesController> _logger;
 
-        public MessagesController(ApplicationDbContext context, IHubContext<ChatHub> hubContext)
+        public MessagesController(
+            ApplicationDbContext context,
+            IHubContext<ChatHub> hubContext,
+            ILogger<MessagesController> logger)
         {
             _context = context;
             _hubContext = hubContext;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -521,8 +526,20 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ? conversation.User2Id
                 : conversation.User1Id;
 
-            await _hubContext.Clients.Users(senderId.ToString(), receiverId.ToString())
-                .SendAsync("RefreshMessages", conversationId);
+            try
+            {
+                await _hubContext.Clients.Users(senderId.ToString(), receiverId.ToString())
+                    .SendAsync("RefreshMessages", conversationId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "Message {ConversationId} kaydedildi fakat SignalR bildirimi gönderilemedi. SenderId: {SenderId}, ReceiverId: {ReceiverId}",
+                    conversationId,
+                    senderId,
+                    receiverId);
+            }
 
             return true;
         }
