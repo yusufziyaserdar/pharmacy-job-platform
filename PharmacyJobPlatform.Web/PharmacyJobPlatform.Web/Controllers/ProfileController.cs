@@ -6,7 +6,6 @@ using PharmacyJobPlatform.Domain.Enums;
 using PharmacyJobPlatform.Infrastructure.Data;
 using PharmacyJobPlatform.Web.Models.Profile;
 using PharmacyJobPlatform.Web.Models.ViewModels;
-using PharmacyJobPlatform.Web.Helpers;
 using System.Security.Claims;
 
 namespace PharmacyJobPlatform.Web.Controllers
@@ -192,16 +191,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ModelState.AddModelError(nameof(model.PharmacyName), "Eczane adı zorunludur");
             }
 
-            if (!FileValidationHelper.HasAllowedExtension(model.ProfileImage, FileValidationHelper.AllowedImageExtensions))
-            {
-                ModelState.AddModelError(nameof(model.ProfileImage), "Profil fotoğrafı sadece jpg, jpeg, png veya webp formatında olmalıdır");
-            }
-
-            if (!FileValidationHelper.HasAllowedExtension(model.CvFile, FileValidationHelper.AllowedCvExtensions))
-            {
-                ModelState.AddModelError(nameof(model.CvFile), "CV dosyası sadece pdf, txt, doc veya docx formatında olmalıdır");
-            }
-
             if (!ModelState.IsValid)
             {
                 ViewData["IsPharmacyOwner"] = user.Role?.Name == "PharmacyOwner";
@@ -294,13 +283,15 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return Forbid();
             }
 
-            var normalizedCvPath = user.CvFilePath.Replace('\\', '/').TrimStart('/');
-            if (normalizedCvPath.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase))
-            {
-                normalizedCvPath = normalizedCvPath["wwwroot/".Length..];
-            }
+            var webRootPath = _environment.WebRootPath;
+            var normalizedCvPath = user.CvFilePath.Replace('\\', '/');
+            var relativePath = normalizedCvPath.TrimStart('/');
 
-            var fullPath = Path.GetFullPath(Path.Combine(_environment.WebRootPath, normalizedCvPath.Replace('/', Path.DirectorySeparatorChar)));
+            var fullPath = Path.IsPathRooted(user.CvFilePath)
+                ? user.CvFilePath
+                : normalizedCvPath.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase)
+                    ? Path.GetFullPath(Path.Combine(_environment.ContentRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)))
+                    : Path.GetFullPath(Path.Combine(webRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)));
 
             if (!System.IO.File.Exists(fullPath))
             {

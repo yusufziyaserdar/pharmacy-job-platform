@@ -7,7 +7,6 @@ using PharmacyJobPlatform.Web.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 using PharmacyJobPlatform.Domain.Entities;
 using PharmacyJobPlatform.Web.Services;
-using PharmacyJobPlatform.Web.Helpers;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -104,16 +103,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             }
 
             model.PhoneNumber = Regex.Replace(model.PhoneNumber ?? string.Empty, @"\D", string.Empty);
-
-            if (!FileValidationHelper.HasAllowedExtension(model.ProfileImage, FileValidationHelper.AllowedImageExtensions))
-            {
-                ModelState.AddModelError(nameof(model.ProfileImage), "Profil fotoğrafı sadece jpg, jpeg, png veya webp formatında olmalıdır");
-            }
-
-            if (!FileValidationHelper.HasAllowedExtension(model.CvFile, FileValidationHelper.AllowedCvExtensions))
-            {
-                ModelState.AddModelError(nameof(model.CvFile), "CV dosyası sadece pdf, txt, doc veya docx formatında olmalıdır");
-            }
 
             if (!ModelState.IsValid)
             {

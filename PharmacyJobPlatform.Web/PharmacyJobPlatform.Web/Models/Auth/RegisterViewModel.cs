@@ -32,10 +32,8 @@ namespace PharmacyJobPlatform.Web.Models.Auth
 
         public bool IsPhoneNumberVisible { get; set; } = true;
         public string? About { get; set; }
-        [FileExtensions(Extensions = "jpg,jpeg,png,webp", ErrorMessage = "Profil fotoğrafı sadece jpg, jpeg, png veya webp formatında olmalıdır")]
         public IFormFile? ProfileImage { get; set; }
 
-        [FileExtensions(Extensions = "pdf,txt,doc,docx", ErrorMessage = "CV dosyası sadece pdf, txt, doc veya docx formatında olmalıdır")]
         public IFormFile? CvFile { get; set; }
 
         public bool IsCvVisible { get; set; } = true;

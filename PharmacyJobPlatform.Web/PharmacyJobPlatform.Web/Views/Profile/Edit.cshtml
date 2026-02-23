@@ -74,14 +74,12 @@
 
     <div class="mb-3">
         <label>Profil Fotoğrafı</label>
-        <input asp-for="ProfileImage" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp,image/*" />
-        <span asp-validation-for="ProfileImage" class="text-danger"></span>
+        <input asp-for="ProfileImage" type="file" class="form-control" />
     </div>
 
     <div class="mb-3">
         <label>CV</label>
-        <input asp-for="CvFile" type="file" class="form-control" accept=".pdf,.txt,.doc,.docx" />
-        <span asp-validation-for="CvFile" class="text-danger"></span>
+        <input asp-for="CvFile" type="file" class="form-control" />
         @if (!string.IsNullOrWhiteSpace(Model.ExistingCvFilePath))
         {
             <small class="text-muted d-block mt-1">Mevcut CV dosyası yüklü.</small>
