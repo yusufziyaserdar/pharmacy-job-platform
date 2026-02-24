@@ -523,7 +523,8 @@ namespace PharmacyJobPlatform.Web.Controllers
                     c.Id == conversationId &&
                     !c.EndedAt.HasValue &&
                     (c.User1Id == senderId || c.User2Id == senderId) &&
-                    !IsConversationDeletedForUser(c, senderId));
+                    ((c.User1Id == senderId && !c.User1Deleted)
+                     || (c.User2Id == senderId && !c.User2Deleted)));
 
             if (conversation == null)
                 return false;
@@ -599,12 +600,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 })
                 .OrderByDescending(x => x.LastMessageTime)
                 .ToList();
-        }
-
-        private static bool IsConversationDeletedForUser(Conversation conversation, int userId)
-        {
-            return (conversation.User1Id == userId && conversation.User1Deleted)
-                || (conversation.User2Id == userId && conversation.User2Deleted);
         }
     }
 }
