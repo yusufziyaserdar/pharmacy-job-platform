@@ -221,11 +221,23 @@
                     @if (User.Identity?.IsAuthenticated == true &&
                     int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value) == user.Id)
                     {
-                        <a asp-controller="Profile"
-                           asp-action="Edit"
-                           class="btn btn-outline-primary btn-sm mb-2">
-                            <i class="bi bi-pencil me-2"></i>Profili Düzenle
-                        </a>
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <a asp-controller="Profile"
+                               asp-action="Edit"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-pencil me-2"></i>Profili Düzenle
+                            </a>
+
+                            @if (!string.IsNullOrEmpty(user.CvFilePath))
+                            {
+                                <a asp-controller="Profile"
+                                   asp-action="DownloadCv"
+                                   asp-route-id="@user.Id"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-file-earmark-arrow-down me-2"></i>CV'mi Gör / İndir
+                                </a>
+                            }
+                        </div>
                     }
                     @if (User.IsInRole("Admin") && user.Role.Name != "Admin")
                     {

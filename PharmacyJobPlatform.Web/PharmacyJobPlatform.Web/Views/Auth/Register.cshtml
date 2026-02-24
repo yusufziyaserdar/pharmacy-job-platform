@@ -157,14 +157,29 @@
                         <p class="text-muted small">1 = Hiç bilmiyorum, 5 = Tamamen hakimim</p>
 
                         <div class="mb-3">
-                            <label class="form-label">Kullanabildiği Eczane Programı</label>
-                            <select asp-for="PharmacyPrograms" class="form-select" multiple size="6">
+                            <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-2">
+                                <label class="form-label mb-0">Kullanabildiği Eczane Programı</label>
+                                <div class="program-picker-toolbar">
+                                    <span class="program-selection-count" id="programSelectionCountRegister">0 seçili</span>
+                                    <button type="button" class="btn btn-link btn-sm p-0" id="clearProgramsRegister">Seçimi Temizle</button>
+                                </div>
+                            </div>
+                            <div class="program-picker" role="group" aria-label="Kullanabildiği Eczane Programı">
                                 @foreach (var program in pharmacyPrograms)
                                 {
-                                    <option value="@program">@program</option>
+                                    var isSelected = Model.PharmacyPrograms?.Contains(program) == true;
+                                    <label class="program-chip @(isSelected ? "selected" : string.Empty)">
+                                        <input type="checkbox"
+                                               name="PharmacyPrograms"
+                                               value="@program"
+                                               @(isSelected ? "checked" : string.Empty)
+                                               class="program-chip__input" />
+                                        <span class="program-chip__label">@program</span>
+                                        <span class="program-chip__check"><i class="bi bi-check-lg"></i></span>
+                                    </label>
                                 }
-                            </select>
-                            <small class="text-muted">Birden fazla seçim yapabilirsiniz.</small>
+                            </div>
+                            <small class="text-muted">Programların üstüne dokunarak seçim yapabilirsiniz.</small>
                         </div>
 
                         @await Html.PartialAsync("_TechnicalRatingInput", ("DrugKnowledgeLevel", "İlaç Bilgisi", Model.DrugKnowledgeLevel))
@@ -253,6 +268,16 @@
         .tech-stars { display:flex; gap:6px; }
         .tech-star { border:none; background:transparent; color:#bfd3f5; font-size:1.25rem; padding:0; }
         .tech-star.active { color:#2f7be5; }
+        .program-picker { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+        .program-picker-toolbar { display:flex; align-items:center; gap:12px; }
+        .program-selection-count { font-size:.85rem; color:#4f6488; background:#edf3ff; border-radius:999px; padding:2px 10px; }
+        .program-chip { border:1px solid #d0dff8; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; background:#fff; transition:all .2s ease; }
+        .program-chip__input { display:none; }
+        .program-chip__label { font-weight:500; color:#35507a; }
+        .program-chip__check { color:transparent; }
+        .program-chip.selected { background:#e9f2ff; border-color:#5b8fe8; box-shadow:0 0 0 1px rgba(91,143,232,.15); }
+        .program-chip.selected .program-chip__label { color:#1c4ca0; }
+        .program-chip.selected .program-chip__check { color:#1c7c54; }
 </style>
 
     <script>
@@ -387,6 +412,42 @@
             }
 
             
+            const setupProgramPicker = (inputSelector, clearButtonId, countLabelId) => {
+                const inputs = Array.from(document.querySelectorAll(inputSelector));
+                const clearButton = document.getElementById(clearButtonId);
+                const countLabel = document.getElementById(countLabelId);
+
+                if (!inputs.length) {
+                    clearButton?.classList.add("d-none");
+                    return;
+                }
+
+                const updateState = () => {
+                    const selectedCount = inputs.filter(input => input.checked).length;
+                    if (countLabel) {
+                        countLabel.textContent = `${selectedCount} seçili`;
+                    }
+                };
+
+                inputs.forEach(input => {
+                    input.addEventListener("change", () => {
+                        input.closest(".program-chip")?.classList.toggle("selected", input.checked);
+                        updateState();
+                    });
+                });
+
+                clearButton?.addEventListener("click", () => {
+                    inputs.forEach(input => {
+                        input.checked = false;
+                        input.closest(".program-chip")?.classList.remove("selected");
+                    });
+                    updateState();
+                });
+
+                updateState();
+            };
+            setupProgramPicker('.program-chip__input[name="PharmacyPrograms"]', 'clearProgramsRegister', 'programSelectionCountRegister');
+
             const setupTechnicalStars = () => {
                 document.querySelectorAll(".technical-rating").forEach(container => {
                     const hidden = container.querySelector("input[type='hidden']");
