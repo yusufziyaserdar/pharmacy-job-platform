@@ -1,0 +1,14 @@
+@model (string FieldName, string Label, int? Value)
+
+<div class="mb-3 technical-rating" data-field="@Model.FieldName">
+    <label class="form-label">@Model.Label</label>
+    <input type="hidden" name="@Model.FieldName" value="@(Model.Value?.ToString() ?? string.Empty)" />
+    <div class="tech-stars" role="radiogroup" aria-label="@Model.Label">
+        @for (var i = 1; i <= 5; i++)
+        {
+            <button type="button" class="tech-star" data-value="@i" aria-label="@i yıldız">
+                <i class="bi bi-star-fill"></i>
+            </button>
+        }
+    </div>
+</div>

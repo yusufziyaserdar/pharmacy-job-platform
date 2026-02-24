@@ -34,6 +34,15 @@ namespace PharmacyJobPlatform.Domain.Entities
         public string? ProfileImagePath { get; set; }
         public string? About { get; set; }
 
+        public int? DrugKnowledgeLevel { get; set; }
+        public int? DermocosmeticKnowledgeLevel { get; set; }
+        public int? CrossSellingSkillLevel { get; set; }
+        public string? PharmacyPrograms { get; set; }
+        public int? PrescriptionPreparationLevel { get; set; }
+        public int? ReportControlLevel { get; set; }
+        public int? PrescriptionControlLevel { get; set; }
+        public int? SutKnowledgeLevel { get; set; }
+
         public bool EmailConfirmed { get; set; }
         public string? EmailConfirmationToken { get; set; }
         public DateTime? EmailConfirmationTokenExpiresAt { get; set; }

@@ -136,6 +136,16 @@ namespace PharmacyJobPlatform.Web.Controllers
                 IsCvVisible = user.IsCvVisible,
                 About = user.About,
                 PharmacyName = user.PharmacyName,
+                DrugKnowledgeLevel = user.DrugKnowledgeLevel,
+                DermocosmeticKnowledgeLevel = user.DermocosmeticKnowledgeLevel,
+                CrossSellingSkillLevel = user.CrossSellingSkillLevel,
+                PharmacyPrograms = string.IsNullOrWhiteSpace(user.PharmacyPrograms)
+                    ? new List<string>()
+                    : user.PharmacyPrograms.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(),
+                PrescriptionPreparationLevel = user.PrescriptionPreparationLevel,
+                ReportControlLevel = user.ReportControlLevel,
+                PrescriptionControlLevel = user.PrescriptionControlLevel,
+                SutKnowledgeLevel = user.SutKnowledgeLevel,
                 Address = user.Address == null
                     ? new AddressInputViewModel()
                     : new AddressInputViewModel
@@ -205,6 +215,16 @@ namespace PharmacyJobPlatform.Web.Controllers
             user.IsPhoneNumberVisible = model.IsPhoneNumberVisible;
             user.IsCvVisible = model.IsCvVisible;
             user.About = model.About;
+            user.DrugKnowledgeLevel = model.DrugKnowledgeLevel;
+            user.DermocosmeticKnowledgeLevel = model.DermocosmeticKnowledgeLevel;
+            user.CrossSellingSkillLevel = model.CrossSellingSkillLevel;
+            user.PharmacyPrograms = model.PharmacyPrograms != null && model.PharmacyPrograms.Any()
+                ? string.Join(",", model.PharmacyPrograms)
+                : null;
+            user.PrescriptionPreparationLevel = model.PrescriptionPreparationLevel;
+            user.ReportControlLevel = model.ReportControlLevel;
+            user.PrescriptionControlLevel = model.PrescriptionControlLevel;
+            user.SutKnowledgeLevel = model.SutKnowledgeLevel;
             if (user.Role?.Name == "PharmacyOwner")
             {
                 user.PharmacyName = model.PharmacyName;

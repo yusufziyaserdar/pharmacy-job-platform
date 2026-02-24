@@ -1,7 +1,9 @@
 ﻿@model PharmacyJobPlatform.Web.Models.Auth.RegisterViewModel
+@using PharmacyJobPlatform.Web.Models.Profile
 
 @{
     ViewData["Title"] = "Kayıt Ol";
+    var pharmacyPrograms = TechnicalInfoConstants.PharmacyPrograms;
     var googleMapsApiKey = ViewData["GoogleMapsApiKey"] as string;
 }
 
@@ -149,6 +151,30 @@
                                 class="btn btn-outline-secondary mb-3">
                             <i class="fa-solid fa-plus"></i> Tecrübe Ekle
                         </button>
+                    
+                    <div class="technical-info-card mt-3">
+                        <h5><i class="fa-solid fa-flask-vial"></i> Teknik Bilgiler</h5>
+                        <p class="text-muted small">1 = Hiç bilmiyorum, 5 = Tamamen hakimim</p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kullanabildiği Eczane Programı</label>
+                            <select asp-for="PharmacyPrograms" class="form-select" multiple size="6">
+                                @foreach (var program in pharmacyPrograms)
+                                {
+                                    <option value="@program">@program</option>
+                                }
+                            </select>
+                            <small class="text-muted">Birden fazla seçim yapabilirsiniz.</small>
+                        </div>
+
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("DrugKnowledgeLevel", "İlaç Bilgisi", Model.DrugKnowledgeLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("DermocosmeticKnowledgeLevel", "Dermokozmetik Ürün Bilgisi", Model.DermocosmeticKnowledgeLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("CrossSellingSkillLevel", "Çapraz Satış Yetkinliği", Model.CrossSellingSkillLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("PrescriptionPreparationLevel", "Reçete Düzeltme / Sıralama / Ay Sonuna Hazırlık", Model.PrescriptionPreparationLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("ReportControlLevel", "Rapor Kontrol Edebilme", Model.ReportControlLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("PrescriptionControlLevel", "Reçete Kontrol Edebilme", Model.PrescriptionControlLevel))
+                        @await Html.PartialAsync("_TechnicalRatingInput", ("SutKnowledgeLevel", "SUT(Sağlık Uygulama Tebliğ)'a Hakimiyet", Model.SutKnowledgeLevel))
+                    </div>
                     </div>
 
                     <!-- ================= PHARMACY OWNER ================= -->
@@ -221,6 +247,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <style>
+        .technical-info-card { border: 1px solid #dce6f8; border-radius: 12px; padding: 16px; background: #f7faff; }
+        .tech-stars { display:flex; gap:6px; }
+        .tech-star { border:none; background:transparent; color:#bfd3f5; font-size:1.25rem; padding:0; }
+        .tech-star.active { color:#2f7be5; }
+</style>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -352,6 +385,27 @@
                     confirmPasswordInput.addEventListener(eventName, event => event.preventDefault());
                 });
             }
+
+            
+            const setupTechnicalStars = () => {
+                document.querySelectorAll(".technical-rating").forEach(container => {
+                    const hidden = container.querySelector("input[type='hidden']");
+                    const buttons = Array.from(container.querySelectorAll(".tech-star"));
+                    let selected = Number(hidden?.value || 0);
+                    const paint = (count) => buttons.forEach((b, i) => b.classList.toggle("active", i < count));
+                    paint(selected);
+                    buttons.forEach(btn => {
+                        btn.addEventListener("mouseenter", () => paint(Number(btn.dataset.value)));
+                        btn.addEventListener("click", () => {
+                            selected = Number(btn.dataset.value);
+                            if (hidden) hidden.value = String(selected);
+                            paint(selected);
+                        });
+                    });
+                    container.addEventListener("mouseleave", () => paint(selected));
+                });
+            };
+            setupTechnicalStars();
 
             if (phoneInput) {
                 phoneInput.addEventListener("input", () => {

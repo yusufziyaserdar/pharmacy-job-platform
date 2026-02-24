@@ -217,6 +217,16 @@ namespace PharmacyJobPlatform.Web.Controllers
                 ProfileImagePath = profileImagePath,
                 CvFilePath = cvFilePath,
                 PharmacyName = model.PharmacyName,
+                DrugKnowledgeLevel = model.DrugKnowledgeLevel,
+                DermocosmeticKnowledgeLevel = model.DermocosmeticKnowledgeLevel,
+                CrossSellingSkillLevel = model.CrossSellingSkillLevel,
+                PharmacyPrograms = model.PharmacyPrograms != null && model.PharmacyPrograms.Any()
+                    ? string.Join(",", model.PharmacyPrograms)
+                    : null,
+                PrescriptionPreparationLevel = model.PrescriptionPreparationLevel,
+                ReportControlLevel = model.ReportControlLevel,
+                PrescriptionControlLevel = model.PrescriptionControlLevel,
+                SutKnowledgeLevel = model.SutKnowledgeLevel,
                 RoleId = role.Id,
                 Address = address, // 🔥 EF otomatik AddressId set eder
                 CreatedAt = DateTime.UtcNow,

@@ -25,6 +25,22 @@
     var currentUserId = User.Identity?.IsAuthenticated == true
         ? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
         : null;
+
+    var pharmacyPrograms = string.IsNullOrWhiteSpace(user.PharmacyPrograms)
+        ? new List<string>()
+        : user.PharmacyPrograms.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+    var technicalItems = new List<(string Label, int? Value)>
+    {
+        ("İlaç Bilgisi", user.DrugKnowledgeLevel),
+        ("Dermokozmetik Ürün Bilgisi", user.DermocosmeticKnowledgeLevel),
+        ("Çapraz Satış Yetkinliği", user.CrossSellingSkillLevel),
+        ("Reçete Düzeltme / Sıralama / Ay Sonu Hazırlık", user.PrescriptionPreparationLevel),
+        ("Rapor Kontrol Edebilme", user.ReportControlLevel),
+        ("Reçete Kontrol Edebilme", user.PrescriptionControlLevel),
+        ("SUT'a Hakimiyet", user.SutKnowledgeLevel)
+    };
+
 }
 
 @section Styles {
@@ -47,6 +63,11 @@
         .rating-star.is-active {
             color: #ffc107;
         }
+
+
+        .tech-display-stars { display:inline-flex; gap:4px; }
+        .tech-display-stars i { color:#bfd3f5; }
+        .tech-display-stars i.active { color:#2f7be5; }
 
         .comments-section {
             background: linear-gradient(145deg, #f8fbff 0%, #eef4ff 100%);
@@ -346,6 +367,44 @@
                 <hr />
             }
 
+
+            @if (user.Role.Name == "Worker" && (pharmacyPrograms.Any() || technicalItems.Any(x => x.Value.HasValue)))
+            {
+                <h5><i class="bi bi-clipboard2-pulse me-2"></i>Teknik Bilgiler</h5>
+
+                @if (pharmacyPrograms.Any())
+                {
+                    <div class="mb-3">
+                        <div class="fw-semibold mb-1">Kullanabildiği Eczane Programları</div>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var program in pharmacyPrograms)
+                            {
+                                <span class="badge rounded-pill text-bg-light border">@program</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <ul class="list-group mb-3">
+                    @foreach (var item in technicalItems)
+                    {
+                        if (!item.Value.HasValue)
+                        {
+                            continue;
+                        }
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@item.Label</span>
+                            <span class="tech-display-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="bi bi-star-fill @(i <= item.Value.Value ? "active" : string.Empty)"></i>
+                                }
+                            </span>
+                        </li>
+                    }
+                </ul>
+                <hr />
+            }
 
             <h5><i class="bi bi-star-fill me-2 text-warning"></i>Değerlendirme</h5>
 

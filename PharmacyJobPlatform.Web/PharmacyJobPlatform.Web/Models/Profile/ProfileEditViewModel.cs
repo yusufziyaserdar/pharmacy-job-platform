@@ -34,6 +34,30 @@ namespace PharmacyJobPlatform.Web.Models.Profile
 
         public bool IsCvVisible { get; set; }
 
+
+        [Range(1, 5)]
+        public int? DrugKnowledgeLevel { get; set; }
+
+        [Range(1, 5)]
+        public int? DermocosmeticKnowledgeLevel { get; set; }
+
+        [Range(1, 5)]
+        public int? CrossSellingSkillLevel { get; set; }
+
+        public List<string> PharmacyPrograms { get; set; } = new();
+
+        [Range(1, 5)]
+        public int? PrescriptionPreparationLevel { get; set; }
+
+        [Range(1, 5)]
+        public int? ReportControlLevel { get; set; }
+
+        [Range(1, 5)]
+        public int? PrescriptionControlLevel { get; set; }
+
+        [Range(1, 5)]
+        public int? SutKnowledgeLevel { get; set; }
+
         public List<WorkExperienceEditModel> WorkExperiences { get; set; }
             = new();
     }
