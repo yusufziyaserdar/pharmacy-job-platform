@@ -146,11 +146,28 @@ namespace PharmacyJobPlatform.Web.Controllers
         [Authorize]
         public async Task<IActionResult> SendMessageAjax(int conversationId, string content)
         {
+            if (conversationId <= 0)
+                return BadRequest();
+
             if (string.IsNullOrWhiteSpace(content))
                 return BadRequest();
 
-            int senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            bool sent = await TrySendMessageAsync(conversationId, senderId, content);
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int senderId))
+                return Unauthorized();
+
+            bool sent;
+            try
+            {
+                sent = await TrySendMessageAsync(conversationId, senderId, content.Trim());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    "SendMessageAjax hatası. ConversationId: {ConversationId}, SenderId: {SenderId}",
+                    conversationId,
+                    senderId);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
             if (!sent)
                 return NotFound();

@@ -303,17 +303,23 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return Forbid();
             }
 
-            var webRootPath = _environment.WebRootPath;
-            var normalizedCvPath = user.CvFilePath.Replace('\\', '/');
+            var normalizedCvPath = user.CvFilePath.Replace('\\', '/').Trim();
             var relativePath = normalizedCvPath.TrimStart('/');
 
-            var fullPath = Path.IsPathRooted(user.CvFilePath)
-                ? user.CvFilePath
-                : normalizedCvPath.StartsWith("wwwroot/", StringComparison.OrdinalIgnoreCase)
-                    ? Path.GetFullPath(Path.Combine(_environment.ContentRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)))
-                    : Path.GetFullPath(Path.Combine(webRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)));
+            string[] candidatePaths =
+            {
+                user.CvFilePath,
+                Path.Combine(_environment.WebRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)),
+                Path.Combine(_environment.ContentRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar)),
+                Path.Combine(_environment.ContentRootPath, "wwwroot", relativePath.Replace('/', Path.DirectorySeparatorChar)),
+                Path.Combine(_environment.ContentRootPath, "wwwroot", "files", "cvs", Path.GetFileName(relativePath))
+            };
 
-            if (!System.IO.File.Exists(fullPath))
+            var fullPath = candidatePaths
+                .Select(path => Path.GetFullPath(path))
+                .FirstOrDefault(System.IO.File.Exists);
+
+            if (string.IsNullOrWhiteSpace(fullPath))
             {
                 return NotFound();
             }
