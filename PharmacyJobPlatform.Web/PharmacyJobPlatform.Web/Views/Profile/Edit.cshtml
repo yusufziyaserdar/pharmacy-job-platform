@@ -3,7 +3,7 @@
 
 @{
     var googleMapsApiKey = ViewData["GoogleMapsApiKey"] as string;
-    var isPharmacyOwner = ViewData["IsPharmacyOwner"] as bool? ?? false;
+    var isPharmacyOwner = (ViewData["IsPharmacyOwner"] as bool? ?? false) || User.IsInRole("PharmacyOwner");
     var addressParts = new List<string>();
     if (!string.IsNullOrWhiteSpace(Model.Address?.Street))
     {
@@ -219,12 +219,21 @@
 
             <div class="mb-3">
                 <label class="form-label">Kullanabildiği Eczane Programı</label>
-                <select asp-for="PharmacyPrograms" class="form-select" multiple size="6">
+                <div class="program-picker" role="group" aria-label="Kullanabildiği Eczane Programı">
                     @foreach (var program in pharmacyPrograms)
                     {
-                        <option value="@program">@program</option>
+                        var isSelected = Model.PharmacyPrograms.Contains(program);
+                        <label class="program-chip @(isSelected ? "selected" : string.Empty)">
+                            <input type="checkbox"
+                                   name="PharmacyPrograms"
+                                   value="@program"
+                                   @(isSelected ? "checked" : string.Empty)
+                                   class="program-chip__input" />
+                            <span class="program-chip__label">@program</span>
+                            <span class="program-chip__check"><i class="bi bi-check-lg"></i></span>
+                        </label>
                     }
-                </select>
+                </div>
             </div>
 
             @await Html.PartialAsync("_TechnicalRatingInput", ("DrugKnowledgeLevel", "İlaç Bilgisi", Model.DrugKnowledgeLevel))
@@ -245,6 +254,14 @@
 .tech-stars { display:flex; gap:6px; }
 .tech-star { border:none; background:transparent; color:#bfd3f5; font-size:1.25rem; padding:0; }
 .tech-star.active { color:#2f7be5; }
+.program-picker { display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+.program-chip { border:1px solid #d0dff8; border-radius:10px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; background:#fff; transition:all .2s ease; }
+.program-chip__input { display:none; }
+.program-chip__label { font-weight:500; color:#35507a; }
+.program-chip__check { color:transparent; }
+.program-chip.selected { background:#e9f2ff; border-color:#5b8fe8; box-shadow:0 0 0 1px rgba(91,143,232,.15); }
+.program-chip.selected .program-chip__label { color:#1c4ca0; }
+.program-chip.selected .program-chip__check { color:#1c7c54; }
 </style>
 
 @section Scripts {
@@ -316,6 +333,12 @@
 
                 experienceIndex = items.length;
             }
+
+            document.querySelectorAll('.program-chip__input').forEach(function (input) {
+                input.addEventListener('change', function () {
+                    input.closest('.program-chip')?.classList.toggle('selected', input.checked);
+                });
+            });
 
 
             const setupTechnicalStars = () => {
