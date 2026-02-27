@@ -30,7 +30,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             _emailSender = emailSender ?? new NullEmailSender();
         }
 
-        // ---------------- LOGIN ----------------
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -73,7 +72,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 new ClaimsPrincipal(identity),
                 authProperties);
 
-            // 🎯 Role bazlı yönlendirme
             return user.Role.Name switch
             {
                 "PharmacyOwner" => RedirectToAction("Index", "PharmacyDashboard"),
@@ -82,7 +80,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             };
         }
 
-        // ---------------- REGISTER ----------------
         public IActionResult Register()
         {
             SetGoogleMapsApiKey();
@@ -127,9 +124,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return View(model);
             }
 
-            // ============================
-            // 📸 Profil Fotoğrafı
-            // ============================
             string? profileImagePath = null;
 
             if (model.ProfileImage != null && model.ProfileImage.Length > 0)
@@ -162,9 +156,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 cvFilePath = "/files/cvs/" + fileName;
             }
 
-            // ============================
-            // 🏠 Address (SADECE PharmacyOwner)
-            // ============================
             Address? address = null;
 
             if (model.Role == "PharmacyOwner")
@@ -200,9 +191,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 return View(model);
             }
 
-            // ============================
-            // 👤 User
-            // ============================
             var user = new User
             {
                 FirstName = model.FirstName,
@@ -235,9 +223,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                 EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddHours(24)
             };
 
-            // ============================
-            // 🏥 Work Experiences (SADECE Worker)
-            // ============================
             if (model.Role == "Worker" && model.WorkExperiences != null)
             {
                 foreach (var exp in model.WorkExperiences)
@@ -320,7 +305,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             }
         }
 
-        // ---------------- LOGOUT ----------------
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();

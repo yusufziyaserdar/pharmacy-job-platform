@@ -23,15 +23,12 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             var model = new WorkerDashboardViewModel
             {
-                // 🔹 Başvurularım
                 TotalApplications = _context.JobApplications
                     .Count(a => a.WorkerId == userId),
 
-                // 🔹 Aktif sohbetler
                 ActiveChats = _context.Conversations
                     .Count(c => c.User1Id == userId || c.User2Id == userId),
 
-                // 🔹 Okunmamış mesajlar
                 UnreadMessages = _context.Messages
                     .Include(m => m.Conversation)
                     .Count(m =>
@@ -41,7 +38,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                          m.Conversation.User2Id == userId)
                     ),
 
-                // 🔹 Son başvurular
                 RecentApplications = _context.JobApplications
                     .Include(a => a.JobPost)
                         .ThenInclude(j => j.PharmacyOwner)
@@ -61,7 +57,6 @@ namespace PharmacyJobPlatform.Web.Controllers
                     })
                     .ToList(),
 
-                // 🔹 Son sohbetler
                 RecentConversations = _context.Conversations
                     .Include(c => c.Messages)
                     .Include(c => c.User1)

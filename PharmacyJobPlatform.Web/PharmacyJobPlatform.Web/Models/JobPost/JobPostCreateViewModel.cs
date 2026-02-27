@@ -14,11 +14,9 @@ namespace PharmacyJobPlatform.Web.Models.JobPost
         [Required]
         public JobType JobType { get; set; }
 
-        // Daily
         public decimal? DailyWage { get; set; }
         public DateTime? WorkDate { get; set; }
 
-        // Permanent
         public decimal? MonthlySalary { get; set; }
     }
 }

@@ -7,7 +7,6 @@ using PharmacyJobPlatform.Web.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ================= SERVICES =================
 
 builder.Services.AddControllersWithViews();
 
@@ -30,7 +29,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
-// ================= APP =================
 
 var app = builder.Build();
 

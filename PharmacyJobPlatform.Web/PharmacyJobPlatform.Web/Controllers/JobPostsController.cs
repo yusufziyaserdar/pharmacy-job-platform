@@ -19,9 +19,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             _context = context;
         }
 
-        // =======================
-        // MY POSTS
-        // =======================
         public IActionResult MyPosts()
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -47,17 +44,11 @@ namespace PharmacyJobPlatform.Web.Controllers
             return View(posts);
         }
 
-        // =======================
-        // CREATE (GET)
-        // =======================
         public IActionResult Create()
         {
             return View(new JobPostCreateViewModel());
         }
 
-        // =======================
-        // CREATE (POST)
-        // =======================
         [HttpPost]
         public async Task<IActionResult> Create(JobPostCreateViewModel model)
         {
@@ -94,9 +85,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction(nameof(MyPosts));
         }
 
-        // =======================
-        // DETAILS
-        // =======================
         public IActionResult Details(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -127,9 +115,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return View(post);
         }
 
-        // =======================
-        // EDIT (GET)
-        // =======================
         public IActionResult Edit(int id)
         {
             int userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -155,9 +140,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return View(model);
         }
 
-        // =======================
-        // EDIT (POST)
-        // =======================
         [HttpPost]
         public async Task<IActionResult> Edit(JobPostEditViewModel model)
         {

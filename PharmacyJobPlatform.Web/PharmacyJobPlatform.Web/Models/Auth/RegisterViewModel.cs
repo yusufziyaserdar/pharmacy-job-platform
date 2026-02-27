@@ -40,7 +40,6 @@ namespace PharmacyJobPlatform.Web.Models.Auth
 
         public string? PharmacyName { get; set; }
 
-        // 🔥 BURASI ÇOK ÖNEMLİ
         public AddressInputViewModel Address { get; set; } = new();
 
         public List<WorkExperienceInputModel> WorkExperiences { get; set; } = new();

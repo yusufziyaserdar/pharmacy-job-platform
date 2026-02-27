@@ -19,12 +19,10 @@ namespace PharmacyJobPlatform.Web.Controllers
             _context = context;
         }
 
-        // 📥 İlan başvuruları
         public IActionResult JobApplications(int jobPostId)
         {
             var ownerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            // Güvenlik: İlan bana mı ait?
             var job = _context.JobPosts
                 .FirstOrDefault(j => j.Id == jobPostId && j.PharmacyOwnerId == ownerId && !j.IsDeleted);
 
@@ -89,7 +87,6 @@ namespace PharmacyJobPlatform.Web.Controllers
         }
 
 
-        // ❌ Reddet
         [HttpPost]
         public IActionResult Reject(int id)
         {

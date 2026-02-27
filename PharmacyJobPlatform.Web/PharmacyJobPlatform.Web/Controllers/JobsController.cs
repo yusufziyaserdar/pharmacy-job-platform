@@ -163,7 +163,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // 👇 BAŞVURU ACTION
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Apply(int jobPostId)

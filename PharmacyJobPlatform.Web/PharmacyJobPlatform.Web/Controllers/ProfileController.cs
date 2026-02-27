@@ -238,7 +238,6 @@ namespace PharmacyJobPlatform.Web.Controllers
             }
 
 
-            // 🖼 Profil Foto
             if (model.ProfileImage != null)
             {
                 var fileName = $"user-{user.Id}{Path.GetExtension(model.ProfileImage.FileName)}";
@@ -266,7 +265,6 @@ namespace PharmacyJobPlatform.Web.Controllers
 
             if (user.Role?.Name != "PharmacyOwner")
             {
-                // 🏥 Work Experiences (basit versiyon)
                 _context.WorkExperiences.RemoveRange(user.WorkExperiences);
 
                 foreach (var exp in model.WorkExperiences)

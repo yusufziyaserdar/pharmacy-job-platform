@@ -24,7 +24,6 @@ function setWidgetOpenState(isOpen) {
     try {
         localStorage.setItem(widgetStorageKey, isOpen ? "1" : "0");
     } catch (error) {
-        // Ignore storage issues and keep UI responsive.
     }
 }
 
@@ -138,7 +137,6 @@ try {
         setWidgetOpenState(true);
     }
 } catch (error) {
-    // Ignore storage issues and keep UI responsive.
 }
 
 loadConversations();

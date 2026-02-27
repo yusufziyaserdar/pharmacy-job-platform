@@ -23,11 +23,9 @@ namespace PharmacyJobPlatform.Domain.Entities
         public int AddressId { get; set; }
         public Address Address { get; set; }
 
-        // Günlük iş
         public decimal? DailyWage { get; set; }
         public DateTime? WorkDate { get; set; }
 
-        // Kalıcı iş
         public decimal? MonthlySalary { get; set; }
 
         public bool IsActive { get; set; } = true;
